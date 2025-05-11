@@ -26,6 +26,8 @@ const bodyStyles = {
   Body4: css`
     ${bodyBaseFontStyles}
     font-size: ${pxToRem(21)};
+    font-weight: 700;
+    line-height: 100%;
   `,
   Body5: css`
     ${bodyBaseFontStyles}

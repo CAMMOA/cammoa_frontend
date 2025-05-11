@@ -13,3 +13,10 @@ export const Header = styled.div`
 
   gap: 10px;
 `;
+
+export const PageWrapper = styled.div`
+  padding: 155px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;

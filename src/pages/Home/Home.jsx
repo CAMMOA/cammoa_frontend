@@ -68,7 +68,7 @@ const BannerImage = styled.img`
 
 const RecommendContainer = styled(Container)`
   width: 1065px;
-  padding: 40px 0;
+  padding: 20px 0;
 
   justify-content: center;
   gap: 10px;

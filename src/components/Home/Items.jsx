@@ -28,6 +28,7 @@ export default Items;
 
 const ItemsContainer = styled.div`
   width: 245px;
+  padding: 20px 0;
 
   display: flex;
   flex-direction: column;

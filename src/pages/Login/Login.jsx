@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { Container } from '@components/shared/UIStyles';
 
 const Login = () => {
   const [id, setId] = useState('');
@@ -11,11 +12,11 @@ const Login = () => {
   };
 
   return (
-    <PageBody>
-      <Form onSubmit={handleSubmit}>
-        <Title>로그인</Title>
+    <LoginContainer>
+      <LoginForm onSubmit={handleSubmit}>
+        <LoginTitle>로그인</LoginTitle>
 
-        <Input
+        <EmailInput
           type="text"
           placeholder="아이디를 입력해주세요"
           value={id}
@@ -23,7 +24,7 @@ const Login = () => {
           required
         />
 
-        <Input
+        <PasswordInput
           type="password"
           placeholder="비밀번호를 입력해주세요"
           value={pw}
@@ -31,113 +32,90 @@ const Login = () => {
           required
         />
 
-        <ButtonGroup>
-          <PrimaryButton type="submit">로그인</PrimaryButton>
-          <SecondaryButton type="button">회원가입</SecondaryButton>
-        </ButtonGroup>
-      </Form>
-    </PageBody>
+        <ButtonContainer>
+          <LoginButton type="submit">로그인</LoginButton>
+          <SignUpButton type="button">회원가입</SignUpButton>
+        </ButtonContainer>
+      </LoginForm>
+    </LoginContainer>
   );
 };
 
 export default Login;
 
-const PageBody = styled.div`
-  display: flex;
-  width: 1920px;
-  height: 627px;
-  flex-direction: column;
+const LoginContainer = styled(Container)`
   justify-content: center;
-  align-items: center;
-  padding-top: 153px;
-  gap: 152px;
-  flex-shrink: 0;
+  margin-top: 330px;
+  margin-bottom: 390px;
 `;
 
-const Form = styled.form`
+const LoginForm = styled.form`
+  width: 440px;
+
   display: flex;
-  width: 340px;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 20px;
 `;
 
-const Title = styled.h2`
-  align-self: stretch;
-  color: #333;
-  text-align: center;
-  font-family: var(--font-family-Font-2, 'Noto Sans KR');
-  font-size: var(--font-size-20, 20px);
-  font-style: normal;
-  font-weight: var(--font-weight-700, 700);
-  line-height: var(--line-height-20, 20px);
-  padding-bottom: 30px;
+const LoginTitle = styled.p`
+  margin-bottom: 20px;
+  text-algin: center;
+  ${({ theme }) => theme.fontStyles.Body2};
 `;
 
 const Input = styled.input`
+  height: 85px;
+  padding: 0px 20px;
+
   display: flex;
-  height: 55px;
-  padding: 16.5px 12px 17.5px 16px;
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;
+
   border-radius: 4px;
-  border: var(--stroke-weight-1, 1px) solid #ddd;
-  margin-bottom: 10px;
+  border: 1px solid #ddd;
+
   color: #757575;
-  font-family: var(--font-family-Font-2, 'Noto Sans KR');
-  font-size: var(--font-size-14, 14px);
-  font-style: normal;
-  font-weight: var(--font-weight-700, 700);
-  line-height: normal;
-  letter-spacing: var(--letter-spacing--0_6, -0.6px);
+  ${({ theme }) => theme.fontStyles.Body6};
+  font-weight: 700;
+  letter-spacing: -0.6px;
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--item-spacing-10, 10px);
+const EmailInput = styled(Input)``;
+
+const PasswordInput = styled(Input)`
+  margin-bottom: 20px;
+`;
+
+const ButtonContainer = styled(Container)`
   width: 100%;
-  padding-top: 10px;
+  gap: 10px;
 `;
 
-const PrimaryButton = styled.button`
-  height: 55px;
+const LoginButton = styled.button`
+  height: 85px;
   padding: 19px 10px;
-  align-items: center;
+
   align-self: stretch;
+
   border-radius: 3px;
   background: #3092fa;
-
   color: #fff;
-  text-align: center;
-
-  /* www.kurly.com/Semantic/Button */
-  font-family: var(--font-family-Font-2, 'Noto Sans KR');
-  font-size: var(--font-size-16, 16px);
-  font-style: normal;
-  font-weight: var(--font-weight-700, 700);
-  line-height: var(--line-height-16, 16px); /* 100% */
+  ${({ theme }) => theme.fontStyles.Body4};
+  font-weight: 700;
+  line-height: 100%;
 `;
-
-const SecondaryButton = styled.button`
-  display: flex;
-  height: 55px;
+const SignUpButton = styled.button`
+  height: 85px;
   padding: 19px 11px;
-  flex-direction: column;
-  align-items: center;
-  align-self: stretch;
   border-radius: 3px;
-  border: var(--stroke-weight-1, 1px) solid #3092fa;
+  border: 1px solid #3092fa;
 
   align-self: stretch;
   color: #3092fa;
-  text-align: center;
 
-  /* www.kurly.com/Semantic/Button */
-  font-family: var(--font-family-Font-2, 'Noto Sans KR');
-  font-size: var(--font-size-16, 16px);
-  font-style: normal;
-  font-weight: var(--font-weight-700, 700);
-  line-height: var(--line-height-16, 16px); /* 100% */
+  ${({ theme }) => theme.fontStyles.Body4};
+  font-weight: 700;
+  line-height: 100%;
 `;

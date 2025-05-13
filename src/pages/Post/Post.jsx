@@ -3,6 +3,7 @@ import { Container } from '@components/shared/UIStyles';
 import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
 import { useState } from 'react';
+import useLimitedInput from '@hooks/useMaxlength';
 
 const Post = () => {
   const categories = [
@@ -11,15 +12,25 @@ const Post = () => {
     { label: '생활용품' },
     { label: '문구류' },
     { label: '화장품' },
-    { label: '화장품' },
   ];
-  const MAX_LENGTH = 1500;
-  const [text, setText] = useState('');
-  const handleChange = (e) => {
-    const newText = e.target.value;
-    if (newText.length <= MAX_LENGTH) {
-      setText(newText);
+  const MAX_TEXT = 1500;
+  const MAX_LOCATION = 50;
+
+  const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT);
+  const [location, handlelocationChange] = useLimitedInput(MAX_LOCATION);
+  const [value, setValue] = useState('');
+
+  const handeDateChange = (e) => {
+    let input = e.target.value.replace(/\D/g, '');
+    if (input.length > 8) input = input.slice(0, 8);
+
+    if (input.length > 4 && input.length <= 6) {
+      input = input.slice(0, 4) + '  /  ' + input.slice(4);
+    } else if (input.length > 6) {
+      input = input.slice(0, 4) + '  /  ' + input.slice(4, 6) + '  /  ' + input.slice(6);
     }
+
+    setValue(input);
   };
 
   return (
@@ -31,11 +42,11 @@ const Post = () => {
           <ProductImage>
             <Image>
               <Camera />
-              <SubTitle>이미지 등록</SubTitle>
+              <ImageSubText>이미지 등록</ImageSubText>
             </Image>
-            <Title>
+            <ImageText>
               이미지는 1:1 비율로 보여지며, 첫 번째로 업로드한 이미지가 대표 이미지로 사용됩니다 :
-            </Title>
+            </ImageText>
           </ProductImage>
         </ProductImageContainer>
         <ProductContainer>
@@ -53,12 +64,12 @@ const Post = () => {
         <ProductPlainContainer>
           <ProductText>설명</ProductText>
           <ProductTextarea
-            value={text}
-            onChange={handleChange}
+            value={explain}
+            onChange={handlExplainChange}
             placeholder="내용을 입력해주세요."
           />
           <CharCount>
-            {text.length}/{MAX_LENGTH}
+            {explain.length}/{MAX_TEXT}
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
@@ -67,37 +78,46 @@ const Post = () => {
         <ProductContainer>
           <ProductText>가격</ProductText>
           <InputWrapper>
-            <ProductPriceInput placeholder="가격을 입력해주세요." />
-            <PriceText>원</PriceText>
+            <ProductInput placeholder="가격을 입력해주세요." />
+            <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
           <ProductText>인원</ProductText>
           <InputWrapper>
-            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
-            <PriceText>명</PriceText>
+            <ProductInput placeholder="인원을 엽력해주세요. (최대 5명)" />
+            <InputText>명</InputText>
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
-          <ProductText>인원</ProductText>
+          <ProductText>기한</ProductText>
           <InputWrapper>
-            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
-            <PriceText>명</PriceText>
+            <ProductInput
+              type="text"
+              placeholder="YYYY / MM / DD"
+              value={value}
+              onChange={handeDateChange}
+            />
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
-          <ProductText>인원</ProductText>
-          <InputWrapper>
-            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
-            <PriceText>명</PriceText>
-          </InputWrapper>
+          <ProductText>위치</ProductText>
+          <LocationInputWrapper>
+            <ProductInput
+              value={location}
+              onChange={handlelocationChange}
+              placeholder="거래할 위치를 입력해 주세요."
+            />
+            <Counter>
+              {location.length}/{MAX_LOCATION}
+            </Counter>
+          </LocationInputWrapper>
         </ProductContainer>
       </PostBody>
       <RegisterButton>등록하기</RegisterButton>
     </PostContainer>
   );
 };
-
 export default Post;
 
 const PostContainer = styled(Container)`
@@ -143,13 +163,13 @@ const Image = styled(Container)`
 
   gap: 15px;
 `;
-const SubTitle = styled.p`
+const ImageText = styled.p`
   color: #666;
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 107%;
 `;
 
-const Title = styled.p`
+const ImageSubText = styled.p`
   color: #666666;
   ${({ theme }) => theme.fontStyles.Body7};
   font-size: 13px;
@@ -170,8 +190,11 @@ const ProductNameInput = styled.input`
   width: 75%;
   padding: 16px;
 
-  color: #8c8c8c;
+  color: #333333;
   ${({ theme }) => theme.fontStyles.Body7};
+  &::placeholder {
+    color: #8c8c8c;
+  }
   border-radius: 2px;
   border: 1px solid #b2b2b2;
 `;
@@ -191,7 +214,10 @@ const ProductTextarea = styled.textarea`
 
   resize: none;
   border: 2px solid #b2b2b2;
-  color: #8c8c8c;
+  color: #333333;
+  &::placeholder {
+    color: #8c8c8c;
+  }
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 161%;
 `;
@@ -208,15 +234,22 @@ const InputWrapper = styled.div`
   width: 30%;
   position: relative;
 `;
-const ProductPriceInput = styled(ProductNameInput)`
+const ProductInput = styled(ProductNameInput)`
   width: 100%;
 `;
-const PriceText = styled.span`
+const InputText = styled.span`
   position: absolute;
   top: 16px;
   right: 16px;
   color: #8c8c8c;
   ${({ theme }) => theme.fontStyles.Body7};
+`;
+const LocationInputWrapper = styled(InputWrapper)`
+  width: 75%;
+`;
+const Counter = styled(CharCount)`
+  top: 14px;
+  right: 16px;
 `;
 const RegisterButton = styled.button`
   margin: 70px 0 50px 0;

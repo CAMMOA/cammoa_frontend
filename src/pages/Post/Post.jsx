@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
+import { useState } from 'react';
 
 const Post = () => {
   const categories = [
@@ -12,6 +13,14 @@ const Post = () => {
     { label: '화장품' },
     { label: '화장품' },
   ];
+  const MAX_LENGTH = 1500;
+  const [text, setText] = useState('');
+  const handleChange = (e) => {
+    const newText = e.target.value;
+    if (newText.length <= MAX_LENGTH) {
+      setText(newText);
+    }
+  };
 
   return (
     <PostContainer>
@@ -30,7 +39,7 @@ const Post = () => {
           </ProductImage>
         </ProductImageContainer>
         <ProductContainer>
-          <ProductNameText>상품명</ProductNameText>
+          <ProductNameText>게시글 제목</ProductNameText>
           <ProductNameInput placeholder="상품명을 입력해 주세요." />
         </ProductContainer>
         <ProductContainer>
@@ -41,6 +50,17 @@ const Post = () => {
             ))}
           </CategoryItemWrapper>
         </ProductContainer>
+        <ProductPlainContainer>
+          <ProductText>설명</ProductText>
+          <ProductTextarea
+            value={text}
+            onChange={handleChange}
+            placeholder="내용을 입력해주세요."
+          />
+          <CharCount>
+            {text.length}/{MAX_LENGTH}
+          </CharCount>
+        </ProductPlainContainer>
       </PostBody>
     </PostContainer>
   );
@@ -105,6 +125,7 @@ const Title = styled.p`
 `;
 
 const ProductContainer = styled(Container)`
+  width: 100%;
   padding: 32px 0;
 
   flex-direction: row;
@@ -114,7 +135,7 @@ const ProductNameText = styled(ProductText)`
   padding: 12px 0;
 `;
 const ProductNameInput = styled.input`
-  width: 782px;
+  width: 75%;
   padding: 16px;
 
   color: #8c8c8c;
@@ -122,4 +143,31 @@ const ProductNameInput = styled.input`
   border-radius: 2px;
   border: 1px solid #b2b2b2;
 `;
-const CategoryItemWrapper = styled.div``;
+const CategoryItemWrapper = styled.div`
+  width: 75%;
+  display: flex;
+`;
+const ProductPlainContainer = styled(ProductContainer)`
+  align-items: flex-start;
+  position: relative;
+`;
+const ProductTextarea = styled.textarea`
+  width: 75%;
+  height: 165px;
+  padding: 20px;
+
+  resize: none;
+  border: 2px solid #b2b2b2;
+  color: #8c8c8c;
+  ${({ theme }) => theme.fontStyles.Body7};
+  line-height: 161%;
+`;
+
+const CharCount = styled.span`
+  position: absolute;
+  bottom: 50px;
+  right: 100px;
+  color: #8c8c8c;
+  ${({ theme }) => theme.fontStyles.Body7};
+  line-height: 161%;
+`;

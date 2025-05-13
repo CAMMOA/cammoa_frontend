@@ -22,7 +22,7 @@ CategoryTabItem.propTypes = {
 export default CategoryTabItem;
 
 const Tab = styled.button`
-  width: 146px;
+  flex: 1;
   padding: 15.5px 0;
 
   border: 1px solid #b2b2b2;

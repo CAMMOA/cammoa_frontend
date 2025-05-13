@@ -62,6 +62,38 @@ const Post = () => {
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
+      <PostHeader>공동구매 정보</PostHeader>
+      <PostBody>
+        <ProductContainer>
+          <ProductText>가격</ProductText>
+          <InputWrapper>
+            <ProductPriceInput placeholder="가격을 입력해주세요." />
+            <PriceText>원</PriceText>
+          </InputWrapper>
+        </ProductContainer>
+        <ProductContainer>
+          <ProductText>인원</ProductText>
+          <InputWrapper>
+            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
+            <PriceText>명</PriceText>
+          </InputWrapper>
+        </ProductContainer>
+        <ProductContainer>
+          <ProductText>인원</ProductText>
+          <InputWrapper>
+            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
+            <PriceText>명</PriceText>
+          </InputWrapper>
+        </ProductContainer>
+        <ProductContainer>
+          <ProductText>인원</ProductText>
+          <InputWrapper>
+            <ProductPriceInput placeholder="인원을 엽력해주세요. (최대 5명)" />
+            <PriceText>명</PriceText>
+          </InputWrapper>
+        </ProductContainer>
+      </PostBody>
+      <RegisterButton>등록하기</RegisterButton>
     </PostContainer>
   );
 };
@@ -148,6 +180,7 @@ const CategoryItemWrapper = styled.div`
   display: flex;
 `;
 const ProductPlainContainer = styled(ProductContainer)`
+  margin-bottom: 20px;
   align-items: flex-start;
   position: relative;
 `;
@@ -170,4 +203,26 @@ const CharCount = styled.span`
   color: #8c8c8c;
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 161%;
+`;
+const InputWrapper = styled.div`
+  width: 30%;
+  position: relative;
+`;
+const ProductPriceInput = styled(ProductNameInput)`
+  width: 100%;
+`;
+const PriceText = styled.span`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #8c8c8c;
+  ${({ theme }) => theme.fontStyles.Body7};
+`;
+const RegisterButton = styled.button`
+  margin: 70px 0 50px 0;
+  width: 240px;
+  height: 56px;
+  border-radius: 3px;
+  background: #3092fa;
+  color: #ffffff;
 `;

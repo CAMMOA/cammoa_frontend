@@ -4,6 +4,7 @@ import Login from '@pages/Login/Login';
 import Home from '@pages/Home/Home.jsx';
 import SearchPage from '@pages/Search/SearchPage';
 import Post from '@pages/Post/Post';
+import Signup from '@pages/Signup/Signup';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="Login" element={<Login />} />
           <Route path="post" element={<Post />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
     </BrowserRouter>

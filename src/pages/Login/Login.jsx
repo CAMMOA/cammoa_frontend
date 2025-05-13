@@ -89,6 +89,7 @@ const PasswordInput = styled(Input)`
 `;
 
 const ButtonContainer = styled(Container)`
+  width: 100%;
   gap: 10px;
 `;
 

@@ -3,6 +3,7 @@ import Layout from '@layout/Layout';
 import Login from '@pages/Login/Login';
 import Home from '@pages/Home/Home.jsx';
 import SearchPage from '@pages/Search/SearchPage';
+import NoSearchResults from '@pages/Search/NoSearchResults';
 import Post from '@pages/Post/Post';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="Login" element={<Login />} />
           <Route path="post" element={<Post />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/nosearchresults" element={<NoSearchResults />} />
         </Route>
       </Routes>
     </BrowserRouter>

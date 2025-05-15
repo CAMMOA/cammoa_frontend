@@ -121,7 +121,7 @@ const Post = () => {
 export default Post;
 
 const PostContainer = styled(Container)`
-  margin-top: 175px;
+  margin-top: 20px;
 `;
 const PostHeader = styled.p`
   width: 1065px;

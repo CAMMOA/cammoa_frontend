@@ -51,8 +51,6 @@ export default Home;
 
 const HomeContainer = styled(Container)`
   width: 100%;
-  padding: 155px 0;
-
   gap: 10px;
 `;
 

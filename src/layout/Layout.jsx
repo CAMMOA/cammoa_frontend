@@ -22,5 +22,6 @@ const Wrapper = styled.div`
   min-height: 100vh;
 `;
 const Content = styled.main`
+  padding-top: 155px;
   flex: 1;
 `;

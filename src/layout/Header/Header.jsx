@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { Container } from '@components/shared/UIStyles';
+import LogoIcon from '@assets/icons/logo-icon.svg?react';
 import SearchBar from '@layout/SearchBar/SearchBar';
 import pxToRem from '@utils/pxToRem';
 import CategoryIcon from '@assets/icons/category/category-icon.svg?react';
@@ -81,7 +82,7 @@ const Divider = styled.span`
 `;
 
 const MainHeader = styled(Container)`
-  width: 1065px;
+  width: 1075px;
   height: ${pxToRem(65)};
   padding: ${pxToRem(12)} 0;
 
@@ -90,11 +91,10 @@ const MainHeader = styled(Container)`
   gap: 55px;
 `;
 
-const Logo = styled.div`
+const Logo = styled(LogoIcon)`
   width: ${pxToRem(180)};
   height: ${pxToRem(40)};
 
-  background-color: skyblue;
   flex-shrink: 0;
 `;
 

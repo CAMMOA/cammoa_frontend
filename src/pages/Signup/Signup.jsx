@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Container } from '@components/shared/UIStyles';
+import { Container, Header } from '@components/shared/UIStyles';
 
 export default function Signup() {
   const [id, setId] = useState('');
@@ -21,15 +21,14 @@ export default function Signup() {
 
   return (
     <SignupContainer>
-      <SignupForm>
+      <SignupFormContainer>
         <HeaderArea>
           <Title>회원가입</Title>
           <RequiredInfo>
-            <RequiredStar>*</RequiredStar>
+            <RequiredStar>* </RequiredStar>
             필수입력사항
           </RequiredInfo>
         </HeaderArea>
-        <Divider />
 
         <Form onSubmit={handleSubmit}>
           {}
@@ -165,8 +164,6 @@ export default function Signup() {
             </InputCell>
           </FormRow>
 
-          <Divider />
-
           {}
           <FormRow>
             <LabelCell>
@@ -182,60 +179,53 @@ export default function Signup() {
 
           <SubmitButton type="submit">가입하기</SubmitButton>
         </Form>
-      </SignupForm>
+      </SignupFormContainer>
     </SignupContainer>
   );
 }
 
 const SignupContainer = styled(Container)`
-  justify-content: center;
-  margin-top: 250px;
-  margin-bottom: 150px;
+  padding-top: 150px;
 `;
 
-const SignupForm = styled.div`
-  width: 650px;
+const SignupFormContainer = styled(Container)`
+  gap: 12px;
 `;
 
-const HeaderArea = styled.div`
-  display: column;
-  align-items: center;
+const HeaderArea = styled(Header)`
+  width: 100%;
+  gap: 50px;
 `;
-
-const Title = styled.h2`
-  padding-bottom: 50px;
-  align-self: stretch;
+const Title = styled.p`
   text-align: center;
   ${({ theme }) => theme.fontStyles.Body2};
+  line-height: 126%;
 `;
 
-const RequiredInfo = styled.div`
+const RequiredInfo = styled.p`
+  width: 100%;
   text-align: right;
-  ${({ theme }) => theme.fontStyles.Body6};
+  ${({ theme }) => theme.fontStyles.Body8};
+  line-height: 142%;
 `;
 
 const RequiredStar = styled.span`
   color: #ee6a7b;
-  text-align: right;
-  ${({ theme }) => theme.fontStyles.Body6};
-`;
-
-const Divider = styled.hr`
-  align-items: flex-end;
-  align-self: stretch;
-  border-bottom: var(--stroke-weight-2, 2px) solid #333;
+  ${({ theme }) => theme.fontStyles.Body8};
+  line-height: 142%;
 `;
 
 const Form = styled.form`
+  padding-top: 20px;
+  border-top: 2px solid #333;
+
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
 `;
 
-const FormRow = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
+const FormRow = styled(Container)`
+  padding: 10px;
+  flex-direction: row;
 `;
 
 const LabelCell = styled.div`

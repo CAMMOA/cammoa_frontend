@@ -4,6 +4,7 @@ import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
 import { useState } from 'react';
 import useLimitedInput from '@hooks/useMaxlength';
+import { ButtonStyle } from '@components/shared/ButtonStyle';
 
 const Post = () => {
   const categories = [
@@ -251,11 +252,8 @@ const Counter = styled(CharCount)`
   top: 14px;
   right: 16px;
 `;
-const RegisterButton = styled.button`
+const RegisterButton = styled(ButtonStyle)`
   margin: 70px 0 50px 0;
   width: 240px;
   height: 56px;
-  border-radius: 3px;
-  background: #3092fa;
-  color: #ffffff;
 `;

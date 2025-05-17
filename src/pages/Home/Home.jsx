@@ -50,7 +50,6 @@ const Home = () => {
 export default Home;
 
 const HomeContainer = styled(Container)`
-  width: 100%;
   gap: 10px;
 `;
 

@@ -21,20 +21,22 @@ export default function Signup() {
 
   return (
     <SignupContainer>
-        <SignupForm>
-      <HeaderArea>
-        <Title>회원가입</Title>
-        <RequiredInfo>
-          <RequiredStar>*</RequiredStar>
-          필수입력사항
-        </RequiredInfo>
-      </HeaderArea>
-      <Divider />
+      <SignupForm>
+        <HeaderArea>
+          <Title>회원가입</Title>
+          <RequiredInfo>
+            <RequiredStar>*</RequiredStar>
+            필수입력사항
+          </RequiredInfo>
+        </HeaderArea>
+        <Divider />
 
         <Form onSubmit={handleSubmit}>
           {}
           <FormRow>
-            <LabelCell>아이디<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              아이디<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <Input
                 type="text"
@@ -48,7 +50,9 @@ export default function Signup() {
 
           {}
           <FormRow>
-            <LabelCell>비밀번호<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              비밀번호<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <Input
                 type="password"
@@ -62,7 +66,9 @@ export default function Signup() {
 
           {}
           <FormRow>
-            <LabelCell>비밀번호 확인<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              비밀번호 확인<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <Input
                 type="password"
@@ -76,7 +82,9 @@ export default function Signup() {
 
           {}
           <FormRow>
-            <LabelCell>이름<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              이름<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <Input
                 type="text"
@@ -90,7 +98,9 @@ export default function Signup() {
 
           {}
           <FormRow>
-            <LabelCell>이메일<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              이메일<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <EmailGroup>
                 <Input
@@ -159,14 +169,12 @@ export default function Signup() {
 
           {}
           <FormRow>
-            <LabelCell>이용약관동의<RequiredStar>*</RequiredStar></LabelCell>
+            <LabelCell>
+              이용약관동의<RequiredStar>*</RequiredStar>
+            </LabelCell>
             <InputCell>
               <CheckboxLabel>
-                <CheckboxInput
-                  type="checkbox"
-                  checked={agree}
-                  onChange={() => setAgree(!agree)}
-                />
+                <CheckboxInput type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
                 공동 구매 모집 완료 이메일 수신 동의
               </CheckboxLabel>
             </InputCell>
@@ -174,7 +182,7 @@ export default function Signup() {
 
           <SubmitButton type="submit">가입하기</SubmitButton>
         </Form>
-        </SignupForm>
+      </SignupForm>
     </SignupContainer>
   );
 }
@@ -187,7 +195,7 @@ const SignupContainer = styled(Container)`
 
 const SignupForm = styled.div`
   width: 650px;
-`
+`;
 
 const HeaderArea = styled.div`
   display: column;
@@ -201,21 +209,21 @@ const Title = styled.h2`
   ${({ theme }) => theme.fontStyles.Body2};
 `;
 
-const RequiredInfo = styled.div`    
+const RequiredInfo = styled.div`
   text-align: right;
   ${({ theme }) => theme.fontStyles.Body6};
 `;
 
 const RequiredStar = styled.span`
-color: #EE6A7B;
-text-align: right;
+  color: #ee6a7b;
+  text-align: right;
   ${({ theme }) => theme.fontStyles.Body6};
 `;
 
 const Divider = styled.hr`
-align-items: flex-end;
-align-self: stretch;
-border-bottom: var(--stroke-weight-2, 2px) solid #333;
+  align-items: flex-end;
+  align-self: stretch;
+  border-bottom: var(--stroke-weight-2, 2px) solid #333;
 `;
 
 const Form = styled.form`
@@ -240,19 +248,19 @@ const LabelCell = styled.div`
 `;
 
 const InputCell = styled.div`
-  margin-bottom:10px;
+  margin-bottom: 10px;
   align-self: stretch;
 
   ${({ theme }) => theme.fontStyles.Body4};
-  font-size:16px;
+  font-size: 16px;
 `;
 
 const Input = styled.input`
-width:380px;
-height: 46px;
-padding: 13px 16px;
-border-radius: 4px;
-border: var(--stroke-weight-1, 1px) solid #DDD;
+  width: 380px;
+  height: 46px;
+  padding: 13px 16px;
+  border-radius: 4px;
+  border: var(--stroke-weight-1, 1px) solid #ddd;
 
   ${({ theme }) => theme.fontStyles.Body6};
 `;
@@ -275,44 +283,44 @@ color: #DDD;ss
 `;
 
 const GenderGroup = styled.div`
-margin:10px;
-display: flex;
-gap:80px;
+  margin: 10px;
+  display: flex;
+  gap: 80px;
 `;
 
 const GenderLabel = styled.label`
-display: flex;
-align-items: center;
-gap: 6px;
-input {
-width: 25px;
-height: 25px;
-}
-${({ theme }) => theme.fontStyles.Body4};
-font-size:16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  input {
+    width: 25px;
+    height: 25px;
+  }
+  ${({ theme }) => theme.fontStyles.Body4};
+  font-size: 16px;
 `;
 
 const DateGroup = styled.div`
-display: flex;
-justify-content: space-between;
-padding-right:30px;
-padding-left:30px;
-width:380px;
-height: 46px;
-align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 30px;
+  padding-left: 30px;
+  width: 380px;
+  height: 46px;
+  align-items: center;
 
-border-radius: 3px;
-border: var(--stroke-weight-1, 1px) solid #DDD;
+  border-radius: 3px;
+  border: var(--stroke-weight-1, 1px) solid #ddd;
 `;
 
 const DateInput = styled.input`
-width:100%;
-height:40px;
-display: flex;
+  width: 100%;
+  height: 40px;
+  display: flex;
 
-text-align: center;
-${({ theme }) => theme.fontStyles.Body4};
-font-size:16px;
+  text-align: center;
+  ${({ theme }) => theme.fontStyles.Body4};
+  font-size: 16px;
 `;
 
 const Slash = styled.span`
@@ -320,12 +328,12 @@ const Slash = styled.span`
 `;
 
 const CheckboxLabel = styled.label`
-  padding-top:10px;
+  padding-top: 10px;
   display: flex;
   align-items: center;
   gap: 12px;
   ${({ theme }) => theme.fontStyles.Body4};
-  font-size:16px;
+  font-size: 16px;
 `;
 
 const CheckboxInput = styled.input`

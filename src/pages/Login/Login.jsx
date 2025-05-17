@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
+import { ButtonStyle } from '@components/shared/ButtonStyle';
 
 const Login = () => {
   const [id, setId] = useState('');
@@ -45,8 +46,7 @@ export default Login;
 
 const LoginContainer = styled(Container)`
   justify-content: center;
-  margin-top: 330px;
-  margin-bottom: 390px;
+  margin-top: 165px;
 `;
 
 const LoginForm = styled.form`
@@ -93,18 +93,12 @@ const ButtonContainer = styled(Container)`
   gap: 10px;
 `;
 
-const LoginButton = styled.button`
+const LoginButton = styled(ButtonStyle)`
   height: 85px;
   padding: 19px 10px;
 
   align-self: stretch;
-
-  border-radius: 3px;
-  background: #3092fa;
-  color: #fff;
   ${({ theme }) => theme.fontStyles.Body4};
-  font-weight: 700;
-  line-height: 100%;
 `;
 const SignUpButton = styled.button`
   height: 85px;

@@ -30,13 +30,14 @@ export default function Signup() {
           </RequiredInfo>
         </HeaderArea>
 
-        <Form onSubmit={handleSubmit}>
+        <SignupForm onSubmit={handleSubmit}>
           {}
           <FormRow>
-            <LabelCell>
-              아이디<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>
+                아이디<RequiredStar>*</RequiredStar>
+              </InputText>
+
               <Input
                 type="text"
                 placeholder="아이디를 입력해주세요"
@@ -44,15 +45,15 @@ export default function Signup() {
                 onChange={(e) => setId(e.target.value)}
                 required
               />
-            </InputCell>
+            </InputLabel>
           </FormRow>
 
           {}
           <FormRow>
-            <LabelCell>
-              비밀번호<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>
+                비밀번호<RequiredStar>*</RequiredStar>
+              </InputText>
               <Input
                 type="password"
                 placeholder="비밀번호를 입력해주세요"
@@ -60,15 +61,15 @@ export default function Signup() {
                 onChange={(e) => setPw(e.target.value)}
                 required
               />
-            </InputCell>
+            </InputLabel>
           </FormRow>
 
           {}
           <FormRow>
-            <LabelCell>
-              비밀번호 확인<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>
+                비밀번호 확인<RequiredStar>*</RequiredStar>
+              </InputText>
               <Input
                 type="password"
                 placeholder="비밀번호를 한 번 더 입력해주세요"
@@ -76,15 +77,14 @@ export default function Signup() {
                 onChange={(e) => setPwConfirm(e.target.value)}
                 required
               />
-            </InputCell>
+            </InputLabel>
           </FormRow>
-
           {}
           <FormRow>
-            <LabelCell>
-              이름<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>
+                이름<RequiredStar>*</RequiredStar>
+              </InputText>
               <Input
                 type="text"
                 placeholder="이름을 입력해 주세요"
@@ -92,32 +92,29 @@ export default function Signup() {
                 onChange={(e) => setName(e.target.value)}
                 required
               />
-            </InputCell>
+            </InputLabel>
+          </FormRow>
+          {}
+          <FormRow>
+            <InputLabel>
+              <InputText>
+                이메일<RequiredStar>*</RequiredStar>
+              </InputText>
+              <Input
+                type="email"
+                placeholder="예: cammoa@hufs.ac.kr"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </InputLabel>
+            <AuthButton>인증번호 받기</AuthButton>
           </FormRow>
 
           {}
           <FormRow>
-            <LabelCell>
-              이메일<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
-              <EmailGroup>
-                <Input
-                  type="email"
-                  placeholder="예: cammoa@hufs.ac.kr"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <AuthButton type="button">인증번호 받기</AuthButton>
-              </EmailGroup>
-            </InputCell>
-          </FormRow>
-
-          {}
-          <FormRow>
-            <LabelCell>성별</LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>성별</InputText>
               <GenderGroup>
                 {['male', 'female', 'none'].map((val) => (
                   <GenderLabel key={val} selected={gender === val}>
@@ -132,13 +129,13 @@ export default function Signup() {
                   </GenderLabel>
                 ))}
               </GenderGroup>
-            </InputCell>
+            </InputLabel>
           </FormRow>
 
           {}
           <FormRow>
-            <LabelCell>생년월일</LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText> 생년월일</InputText>
               <DateGroup>
                 <DateInput
                   type="text"
@@ -161,24 +158,22 @@ export default function Signup() {
                   onChange={(e) => setBirthDay(e.target.value)}
                 />
               </DateGroup>
-            </InputCell>
+            </InputLabel>
           </FormRow>
-
           {}
           <FormRow>
-            <LabelCell>
-              이용약관동의<RequiredStar>*</RequiredStar>
-            </LabelCell>
-            <InputCell>
+            <InputLabel>
+              <InputText>
+                이용약관동의<RequiredStar>*</RequiredStar>
+              </InputText>
               <CheckboxLabel>
                 <CheckboxInput type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
                 공동 구매 모집 완료 이메일 수신 동의
               </CheckboxLabel>
-            </InputCell>
+            </InputLabel>
           </FormRow>
-
           <SubmitButton type="submit">가입하기</SubmitButton>
-        </Form>
+        </SignupForm>
       </SignupFormContainer>
     </SignupContainer>
   );
@@ -189,9 +184,9 @@ const SignupContainer = styled(Container)`
 `;
 
 const SignupFormContainer = styled(Container)`
+  width: 680px;
   gap: 12px;
 `;
-
 const HeaderArea = styled(Header)`
   width: 100%;
   gap: 50px;
@@ -201,81 +196,75 @@ const Title = styled.p`
   ${({ theme }) => theme.fontStyles.Body2};
   line-height: 126%;
 `;
-
 const RequiredInfo = styled.p`
   width: 100%;
   text-align: right;
   ${({ theme }) => theme.fontStyles.Body8};
   line-height: 142%;
 `;
-
 const RequiredStar = styled.span`
   color: #ee6a7b;
   ${({ theme }) => theme.fontStyles.Body8};
   line-height: 142%;
 `;
-
-const Form = styled.form`
+const SignupForm = styled.form`
+  width: 100%;
   padding-top: 20px;
   border-top: 2px solid #333;
 
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const FormRow = styled(Container)`
-  padding: 10px;
+  width: 100%;
+  padding: 10px 20px;
   flex-direction: row;
 `;
+const InputLabel = styled.label`
+  width: 75%;
 
-const LabelCell = styled.div`
-  width: 150px;
-  padding-top: 12px;
-  align-self: stretch;
-
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
+  display: flex;
+  align-items: center;
 `;
-
-const InputCell = styled.div`
-  margin-bottom: 10px;
-  align-self: stretch;
-
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
+const InputText = styled.p`
+  width: 139px;
+  padding: 12px 0;
+  color: #333;
+  ${({ theme }) => theme.fontStyles.Body6};
+  font-weight: 700;
+  line-height: 144%;
 `;
-
 const Input = styled.input`
-  width: 380px;
+  flex: 1;
   height: 46px;
   padding: 13px 16px;
   border-radius: 4px;
-  border: var(--stroke-weight-1, 1px) solid #ddd;
+  border: 1px solid #ddd;
 
+  color: #757575;
   ${({ theme }) => theme.fontStyles.Body6};
-`;
-
-const EmailGroup = styled.div`
-  display: flex;
-  gap: 10px;
+  font-weight: 700;
 `;
 
 const AuthButton = styled.button`
-display: flex;
-height: 46px;
-padding: 15px;
+  display: flex;
+  height: 46px;
+  padding: 15px;
+  margin-left: 8px;
 
-border-radius: 3px;
-border: var(--stroke-weight-1, 1px) solid #DDD;
+  border-radius: 3px;
+  border: 1px solid #ddd;
 
-color: #DDD;ss
- ${({ theme }) => theme.fontStyles.Body7};
+  color: #ddd;
+  ${({ theme }) => theme.fontStyles.Body7};
 `;
 
 const GenderGroup = styled.div`
-  margin: 10px;
   display: flex;
-  gap: 80px;
+  justify-content: space-between;
+  flex: 1;
 `;
 
 const GenderLabel = styled.label`
@@ -290,17 +279,13 @@ const GenderLabel = styled.label`
   font-size: 16px;
 `;
 
-const DateGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding-right: 30px;
-  padding-left: 30px;
-  width: 380px;
-  height: 46px;
-  align-items: center;
+const DateGroup = styled(Container)`
+  flex-direction: row;
+  flex: 1;
 
+  height: 46px;
   border-radius: 3px;
-  border: var(--stroke-weight-1, 1px) solid #ddd;
+  border: 1px solid #ddd;
 `;
 
 const DateInput = styled.input`

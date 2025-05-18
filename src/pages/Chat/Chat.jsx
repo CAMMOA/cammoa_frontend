@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { chatRooms, messagesByRoom } from './MockData/MockData';
 import LogoIcon from '@assets/chat/logo-icon.svg?react';
 import { ChatRoomList, QuitButton, MessageList, ChatInput } from '@components/Chat/ChatComponent';
+import { Container } from '@components/shared/UIStyles';
+import { ButtonStyle } from '@components/shared/ButtonStyle';
 
 const Chat = () => {
   const initialActiveRoom = chatRooms.find((r) => r.active) || chatRooms[0];
@@ -66,45 +68,43 @@ const Chat = () => {
 export default Chat;
 
 // 스타일 컴포넌트 정의
-const ChatWrapper = styled.div`
+const ChatWrapper = styled(Container)`
   width: 100%;
-  display: flex;
-  flex-direction: column;
   background: #fff;
-  padding-bottom: 135px;
 `;
 
-const ChatContainer = styled.div`
+const ChatContainer = styled(Container)`
   width: 1050px;
-  min-width: 1050px;
-  min-height: 645px;
-  display: flex;
-  margin: 200px auto 0;
+  height: 645px;
+  margin: 150px 0;
+
+  flex-direction: row;
   background: #fff;
 `;
 
-const Sidebar = styled.div`
+const Sidebar = styled(Container)`
   width: 300px;
-  height: 645px;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+
   overflow: hidden;
   background: #fff;
   border: 1px solid #ced4da;
   border-right: none;
   border-radius: 4px 0 0 4px;
+
+  align-items: flex-start;
 `;
 
-const SidebarHeader = styled.div`
+const SidebarHeader = styled(Container)`
   height: 73px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border-bottom: 1px solid #e5e7eb;
   padding: 0 16px;
+  border-bottom: 1px solid #e5e7eb;
+
+  flex-direction: row;
+  gap: 20px;
 `;
 
-const SidebarTitle = styled.div`
+const SidebarTitle = styled.p`
   ${({ theme }) => theme.fontStyles.Body5};
   font-weight: 700;
   color: #333;
@@ -112,35 +112,31 @@ const SidebarTitle = styled.div`
 
 const MainPanel = styled.div`
   width: 750px;
-  height: 645px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  background: #fff;
   border: 1px solid #ced4da;
   border-radius: 0 4px 4px 0;
 `;
 
-const MainHeader = styled.div`
+const MainHeader = styled(Container)`
   height: 155px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 16px;
 `;
 
-const MainRow = styled.div`
+const MainRow = styled(Container)`
   width: 100%;
-  display: flex;
-  align-items: center;
+
+  flex-direction: row;
   justify-content: space-between;
 `;
 
-const MainHeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
+const MainHeaderLeft = styled(Container)`
+  flex-direction: row;
 `;
 
 const MainTitle = styled.div`
@@ -157,15 +153,14 @@ const Avatar = styled.img`
   margin-right: 12px;
 `;
 
-const ProductInfo = styled.div`
-  width: 718px;
+const ProductInfo = styled(Container)`
+  width: 100%;
   height: 72px;
-  display: flex;
-  align-items: center;
-  position: relative;
+  padding: 12px;
+
+  flex-direction: row;
   background: #f9fafb;
   border-radius: 4px;
-  padding: 12px;
 `;
 
 const ProductAvatar = styled.img`
@@ -175,35 +170,33 @@ const ProductAvatar = styled.img`
   margin-right: 12px;
 `;
 
-const ProductDetails = styled.div`
+const ProductDetails = styled(Container)`
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: flex-start;
   gap: 5px;
 `;
 
-const ProductName = styled.div`
+const ProductName = styled.p`
   ${({ theme }) => theme.fontStyles.Body7};
   font-weight: 600;
   color: #555;
 `;
 
-const ProductPrice = styled.div`
+const ProductPrice = styled.p`
   ${({ theme }) => theme.fontStyles.Body8};
   font-weight: 500;
   color: #666;
 `;
 
-const ViewButton = styled.button`
-  ${({ theme }) => theme.fontStyles.Body7};
+const ViewButton = styled(ButtonStyle)`
   width: 62px;
   height: 36px;
+  ${({ theme }) => theme.fontStyles.Body7};
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #3092fa;
-  color: #fff;
+
   border: none;
   border-radius: 4px;
   cursor: pointer;

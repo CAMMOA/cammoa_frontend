@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
 import useFormattedDate from '@hooks/useFormattedDate';
+import { ButtonStyle } from '@components/shared/ButtonStyle';
 
 export default function Signup() {
   const [id, setId] = useState('');
@@ -28,7 +29,6 @@ export default function Signup() {
             필수입력사항
           </RequiredInfo>
         </HeaderArea>
-
         <SignupForm onSubmit={handleSubmit}>
           <FormRow>
             <InputLabel>
@@ -44,8 +44,6 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
-
-          {}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -60,8 +58,6 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
-
-          {}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -76,7 +72,6 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
-          {}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -91,7 +86,6 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
-          {}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -107,8 +101,6 @@ export default function Signup() {
             </InputLabel>
             <AuthButton>인증번호 받기</AuthButton>
           </FormRow>
-
-          {}
           <FormRow>
             <InputLabel>
               <InputText>성별</InputText>
@@ -128,8 +120,6 @@ export default function Signup() {
               </GenderGroup>
             </InputLabel>
           </FormRow>
-
-          {}
           <FormRow>
             <InputLabel>
               <InputText> 생년월일</InputText>
@@ -143,8 +133,7 @@ export default function Signup() {
               </DateGroup>
             </InputLabel>
           </FormRow>
-          {}
-          <FormRow>
+          <CheckFormrow>
             <InputLabel>
               <InputText>
                 이용약관동의<RequiredStar>*</RequiredStar>
@@ -154,7 +143,7 @@ export default function Signup() {
                 공동 구매 모집 완료 이메일 수신 동의
               </CheckboxLabel>
             </InputLabel>
-          </FormRow>
+          </CheckFormrow>
           <SubmitButton type="submit">가입하기</SubmitButton>
         </SignupForm>
       </SignupFormContainer>
@@ -232,7 +221,6 @@ const Input = styled.input`
 `;
 
 const AuthButton = styled.button`
-  display: flex;
   height: 46px;
   padding: 15px;
   margin-left: 8px;
@@ -278,6 +266,10 @@ const DateInput = styled.input`
   font-size: 16px;
 `;
 
+const CheckFormrow = styled(FormRow)`
+  margin-top: 20px;
+  border-top: 2px solid #333;
+`;
 const CheckboxLabel = styled.label`
   padding-top: 10px;
   display: flex;
@@ -292,17 +284,11 @@ const CheckboxInput = styled.input`
   height: 24px;
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled(ButtonStyle)`
   align-self: center;
-  margin-top: 40px;
-  width: 100%;
-  max-width: 240px;
-  height: 56px;
-  background-color: #3092fa;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
 
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
+  width: 240px;
+  height: 56px;
+  margin-top: 40px;
+  border: none;
 `;

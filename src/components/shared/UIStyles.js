@@ -15,7 +15,6 @@ export const Header = styled.div`
 `;
 
 export const PageWrapper = styled.div`
-  padding: 155px 0;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
+import useFormattedDate from '@hooks/useFormattedDate';
 
 export default function Signup() {
   const [id, setId] = useState('');
@@ -9,14 +10,12 @@ export default function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [gender, setGender] = useState('none');
-  const [birthYear, setBirthYear] = useState('');
-  const [birthMonth, setBirthMonth] = useState('');
-  const [birthDay, setBirthDay] = useState('');
   const [agree, setAgree] = useState(false);
+  const { value, handleDateChange } = useFormattedDate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ id, pw, pwConfirm, name, email, gender, birthYear, birthMonth, birthDay, agree });
+    console.log({ id, pw, pwConfirm, name, email, gender, agree });
   };
 
   return (
@@ -31,13 +30,11 @@ export default function Signup() {
         </HeaderArea>
 
         <SignupForm onSubmit={handleSubmit}>
-          {}
           <FormRow>
             <InputLabel>
               <InputText>
                 아이디<RequiredStar>*</RequiredStar>
               </InputText>
-
               <Input
                 type="text"
                 placeholder="아이디를 입력해주세요"
@@ -139,23 +136,9 @@ export default function Signup() {
               <DateGroup>
                 <DateInput
                   type="text"
-                  placeholder="YYYY"
-                  value={birthYear}
-                  onChange={(e) => setBirthYear(e.target.value)}
-                />
-                <Slash>/</Slash>
-                <DateInput
-                  type="text"
-                  placeholder="MM"
-                  value={birthMonth}
-                  onChange={(e) => setBirthMonth(e.target.value)}
-                />
-                <Slash>/</Slash>
-                <DateInput
-                  type="text"
-                  placeholder="DD"
-                  value={birthDay}
-                  onChange={(e) => setBirthDay(e.target.value)}
+                  placeholder="YYYY     /    MM    /    DD"
+                  value={value}
+                  onChange={handleDateChange}
                 />
               </DateGroup>
             </InputLabel>
@@ -290,16 +273,9 @@ const DateGroup = styled(Container)`
 
 const DateInput = styled.input`
   width: 100%;
-  height: 40px;
-  display: flex;
-
   text-align: center;
   ${({ theme }) => theme.fontStyles.Body4};
   font-size: 16px;
-`;
-
-const Slash = styled.span`
-  ${({ theme }) => theme.fontStyles.Body6};
 `;
 
 const CheckboxLabel = styled.label`

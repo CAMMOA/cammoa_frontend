@@ -9,7 +9,7 @@ export function MessageItem({ msg }) {
   if (msg.mine) {
     return (
       <MyMessage>
-        <MsgMetaCol align="right">
+        <MsgMetaCol $align="right">
           {msg.unreadCount > 0 && <UnreadText>{msg.unreadCount}</UnreadText>}
           <MsgTime>{msg.time}</MsgTime>
         </MsgMetaCol>
@@ -24,7 +24,7 @@ export function MessageItem({ msg }) {
         <SenderName>{msg.sender}</SenderName>
         <MsgBubbleRow>
           <OtherMsgBubble>{msg.content}</OtherMsgBubble>
-          <MsgMetaCol align="left">
+          <MsgMetaCol $align="left">
             {msg.unreadCount > 0 && <UnreadText>{msg.unreadCount}</UnreadText>}
             <MsgTime>{msg.time}</MsgTime>
           </MsgMetaCol>
@@ -159,7 +159,7 @@ const OtherMsgBubble = styled.div`
 
 const MsgMetaCol = styled(Container)`
   min-width: 24px;
-  align-items: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
+  align-items: ${({ $align }) => ($align === 'right' ? 'flex-end' : 'flex-start')};
   gap: 2px;
 `;
 

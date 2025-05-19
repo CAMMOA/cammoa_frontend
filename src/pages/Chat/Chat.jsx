@@ -2,7 +2,9 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { chatRooms, messagesByRoom } from './MockData/MockData';
 import LogoIcon from '@assets/chat/logo-icon.svg?react';
-import { ChatRoomList, QuitButton, MessageList, ChatInput } from '@components/Chat/ChatComponent';
+import { ChatRoomList, QuitButton } from '@components/Chat/ChatRoomList';
+import { MessageList, ChatInput } from '@components/Chat/MessageList';
+
 import { Container } from '@components/shared/UIStyles';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 
@@ -110,16 +112,15 @@ const SidebarTitle = styled.p`
   color: #333;
 `;
 
-const MainPanel = styled.div`
-  width: 750px;
+const MainPanel = styled(Container)`
+  flex: 1;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   border: 1px solid #ced4da;
   border-radius: 0 4px 4px 0;
 `;
 
 const MainHeader = styled(Container)`
+  width: 100%;
   height: 155px;
   padding: 16px;
   border-bottom: 1px solid #e5e7eb;

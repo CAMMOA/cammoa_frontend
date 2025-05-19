@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import QuitButtonIcon from '@assets/chat/quit-button.svg?react';
 import { Container } from '@components/shared/UIStyles';
+import { Avatar } from './shared/Avatar';
 
 // 채팅방 목록 아이템
 export function ChatRoomItem({ room, active, onClick }) {
@@ -109,26 +110,14 @@ const UnreadDot = styled.div`
   z-index: 2;
 `;
 
-const Avatar = styled.img`
-  width: ${({ size }) => size || '48px'};
-  height: ${({ size }) => size || '48px'};
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 12px;
-`;
-
-const RoomInfo = styled.div`
+const RoomInfo = styled(Container)`
   flex: 1;
-  display: flex;
-  flex-direction: column;
 `;
 
-const RoomTitleRow = styled.div`
+const RoomTitleRow = styled(Container)`
   width: 100%;
-  display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: space-between;
-  gap: 8px;
 `;
 
 const RoomTitle = styled.div`
@@ -150,7 +139,7 @@ const RoomTime = styled.div`
 
 const RoomLastMsg = styled.div`
   ${({ theme }) => theme.fontStyles.Body7};
-  max-width: 207px;
+  max-width: 205px;
   color: #6b7280;
   margin-top: 4px;
   white-space: nowrap;

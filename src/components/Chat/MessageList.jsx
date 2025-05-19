@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import SendIcon from '@assets/chat/send-icon.svg?react';
+import { Avatar } from './shared/Avatar';
+import { Container } from '@components/shared/UIStyles';
 
 export function MessageItem({ msg }) {
   if (msg.mine) {
@@ -108,14 +110,13 @@ ChatInput.propTypes = {
   onSend: PropTypes.func.isRequired,
 };
 
-const MessageListBox = styled.div`
+const MessageListBox = styled(Container)`
   width: 100%;
   padding: 16px;
   background: #f9fafb;
   overflow-y: auto;
 
-  display: flex;
-  flex-direction: column;
+  align-items: stretch;
   gap: 10px;
 `;
 
@@ -125,9 +126,7 @@ const OtherMessageRow = styled.div`
   margin-bottom: 8px;
 `;
 
-const OtherMsgContent = styled.div`
-  display: flex;
-  flex-direction: column;
+const OtherMsgContent = styled(Container)`
   align-items: flex-start;
   gap: 5px;
   min-width: 0;
@@ -158,10 +157,8 @@ const OtherMsgBubble = styled.div`
   word-break: break-word;
 `;
 
-const MsgMetaCol = styled.div`
+const MsgMetaCol = styled(Container)`
   min-width: 24px;
-  display: flex;
-  flex-direction: column;
   align-items: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
   gap: 2px;
 `;
@@ -198,15 +195,16 @@ const MyMsgBubble = styled.div`
   word-break: break-word;
 `;
 
-const InputArea = styled.div`
+const InputArea = styled(Container)`
   width: 100%;
-  display: flex;
-  align-items: center;
-  border-top: 1px solid #e5e7eb;
   padding: 16px;
+  border-top: 1px solid #e5e7eb;
   background: #fff;
   box-sizing: border-box;
   border-radius: 0 0 4px 0;
+
+  flex-direction: row;
+  gap: 12px;
 `;
 
 const InputBox = styled.input`
@@ -229,7 +227,6 @@ const SendButton = styled.button`
   justify-content: center;
   background: none;
   border: none;
-  margin-left: 12px;
   cursor: pointer;
 `;
 
@@ -237,14 +234,6 @@ const DateSeparatorLine = styled.div`
   ${({ theme }) => theme.fontStyles.Body7};
   font-weight: 500;
   text-align: center;
-  margin: 20px 0 8px 0;
+  padding: 20px 0 8px 0;
   color: #999;
-`;
-
-const Avatar = styled.img`
-  width: ${({ size }) => size || '48px'};
-  height: ${({ size }) => size || '48px'};
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 12px;
 `;

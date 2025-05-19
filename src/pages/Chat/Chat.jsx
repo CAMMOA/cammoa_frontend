@@ -7,6 +7,7 @@ import { MessageList, ChatInput } from '@components/Chat/MessageList';
 
 import { Container } from '@components/shared/UIStyles';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
+import { Avatar } from '@components/Chat/shared/Avatar';
 
 const Chat = () => {
   const initialActiveRoom = chatRooms.find((r) => r.active) || chatRooms[0];
@@ -144,14 +145,6 @@ const MainTitle = styled.div`
   ${({ theme }) => theme.fontStyles.Body6};
   font-weight: 600;
   color: #333;
-`;
-
-const Avatar = styled.img`
-  width: ${({ size }) => size || '48px'};
-  height: ${({ size }) => size || '48px'};
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 12px;
 `;
 
 const ProductInfo = styled(Container)`

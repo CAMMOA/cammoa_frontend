@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
-import { useState } from 'react';
 import useLimitedInput from '@hooks/useMaxlength';
+import { ButtonStyle } from '@components/shared/ButtonStyle';
+import useFormattedDate from '@hooks/useFormattedDate';
 
 const Post = () => {
   const categories = [
@@ -18,20 +19,7 @@ const Post = () => {
 
   const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT);
   const [location, handlelocationChange] = useLimitedInput(MAX_LOCATION);
-  const [value, setValue] = useState('');
-
-  const handeDateChange = (e) => {
-    let input = e.target.value.replace(/\D/g, '');
-    if (input.length > 8) input = input.slice(0, 8);
-
-    if (input.length > 4 && input.length <= 6) {
-      input = input.slice(0, 4) + '  /  ' + input.slice(4);
-    } else if (input.length > 6) {
-      input = input.slice(0, 4) + '  /  ' + input.slice(4, 6) + '  /  ' + input.slice(6);
-    }
-
-    setValue(input);
-  };
+  const { value, handleDateChange } = useFormattedDate();
 
   return (
     <PostContainer>
@@ -96,7 +84,7 @@ const Post = () => {
               type="text"
               placeholder="YYYY / MM / DD"
               value={value}
-              onChange={handeDateChange}
+              onChange={handleDateChange}
             />
           </InputWrapper>
         </ProductContainer>
@@ -251,11 +239,8 @@ const Counter = styled(CharCount)`
   top: 14px;
   right: 16px;
 `;
-const RegisterButton = styled.button`
+const RegisterButton = styled(ButtonStyle)`
   margin: 70px 0 50px 0;
   width: 240px;
   height: 56px;
-  border-radius: 3px;
-  background: #3092fa;
-  color: #ffffff;
 `;

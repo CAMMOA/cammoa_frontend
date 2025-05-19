@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { PageWrapper, Container } from '@components/shared/UIStyles';
+import { Container } from '@components/shared/UIStyles';
 import ImageIcon from '@assets/icons/image-icon.svg';
 
 const MyPage = () => {
@@ -22,18 +22,18 @@ const MyPage = () => {
 
         <PasswordSection>
           <PasswordSectionTitle>비밀번호 변경</PasswordSectionTitle>
-          <PasswordRow>
-            <Label>현재 비밀번호</Label>
+          <InputLabel>
+            <Inputtext>현재 비밀번호</Inputtext>
             <Input type="password" placeholder="현재 비밀번호를 입력해주세요" />
-          </PasswordRow>
-          <PasswordRow>
-            <Label>새 비밀번호</Label>
+          </InputLabel>
+          <InputLabel>
+            <Inputtext>새 비밀번호</Inputtext>
             <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요" />
-          </PasswordRow>
-          <PasswordRow>
-            <Label>비밀번호 확인</Label>
+          </InputLabel>
+          <InputLabel>
+            <Inputtext>비밀번호 확인</Inputtext>
             <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요" />
-          </PasswordRow>
+          </InputLabel>
 
           <ButtonRow>
             <ChangeButton type="button">
@@ -61,7 +61,7 @@ const MyPage = () => {
         </PasswordSection>
       </ProfileContainer>
 
-      <PurchaseSection>
+      <MyPurchaseManagementContainer>
         <SectionTitle>나의 공동구매 관리</SectionTitle>
         <TabContainer>
           <Tab active={tab === 'hosted'} onClick={() => setTab('hosted')}>
@@ -75,28 +75,30 @@ const MyPage = () => {
         {items.length === 0 && (
           <EmptyMessage>아직 기록이 없어요. 첫 공동구매에 도전해보세요!</EmptyMessage>
         )}
-      </PurchaseSection>
+      </MyPurchaseManagementContainer>
     </MyPageContainer>
   );
 };
 
 export default MyPage;
 
-const MyPageContainer = styled(PageWrapper)`
-  margin-top: 55px;
+const MyPageContainer = styled(Container)`
+  width: 1065px;
+  padding-top: 55px;
   gap: 35px;
 `;
 
-const ProfileContainer = styled.div`
-  display: flex;
+const ProfileContainer = styled(Container)`
   gap: 30px;
-  width: 1065px;
+  width: 100%;
+  flex-direction: row;
+  align-items: stretch;
   height: 330px;
-  alig-items: flex-start;
 `;
 
 const ProfileSection = styled(Container)`
   width: 330px;
+  height: 100%;
   background: rgba(255, 255, 255, 0);
   box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.05);
   justify-content: center;
@@ -139,7 +141,7 @@ const PasswordSectionTitle = styled(Container)`
   height: 25px;
 `;
 
-const PasswordRow = styled.div`
+const InputLabel = styled.label`
   display: flex;
   padding: 5px 0px;
   align-items: center;
@@ -147,7 +149,7 @@ const PasswordRow = styled.div`
   align-self: stretch;
 `;
 
-const Label = styled.label`
+const Inputtext = styled.p`
   width: 108px;
   ${({ theme }) => theme.fontStyles.Body6};
   color: #333;
@@ -158,22 +160,21 @@ const Input = styled.input`
   height: 40px;
   padding: 9px 136px 8px 12px;
   border-radius: 2px;
-  border: var(--stroke-weight-1, 1px) solid #b2b2b2;
+  border: 1px solid #b2b2b2;
   background: #fff;
   ${({ theme }) => theme.fontStyles.Body6};
 `;
 
-const ButtonRow = styled.div`
+const ButtonRow = styled(Container)`
   height: 70px;
-  display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   align-self: stretch;
 `;
 
 const Button = styled.button`
   ${({ theme }) => theme.fontStyles.Body7};
-  line-height: 13px;
+  line-height: 96%;
   color: #888;
 `;
 
@@ -184,8 +185,9 @@ const ChangeButton = styled(Button)`
 
 const WithdrawButton = styled(Button)``;
 
-const PurchaseSection = styled.div`
-  width: 1065px;
+const MyPurchaseManagementContainer = styled(Container)`
+  width: 100%;
+  align-items: flex-start;
 `;
 
 const SectionTitle = styled.p`
@@ -193,12 +195,12 @@ const SectionTitle = styled.p`
   margin-bottom: 20px;
 `;
 
-const TabContainer = styled.div`
-  display: flex;
-  gap: 30px;
+const TabContainer = styled(Container)`
+  width: 100%;
+  flex-direction: row;
+  gap: 20px;
   border-bottom: 1px solid #9ca3af;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin: 30px 0px 30px 0px;
 `;
 
 const Tab = styled(Container)`

@@ -23,5 +23,6 @@ const Wrapper = styled.div`
 `;
 const Content = styled.main`
   padding-top: 155px;
+  margin: 0 auto;
   flex: 1;
 `;

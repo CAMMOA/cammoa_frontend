@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import ImageIcon from '@assets/icons/image-icon.svg';
+import EditIcon from '@assets/icons/edit-icon.svg?react';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
@@ -23,37 +24,21 @@ const MyPage = () => {
         <PasswordSection>
           <PasswordSectionTitle>비밀번호 변경</PasswordSectionTitle>
           <InputLabel>
-            <Inputtext>현재 비밀번호</Inputtext>
+            <Inputext>현재 비밀번호</Inputext>
             <Input type="password" placeholder="현재 비밀번호를 입력해주세요" />
           </InputLabel>
           <InputLabel>
-            <Inputtext>새 비밀번호</Inputtext>
+            <Inputext>새 비밀번호</Inputext>
             <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요" />
           </InputLabel>
           <InputLabel>
-            <Inputtext>비밀번호 확인</Inputtext>
+            <Inputext>비밀번호 확인</Inputext>
             <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요" />
           </InputLabel>
 
           <ButtonRow>
             <ChangeButton type="button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-              >
-                <path
-                  opacity="0.2"
-                  d="M13.8538 5.64633L12 7.50008L8.5 4.00008L10.3538 2.14633C10.4475 2.05263 10.5746 2 10.7072 2C10.8397 2 10.9669 2.05263 11.0606 2.14633L13.8538 4.93758C13.9004 4.98404 13.9375 5.03926 13.9627 5.10008C13.988 5.16089 14.001 5.2261 14.001 5.29196C14.001 5.35781 13.988 5.42302 13.9627 5.48383C13.9375 5.54465 13.9004 5.59987 13.8538 5.64633Z"
-                  fill="#B6B6B6"
-                />
-                <path
-                  d="M14.2075 4.58547L11.4144 1.79297C11.3215 1.70009 11.2113 1.62641 11.0899 1.57614C10.9686 1.52587 10.8385 1.5 10.7072 1.5C10.5759 1.5 10.4458 1.52587 10.3245 1.57614C10.2031 1.62641 10.0929 1.70009 10 1.79297L2.29313 9.49985C2.19987 9.59237 2.12593 9.70251 2.0756 9.82386C2.02528 9.94521 1.99959 10.0754 2.00001 10.2067V12.9998C2.00001 13.2651 2.10536 13.5194 2.2929 13.707C2.48043 13.8945 2.73479 13.9998 3.00001 13.9998H13.5C13.6326 13.9998 13.7598 13.9472 13.8536 13.8534C13.9473 13.7596 14 13.6325 14 13.4998C14 13.3672 13.9473 13.2401 13.8536 13.1463C13.7598 13.0525 13.6326 12.9998 13.5 12.9998H7.20751L14.2075 5.99985C14.3004 5.90699 14.3741 5.79674 14.4243 5.6754C14.4746 5.55406 14.5005 5.424 14.5005 5.29266C14.5005 5.16132 14.4746 5.03127 14.4243 4.90992C14.3741 4.78858 14.3004 4.67834 14.2075 4.58547ZM3.00001 10.2067L8.50001 4.70672L11.2931 7.49985L5.79313 12.9998H3.00001V10.2067ZM12 6.79297L9.20751 3.99985L10.7075 2.49985L13.5 5.29297L12 6.79297Z"
-                  fill="#B6B6B6"
-                />
-              </svg>
+              <EditIcon />
               변경하기
             </ChangeButton>
             <WithdrawButton type="button">탈퇴하기</WithdrawButton>
@@ -72,7 +57,14 @@ const MyPage = () => {
           </Tab>
         </TabContainer>
         <CountText>총 {items.length}개</CountText>
-        {items.length === 0 && (
+
+        {items.length > 0 ? (
+          <PurchaseListContainer>
+            {items.map((item) => (
+              <div key={item.id}>{item.title}</div>
+            ))}
+          </PurchaseListContainer>
+        ) : (
           <EmptyMessage>아직 기록이 없어요. 첫 공동구매에 도전해보세요!</EmptyMessage>
         )}
       </MyPurchaseManagementContainer>
@@ -149,7 +141,7 @@ const InputLabel = styled.label`
   align-self: stretch;
 `;
 
-const Inputtext = styled.p`
+const Inputext = styled.p`
   width: 108px;
   ${({ theme }) => theme.fontStyles.Body6};
   color: #333;
@@ -199,13 +191,20 @@ const TabContainer = styled(Container)`
   width: 100%;
   flex-direction: row;
   gap: 20px;
-  border-bottom: 1px solid #9ca3af;
-  margin: 30px 0px 30px 0px;
+  border-bottom: 1px solid #dadee5;
+  margin: 30px 0px;
+`;
+
+const PurchaseListContainer = styled(Container)`
+  width: 100%;
+  gap: 20px;
+  padding-bottom: 50px;
+  align-items: center;
 `;
 
 const Tab = styled(Container)`
   width: 230px;
-  padding: 20px; 60px;
+  padding: 20px 60px;
   ${({ theme }) => theme.fontStyles.Body6};
   color: ${({ active }) => (active ? '#3092FA' : '#9CA3AF')};
   border-bottom: ${({ active }) => (active ? '2px solid #3092FA' : '#9CA3AF')};
@@ -221,6 +220,7 @@ const CountText = styled.p`
 const EmptyMessage = styled.p`
   ${({ theme }) => theme.fontStyles.Body6};
   color: #666;
+  width: 100%;
   text-align: center;
-  margin: 200px 0px 200px 0px;
+  margin: 200px 0px;
 `;

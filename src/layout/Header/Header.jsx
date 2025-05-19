@@ -6,22 +6,24 @@ import SearchBar from '@layout/SearchBar/SearchBar';
 import pxToRem from '@utils/pxToRem';
 import CategoryIcon from '@assets/icons/category/category-icon.svg?react';
 import UserMenuDropdown from '@components/UserMenuDropdown/UserMenuDropdown';
+import { useNavigate } from 'react-router';
 
 const Header = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <HeaderContainer>
       <AccountArea>
-        <AccountText>회원가입</AccountText>
+        <AccountText onClick={() => navigate('/signup')}>회원가입</AccountText>
         <Divider></Divider>
-        <AccountText>로그인</AccountText>
+        <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
       </AccountArea>
       <MainHeader>
-        <Logo></Logo>
+        <Logo onClick={() => navigate('/')}></Logo>
         <SearchBar></SearchBar>
         <FeaturePanel>
-          <FeatureText>공구 올리기</FeatureText>
+          <FeatureText onClick={() => navigate('/post')}>공구 올리기</FeatureText>
           <Divider></Divider>
           <FeatureText>마이 페이지</FeatureText>
           <Divider></Divider>
@@ -72,6 +74,7 @@ const AccountArea = styled(Container)`
 const AccountText = styled.p`
   ${({ theme }) => theme.fontStyles.Body8}
   line-height: 1.5;
+  cursor: pointer;
 `;
 
 const Divider = styled.span`
@@ -96,6 +99,7 @@ const Logo = styled(LogoIcon)`
   height: ${pxToRem(40)};
 
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 const FeaturePanel = styled(Container)`
@@ -114,6 +118,7 @@ const FeatureText = styled.p`
     theme.fontStyles.Body7;
   }};
   font-weight: 700;
+  cursor: pointer;
 `;
 
 const CategoryContainer = styled(Container)`

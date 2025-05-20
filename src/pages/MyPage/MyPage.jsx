@@ -1,21 +1,25 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
-import ImageIcon from '@assets/icons/image-icon.svg';
+import UserIcon from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
+import HostedProductList from '@components/MyPage/HostedProductList';
+import JoinedProductList from '@components/MyPage/JoinedProductList';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
-  const hostedList = [];
-  const joinedList = [];
-  const items = tab === 'hosted' ? hostedList : joinedList;
+
+  const handleEdit = (id) => console.log('edit', id);
+  const handleChat = (id) => console.log('chat', id);
+  const handleDelete = (id) => console.log('delete', id);
+  const handleCancel = (id) => console.log('cancel', id);
 
   return (
     <MyPageContainer>
       <ProfileContainer>
         <ProfileSection>
           <Avatar>
-            <img src={ImageIcon} alt="avatar" />
+            <UserIcon />
           </Avatar>
           <Username>지나가는 감자</Username>
           <Email>asdfasdf@hufs.ac.kr</Email>
@@ -38,8 +42,7 @@ const MyPage = () => {
 
           <ButtonRow>
             <ChangeButton type="button">
-              <EditIcon />
-              변경하기
+              <EditIcon /> 변경하기
             </ChangeButton>
             <WithdrawButton type="button">탈퇴하기</WithdrawButton>
           </ButtonRow>
@@ -56,16 +59,11 @@ const MyPage = () => {
             참여한 공동구매
           </Tab>
         </TabContainer>
-        <CountText>총 {items.length}개</CountText>
 
-        {items.length > 0 ? (
-          <PurchaseListContainer>
-            {items.map((item) => (
-              <div key={item.id}>{item.title}</div>
-            ))}
-          </PurchaseListContainer>
+        {tab === 'hosted' ? (
+          <HostedProductList onEdit={handleEdit} onChat={handleChat} onDelete={handleDelete} />
         ) : (
-          <EmptyMessage>아직 기록이 없어요. 첫 공동구매에 도전해보세요!</EmptyMessage>
+          <JoinedProductList onCancel={handleCancel} />
         )}
       </MyPurchaseManagementContainer>
     </MyPageContainer>
@@ -91,16 +89,16 @@ const ProfileContainer = styled(Container)`
 const ProfileSection = styled(Container)`
   width: 330px;
   height: 100%;
-  background: rgba(255, 255, 255, 0);
-  box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
   justify-content: center;
 `;
 
 const PasswordSection = styled(Container)`
   flex: 1;
   padding: 0 30px;
-  background: rgba(255, 255, 255, 0);
-  box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
   align-items: flex-start;
   gap: 10px;
 `;
@@ -128,17 +126,15 @@ const Email = styled.p`
 
 const PasswordSectionTitle = styled(Container)`
   ${({ theme }) => theme.fontStyles.Body5};
-  margin-top: 25px;
-  margin-bottom: 25px;
-  height: 25px;
+  margin: 25px 0;
 `;
 
 const InputLabel = styled.label`
   display: flex;
-  padding: 5px 0px;
+  width: 100%;
   align-items: center;
   gap: 24px;
-  align-self: stretch;
+  padding: 5px 0;
 `;
 
 const Inputext = styled.p`
@@ -192,14 +188,7 @@ const TabContainer = styled(Container)`
   flex-direction: row;
   gap: 20px;
   border-bottom: 1px solid #dadee5;
-  margin: 30px 0px;
-`;
-
-const PurchaseListContainer = styled(Container)`
-  width: 100%;
-  gap: 20px;
-  padding-bottom: 50px;
-  align-items: center;
+  margin: 30px 0;
 `;
 
 const Tab = styled(Container)`
@@ -207,20 +196,6 @@ const Tab = styled(Container)`
   padding: 20px 60px;
   ${({ theme }) => theme.fontStyles.Body6};
   color: ${({ active }) => (active ? '#3092FA' : '#9CA3AF')};
-  border-bottom: ${({ active }) => (active ? '2px solid #3092FA' : '#9CA3AF')};
+  border-bottom: ${({ active }) => (active ? '2px solid #3092FA' : 'none')};
   cursor: pointer;
-`;
-
-const CountText = styled.p`
-  ${({ theme }) => theme.fontStyles.Body6};
-  color: #333;
-  margin: 20px 0;
-`;
-
-const EmptyMessage = styled.p`
-  ${({ theme }) => theme.fontStyles.Body6};
-  color: #666;
-  width: 100%;
-  text-align: center;
-  margin: 200px 0px;
 `;

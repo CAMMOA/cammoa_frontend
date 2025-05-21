@@ -2,7 +2,7 @@ import { Container } from '@components/shared/UIStyles';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-export default function ProductItem({ imageUrl, title, deadLine, detailText, children }) {
+export default function Items({ imageUrl, title, deadLine, detailText, children }) {
   return (
     <ProductItemContainer>
       <ProductImageContainer>
@@ -11,7 +11,7 @@ export default function ProductItem({ imageUrl, title, deadLine, detailText, chi
       </ProductImageContainer>
       <ProductContentContainer>
         <Title>{title}</Title>
-        <Detail>{detailText}</Detail>
+        <Price>{detailText}</Price>
         {children}
       </ProductContentContainer>
     </ProductItemContainer>
@@ -49,24 +49,24 @@ const DeadLine = styled.div`
 
 const ProductContentContainer = styled(Container)`
   width: 100%;
-  padding: 10px;
+  align-items: flex-start;
 `;
 
 const Title = styled.p`
   ${({ theme }) => theme.fontStyles.Body6};
-  margin: 0 0 8px;
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 15px 0 15px 0;
 `;
 
-const Detail = styled.p`
+const Price = styled.p`
   ${({ theme }) => theme.fontStyles.Body6};
   font-weight: 800;
-  margin: 0;
 `;
 
-ProductItem.propTypes = {
+Items.propTypes = {
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   deadLine: PropTypes.string,

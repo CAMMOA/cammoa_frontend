@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import UserIcon from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
-import HostedProductList from '@components/MyPage/HostedProductList';
-import JoinedProductList from '@components/MyPage/JoinedProductList';
+import ProductItemList from '@components/MyPage/ProductItemList';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
@@ -60,11 +59,13 @@ const MyPage = () => {
           </Tab>
         </TabContainer>
 
-        {tab === 'hosted' ? (
-          <HostedProductList onEdit={handleEdit} onChat={handleChat} onDelete={handleDelete} />
-        ) : (
-          <JoinedProductList onCancel={handleCancel} />
-        )}
+        <ProductItemList
+          mode={tab}
+          onEdit={handleEdit}
+          onChat={handleChat}
+          onDelete={handleDelete}
+          onCancel={handleCancel}
+        />
       </MyPurchaseManagementContainer>
     </MyPageContainer>
   );
@@ -84,6 +85,7 @@ const ProfileContainer = styled(Container)`
   flex-direction: row;
   align-items: stretch;
   height: 330px;
+  flex-direction:;
 `;
 
 const ProfileSection = styled(Container)`

@@ -8,6 +8,42 @@ import ProductItemList from '@components/MyPage/ProductItemList';
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
 
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage('새 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    try {
+      await axios.patch('/api/user/password', {
+        currentPassword,
+        newPassword,
+      });
+      setPasswordMessage('비밀번호가 성공적으로 변경되었습니다.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      setPasswordMessage(
+        error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.'
+      );
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!window.confirm('정말로 탈퇴하시겠습니까?')) return;
+    try {
+      await axios.delete('/api/user');
+      window.location.href = '/login';
+    } catch (error) {
+      alert(error.response?.data?.message || '탈퇴 중 오류가 발생했습니다.');
+    }
+  };
+
   const handleEdit = (id) => console.log('edit', id);
   const handleChat = (id) => console.log('chat', id);
   const handleDelete = (id) => console.log('delete', id);
@@ -28,22 +64,35 @@ const MyPage = () => {
           <PasswordSectionTitle>비밀번호 변경</PasswordSectionTitle>
           <InputLabel>
             <Inputext>현재 비밀번호</Inputext>
-            <Input type="password" placeholder="현재 비밀번호를 입력해주세요" />
+            <Input type="password" placeholder="현재 비밀번호를 입력해주세요"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
           </InputLabel>
           <InputLabel>
             <Inputext>새 비밀번호</Inputext>
-            <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요" />
+            <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
           </InputLabel>
           <InputLabel>
             <Inputext>비밀번호 확인</Inputext>
-            <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요" />
+            <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </InputLabel>
+          {passwordMessage && <Message>{passwordMessage}</Message>}
 
           <ButtonRow>
-            <ChangeButton type="button">
-              <EditIcon /> 변경하기
+            <ChangeButton type="button"onClick={handleChangePassword}>
+              <EditIcon /> 
+              변경하기
             </ChangeButton>
-            <WithdrawButton type="button">탈퇴하기</WithdrawButton>
+            <WithdrawButton type="button" onClick={handleWithdraw}>
+              탈퇴하기
+            </WithdrawButton>
           </ButtonRow>
         </PasswordSection>
       </ProfileContainer>
@@ -117,7 +166,7 @@ const AvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`
+`;
 
 const Username = styled.p`
   ${({ theme }) => theme.fontStyles.Body4};
@@ -203,4 +252,8 @@ const Tab = styled(Container)`
   color: ${({ active }) => (active ? '#3092FA' : '#9CA3AF')};
   border-bottom: ${({ active }) => (active ? '2px solid #3092FA' : 'none')};
   cursor: pointer;
+`;
+
+const Message = styled.p`
+  ${({ theme }) => theme.fontStyles.Body6};
 `;

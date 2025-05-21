@@ -4,6 +4,7 @@ import { Container } from '@components/shared/UIStyles';
 import userProfileUrl from '@assets/icons/user-image.svg?url';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
+import axios from 'axios';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
@@ -28,9 +29,7 @@ const MyPage = () => {
       setNewPassword('');
       setConfirmPassword('');
     } catch (error) {
-      setPasswordMessage(
-        error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.'
-      );
+      setPasswordMessage(error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.');
     }
   };
 
@@ -64,21 +63,27 @@ const MyPage = () => {
           <PasswordSectionTitle>비밀번호 변경</PasswordSectionTitle>
           <InputLabel>
             <Inputext>현재 비밀번호</Inputext>
-            <Input type="password" placeholder="현재 비밀번호를 입력해주세요"
+            <Input
+              type="password"
+              placeholder="현재 비밀번호를 입력해주세요"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </InputLabel>
           <InputLabel>
             <Inputext>새 비밀번호</Inputext>
-            <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요"
+            <Input
+              type="password"
+              placeholder="8자 이상의 새로운 비밀번호를 입력해주세요"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </InputLabel>
           <InputLabel>
             <Inputext>비밀번호 확인</Inputext>
-            <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요"
+            <Input
+              type="password"
+              placeholder="새로운 비밀번호를 한번 더 입력해주세요"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -86,8 +91,8 @@ const MyPage = () => {
           {passwordMessage && <Message>{passwordMessage}</Message>}
 
           <ButtonRow>
-            <ChangeButton type="button"onClick={handleChangePassword}>
-              <EditIcon /> 
+            <ChangeButton type="button" onClick={handleChangePassword}>
+              <EditIcon />
               변경하기
             </ChangeButton>
             <WithdrawButton type="button" onClick={handleWithdraw}>

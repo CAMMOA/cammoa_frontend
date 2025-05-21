@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
-import UserIcon from '@assets/icons/user-image.svg?react';
+import userProfileUrl from '@assets/icons/user-image.svg?url';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
 
@@ -17,9 +17,9 @@ const MyPage = () => {
     <MyPageContainer>
       <ProfileContainer>
         <ProfileSection>
-          <Avatar>
-            <UserIcon />
-          </Avatar>
+          <AvatarContainer>
+            <AvatarImage src={userProfileUrl} alt="프로필 사진" />
+          </AvatarContainer>
           <Username>지나가는 감자</Username>
           <Email>asdfasdf@hufs.ac.kr</Email>
         </ProfileSection>
@@ -105,16 +105,19 @@ const PasswordSection = styled(Container)`
   gap: 10px;
 `;
 
-const Avatar = styled.div`
+const AvatarContainer = styled(Container)`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 25px;
-  background: url(<path-to-image>) lightgray 50% / cover no-repeat;
+  overflow: hidden;
+  margin-bottom: 20px;
 `;
+
+const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
 
 const Username = styled.p`
   ${({ theme }) => theme.fontStyles.Body4};

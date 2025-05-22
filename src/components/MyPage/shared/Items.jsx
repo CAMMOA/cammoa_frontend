@@ -7,7 +7,7 @@ export default function Items({ imageUrl, title, deadLine, detailText, children 
     <ProductItemContainer>
       <ProductImageContainer>
         <img src={imageUrl} alt={title} />
-        {deadLine && <DeadLine>{deadLine}</DeadLine>}
+        <DeadLine $visible={!!deadLine}>{deadLine}</DeadLine>
       </ProductImageContainer>
       <ProductContentContainer>
         <Title>{title}</Title>
@@ -23,6 +23,8 @@ const ProductItemContainer = styled(Container)`
   border-radius: 4px;
   border: 1px solid #ddd;
   padding: 15px;
+
+  gap: 15px;
 `;
 const ProductImageContainer = styled(Container)`
   position: relative;
@@ -45,11 +47,13 @@ const DeadLine = styled.div`
   padding: 4px 9px;
   border-radius: 4px;
   ${({ theme }) => theme.fontStyles.Body6};
+  display: ${({ $visible }) => ($visible ? 'block' : 'none')};
 `;
 
 const ProductContentContainer = styled(Container)`
   width: 100%;
   align-items: flex-start;
+  gap: 10px;
 `;
 
 const Title = styled.p`
@@ -58,12 +62,12 @@ const Title = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: 15px 0 15px 0;
 `;
 
 const Price = styled.p`
   ${({ theme }) => theme.fontStyles.Body6};
   font-weight: 800;
+  padding: 5px 0;
 `;
 
 Items.propTypes = {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
-import userProfileUrl from '@assets/icons/user-image.svg?url';
+import UserProfile from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
 
@@ -13,35 +13,20 @@ const MyPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
 
-  const handleChangePassword = async () => {
+  const handleChangePassword = () => {
     if (newPassword !== confirmPassword) {
-      setPasswordMessage('새 비밀번호가 일치하지 않습니다.');
+      setPasswordMessage('❌ 새 비밀번호가 일치하지 않습니다.');
       return;
     }
-    try {
-      await axios.patch('/api/user/password', {
-        currentPassword,
-        newPassword,
-      });
-      setPasswordMessage('비밀번호가 성공적으로 변경되었습니다.');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (error) {
-      setPasswordMessage(
-        error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.'
-      );
-    }
+
+    setPasswordMessage('✅ 비밀번호가 성공적으로 변경되었습니다.');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
   const handleWithdraw = async () => {
     if (!window.confirm('정말로 탈퇴하시겠습니까?')) return;
-    try {
-      await axios.delete('/api/user');
-      window.location.href = '/login';
-    } catch (error) {
-      alert(error.response?.data?.message || '탈퇴 중 오류가 발생했습니다.');
-    }
   };
 
   const handleEdit = (id) => console.log('edit', id);
@@ -54,7 +39,7 @@ const MyPage = () => {
       <ProfileContainer>
         <ProfileSection>
           <AvatarContainer>
-            <AvatarImage src={userProfileUrl} alt="프로필 사진" />
+            <UserProfile />
           </AvatarContainer>
           <Username>지나가는 감자</Username>
           <Email>asdfasdf@hufs.ac.kr</Email>
@@ -64,21 +49,27 @@ const MyPage = () => {
           <PasswordSectionTitle>비밀번호 변경</PasswordSectionTitle>
           <InputLabel>
             <Inputext>현재 비밀번호</Inputext>
-            <Input type="password" placeholder="현재 비밀번호를 입력해주세요"
+            <Input
+              type="password"
+              placeholder="현재 비밀번호를 입력해주세요"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </InputLabel>
           <InputLabel>
             <Inputext>새 비밀번호</Inputext>
-            <Input type="password" placeholder="8자 이상의 새로운 비밀번호를 입력해주세요"
+            <Input
+              type="password"
+              placeholder="8자 이상의 새로운 비밀번호를 입력해주세요"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </InputLabel>
           <InputLabel>
             <Inputext>비밀번호 확인</Inputext>
-            <Input type="password" placeholder="새로운 비밀번호를 한번 더 입력해주세요"
+            <Input
+              type="password"
+              placeholder="새로운 비밀번호를 한번 더 입력해주세요"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -86,8 +77,8 @@ const MyPage = () => {
           {passwordMessage && <Message>{passwordMessage}</Message>}
 
           <ButtonRow>
-            <ChangeButton type="button"onClick={handleChangePassword}>
-              <EditIcon /> 
+            <ChangeButton type="button" onClick={handleChangePassword}>
+              <EditIcon />
               변경하기
             </ChangeButton>
             <WithdrawButton type="button" onClick={handleWithdraw}>
@@ -100,10 +91,10 @@ const MyPage = () => {
       <MyPurchaseManagementContainer>
         <SectionTitle>나의 공동구매 관리</SectionTitle>
         <TabContainer>
-          <Tab active={tab === 'hosted'} onClick={() => setTab('hosted')}>
+          <Tab $active={tab === 'hosted'} onClick={() => setTab('hosted')}>
             주최한 공동구매
           </Tab>
-          <Tab active={tab === 'joined'} onClick={() => setTab('joined')}>
+          <Tab $active={tab === 'joined'} onClick={() => setTab('joined')}>
             참여한 공동구매
           </Tab>
         </TabContainer>
@@ -129,12 +120,12 @@ const MyPageContainer = styled(Container)`
 `;
 
 const ProfileContainer = styled(Container)`
-  gap: 30px;
   width: 100%;
+  height: 330px;
+
   flex-direction: row;
   align-items: stretch;
-  height: 330px;
-  flex-direction:;
+  gap: 30px;
 `;
 
 const ProfileSection = styled(Container)`
@@ -151,7 +142,6 @@ const PasswordSection = styled(Container)`
   background: transparent;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
   align-items: flex-start;
-  gap: 10px;
 `;
 
 const AvatarContainer = styled(Container)`
@@ -160,12 +150,6 @@ const AvatarContainer = styled(Container)`
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 20px;
-`;
-
-const AvatarImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const Username = styled.p`
@@ -180,7 +164,7 @@ const Email = styled.p`
 
 const PasswordSectionTitle = styled(Container)`
   ${({ theme }) => theme.fontStyles.Body5};
-  margin: 25px 0;
+  padding: 25px 0;
 `;
 
 const InputLabel = styled.label`
@@ -188,7 +172,7 @@ const InputLabel = styled.label`
   width: 100%;
   align-items: center;
   gap: 24px;
-  padding: 5px 0;
+  padding: 10px 0;
 `;
 
 const Inputext = styled.p`
@@ -200,10 +184,9 @@ const Inputext = styled.p`
 const Input = styled.input`
   flex: 0.8;
   height: 40px;
-  padding: 9px 136px 8px 12px;
+  padding: 9px 12px;
   border-radius: 2px;
   border: 1px solid #b2b2b2;
-  background: #fff;
   ${({ theme }) => theme.fontStyles.Body6};
 `;
 
@@ -249,8 +232,8 @@ const Tab = styled(Container)`
   width: 230px;
   padding: 20px 60px;
   ${({ theme }) => theme.fontStyles.Body6};
-  color: ${({ active }) => (active ? '#3092FA' : '#9CA3AF')};
-  border-bottom: ${({ active }) => (active ? '2px solid #3092FA' : 'none')};
+  color: ${({ $active }) => ($active ? '#3092FA' : '#9CA3AF')};
+  border-bottom: ${({ $active }) => ($active ? '2px solid #3092FA' : 'none')};
   cursor: pointer;
 `;
 

@@ -104,7 +104,6 @@ const CancelButton = styled.button`
 `;
 
 const Actions = styled(Container)`
-  margin-top: 12px;
   flex-direction: row;
   gap: 8px;
 `;

@@ -55,7 +55,7 @@ const ListContainer = styled(Container)`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 25px;
-  padding-bottom: 50px;
+  padding-bottom: 105px;
 `;
 
 ProductItemList.propTypes = {

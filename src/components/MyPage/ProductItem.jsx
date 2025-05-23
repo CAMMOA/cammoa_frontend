@@ -15,17 +15,15 @@ export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCa
     >
       <Actions mode={mode}>
         {mode === 'hosted' ? (
-          <>
-            <ButtonContainer>
-              <ModificationButton onClick={() => onEdit(item.id)}>수정하기</ModificationButton>
-              <IconButton onClick={() => onChat(item.id)}>
-                <ChatIcon />
-              </IconButton>
-              <IconButton onClick={() => onDelete(item.id)}>
-                <TrashIcon />
-              </IconButton>
-            </ButtonContainer>
-          </>
+          <ButtonContainer>
+            <ModificationButton onClick={() => onEdit(item.id)}>수정하기</ModificationButton>
+            <IconButton onClick={() => onChat(item.id)}>
+              <ChatIcon />
+            </IconButton>
+            <IconButton onClick={() => onDelete(item.id)}>
+              <TrashIcon />
+            </IconButton>
+          </ButtonContainer>
         ) : (
           <ButtonContainer>
             <CancelButton onClick={() => onCancel(item.id)}>취소하기</CancelButton>
@@ -65,7 +63,7 @@ const ButtonContainer = styled(Container)`
 `;
 
 const ModificationButton = styled.button`
-  width: 137px;
+  width: 139px;
   height: 100%;
   padding: 4px 0;
 
@@ -103,7 +101,4 @@ const CancelButton = styled.button`
   border-radius: 4px;
 `;
 
-const Actions = styled(Container)`
-  flex-direction: row;
-  gap: 8px;
-`;
+const Actions = styled.div``;

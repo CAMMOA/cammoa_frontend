@@ -213,24 +213,24 @@ const WithdrawButton = styled(Button)``;
 const MyPurchaseManagementContainer = styled(Container)`
   width: 100%;
   align-items: flex-start;
+  gap: 20px;
 `;
 
 const SectionTitle = styled.p`
   ${({ theme }) => theme.fontStyles.Body2};
-  margin-bottom: 20px;
 `;
 
 const TabContainer = styled(Container)`
   width: 100%;
-  flex-direction: row;
-  gap: 20px;
-  border-bottom: 1px solid #dadee5;
   margin: 30px 0;
+  flex-direction: row;
+  border-bottom: 1px solid #dadee5;
 `;
 
 const Tab = styled(Container)`
-  width: 230px;
-  padding: 20px 60px;
+  width: fit-content;
+  padding: 17px 60px;
+
   ${({ theme }) => theme.fontStyles.Body6};
   color: ${({ $active }) => ($active ? '#3092FA' : '#9CA3AF')};
   border-bottom: ${({ $active }) => ($active ? '2px solid #3092FA' : 'none')};

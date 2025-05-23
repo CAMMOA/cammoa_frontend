@@ -20,11 +20,11 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, './src/utils'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
     },
-    server: {
-      port: 3000,
-    },
-    build: {
-      outDir: 'build',
-    },
+  },
+  server: {
+    port: 8080,
+  },
+  build: {
+    outDir: 'build',
   },
 });

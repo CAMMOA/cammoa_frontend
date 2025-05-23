@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
-import useFormattedDate from '@hooks/useFormattedDate';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 
 export default function Signup() {
@@ -10,13 +9,10 @@ export default function Signup() {
   const [pwConfirm, setPwConfirm] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('none');
-  const [agree, setAgree] = useState(false);
-  const { value, handleDateChange } = useFormattedDate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ id, pw, pwConfirm, name, email, gender, agree });
+    console.log({ id, pw, pwConfirm, name, email });
   };
 
   return (
@@ -101,50 +97,9 @@ export default function Signup() {
             </InputLabel>
             <AuthButton>인증번호 받기</AuthButton>
           </FormRow>
-          <FormRow>
-            <InputLabel>
-              <InputText>성별</InputText>
-              <GenderGroup>
-                {['male', 'female', 'none'].map((val) => (
-                  <GenderLabel key={val} selected={gender === val}>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value={val}
-                      checked={gender === val}
-                      onChange={() => setGender(val)}
-                    />
-                    {val === 'male' ? '남자' : val === 'female' ? '여자' : '선택안함'}
-                  </GenderLabel>
-                ))}
-              </GenderGroup>
-            </InputLabel>
-          </FormRow>
-          <FormRow>
-            <InputLabel>
-              <InputText> 생년월일</InputText>
-              <DateGroup>
-                <DateInput
-                  type="text"
-                  placeholder="YYYY     /    MM    /    DD"
-                  value={value}
-                  onChange={handleDateChange}
-                />
-              </DateGroup>
-            </InputLabel>
-          </FormRow>
-          <CheckFormrow>
-            <InputLabel>
-              <InputText>
-                이용약관동의<RequiredStar>*</RequiredStar>
-              </InputText>
-              <CheckboxLabel>
-                <CheckboxInput type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
-                공동 구매 모집 완료 이메일 수신 동의
-              </CheckboxLabel>
-            </InputLabel>
-          </CheckFormrow>
-          <SubmitButton type="submit">가입하기</SubmitButton>
+          <ButtonContainer>
+            <SubmitButton type="submit">가입하기</SubmitButton>
+          </ButtonContainer>
         </SignupForm>
       </SignupFormContainer>
     </SignupContainer>
@@ -152,7 +107,7 @@ export default function Signup() {
 }
 
 const SignupContainer = styled(Container)`
-  padding-top: 150px;
+  padding-top: 200px;
 `;
 
 const SignupFormContainer = styled(Container)`
@@ -191,7 +146,7 @@ const SignupForm = styled.form`
 
 const FormRow = styled(Container)`
   width: 100%;
-  padding: 10px 20px;
+  padding: 20px 20px;
   flex-direction: row;
 `;
 const InputLabel = styled.label`
@@ -231,59 +186,11 @@ const AuthButton = styled.button`
   color: #ddd;
   ${({ theme }) => theme.fontStyles.Body7};
 `;
-
-const GenderGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
-`;
-
-const GenderLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  input {
-    width: 25px;
-    height: 25px;
-  }
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
-
-const DateGroup = styled(Container)`
-  flex-direction: row;
-  flex: 1;
-
-  height: 46px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
-`;
-
-const DateInput = styled.input`
+const ButtonContainer = styled(Container)`
   width: 100%;
-  text-align: center;
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
-
-const CheckFormrow = styled(FormRow)`
   margin-top: 20px;
   border-top: 2px solid #333;
 `;
-const CheckboxLabel = styled.label`
-  padding-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
-
-const CheckboxInput = styled.input`
-  width: 24px;
-  height: 24px;
-`;
-
 const SubmitButton = styled(ButtonStyle)`
   align-self: center;
 

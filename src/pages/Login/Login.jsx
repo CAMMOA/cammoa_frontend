@@ -46,7 +46,7 @@ export default Login;
 
 const LoginContainer = styled(Container)`
   justify-content: center;
-  margin-top: 165px;
+  padding-top: 225px;
 `;
 
 const LoginForm = styled.form`

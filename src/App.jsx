@@ -4,6 +4,7 @@ import Login from '@pages/Login/Login';
 import Home from '@pages/Home/Home.jsx';
 import SearchPage from '@pages/Search/SearchPage';
 import Post from '@pages/Post/Post';
+import MyPage from '@pages/MyPage/MyPage';
 import Chat from '@pages/Chat/Chat';
 import Signup from '@pages/Signup/Signup';
 import ProductDetail from '@pages/ProductDetail/ProductDetail';
@@ -18,6 +19,7 @@ function App() {
           <Route path="post" element={<Post />} />
           <Route path="detail" element={<ProductDetail />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/mypage" element={<MyPage />} />
           <Route path="chat" element={<Chat />} />
           <Route path="/signup" element={<Signup />} />
         </Route>

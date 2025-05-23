@@ -25,7 +25,7 @@ Items.propTypes = {
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  dday: PropTypes.number.isRequired,
+  dday: PropTypes.string,
 };
 
 export default Items;

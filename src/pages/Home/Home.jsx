@@ -17,7 +17,13 @@ const Home = () => {
         </RecommendHeader>
         <RecommendMain>
           {mockPosts.map((post) => (
-            <Items key={post.id} title={post.title} price={post.price} imageUrl={post.imageUrl} />
+            <Items
+              key={post.id}
+              title={post.title}
+              price={post.price}
+              imageUrl={post.imageUrl}
+              dday={post.dday}
+            />
           ))}
         </RecommendMain>
       </RecommendContainer>
@@ -28,7 +34,13 @@ const Home = () => {
         </RecommendHeader>
         <RecommendMain>
           {mockPosts.slice(0, 4).map((post) => (
-            <Items key={post.id} title={post.title} price={post.price} imageUrl={post.imageUrl} />
+            <Items
+              key={post.id}
+              title={post.title}
+              price={post.price}
+              imageUrl={post.imageUrl}
+              dday={post.dday}
+            />
           ))}
         </RecommendMain>
       </RecommendContainer>
@@ -39,7 +51,13 @@ const Home = () => {
         </RecommendHeader>
         <RecommendMain>
           {mockPosts.slice(0, 4).map((post) => (
-            <Items key={post.id} title={post.title} price={post.price} imageUrl={post.imageUrl} />
+            <Items
+              key={post.id}
+              title={post.title}
+              price={post.price}
+              imageUrl={post.imageUrl}
+              dday={post.dday}
+            />
           ))}
         </RecommendMain>
       </RecommendContainer>
@@ -50,13 +68,12 @@ const Home = () => {
 export default Home;
 
 const HomeContainer = styled(Container)`
-  gap: 10px;
+  padding-bottom: 100px;
 `;
 
 const BannerContainer = styled(Container)`
-  width: 1065px;
-  padding-top: 10px;
-  margin-bottom: 10px;
+  width: 1050px;
+  padding-bottom: 40px;
 `;
 const BannerImage = styled.img`
   width: 100%;
@@ -64,8 +81,8 @@ const BannerImage = styled.img`
 `;
 
 const RecommendContainer = styled(Container)`
-  width: 1065px;
-  padding: 20px 0;
+  width: 1050px;
+  padding: 40px 0;
 
   justify-content: center;
   gap: 10px;
@@ -87,10 +104,9 @@ const HeaderSubText = styled.p`
   line-height: 145%;
 `;
 
-const RecommendMain = styled(Container)`
-  width: fit-content;
-
+const RecommendMain = styled.div`
+  width: 1050px;
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 25px;
 `;

@@ -5,6 +5,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - day',
   },
   {
     id: 2,
@@ -12,6 +13,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - day',
   },
   {
     id: 3,
@@ -19,6 +21,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - day',
   },
   {
     id: 4,
@@ -26,6 +29,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - 1',
   },
   {
     id: 5,
@@ -33,6 +37,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - day',
   },
   {
     id: 6,
@@ -40,6 +45,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - 15',
   },
   {
     id: 7,
@@ -47,6 +53,7 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - 5',
   },
   {
     id: 8,
@@ -54,5 +61,6 @@ export const mockPosts = [
     price: 12000,
     imageUrl:
       'https://ecimg.cafe24img.com/pg341b66939846097/kyungilfood21/web/product/big/20230627/0fcc8e793bccc78d0934866b8400e95e.jpg',
+    dday: 'D - 6',
   },
 ];

@@ -1,12 +1,39 @@
 import styled from 'styled-components';
 import JoinIcon from '@assets/icons/join-icon.svg?react';
 import PropTypes from 'prop-types';
+const FALLBACK_IMAGE =
+  'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
 
-const Items = ({ imageUrl, title, price, dday }) => {
+// D-day 계산 함수
+function getDday(deadline) {
+  if (!deadline) return null;
+
+  const now = new Date();
+  const end = new Date(deadline);
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  const diff = Math.ceil((endDate - nowDate) / (1000 * 60 * 60 * 24));
+
+  if (diff === 0) return 'D - day';
+  if (diff > 0) return `D - ${diff}`;
+  return null;
+}
+
+const Items = ({ imageUrl, title, price, deadline }) => {
+  const dday = getDday(deadline);
+
   return (
     <ItemsContainer>
       <ImageWrapper>
-        <ItemImage src={imageUrl} alt={title} />
+        <ItemImage
+          src={imageUrl}
+          alt={title}
+          onError={(e) => {
+            if (e.target.src !== FALLBACK_IMAGE) {
+              e.target.src = FALLBACK_IMAGE;
+            }
+          }}
+        />
         {dday && <DdayOverlay>{dday}</DdayOverlay>}
       </ImageWrapper>
       <JoinButton>
@@ -25,7 +52,7 @@ Items.propTypes = {
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  dday: PropTypes.string,
+  deadline: PropTypes.string,
 };
 
 export default Items;

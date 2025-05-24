@@ -12,7 +12,10 @@ const ProductDetail = () => {
         <ProductImage src={firstItem.imageUrl} />
         <ProductInfo>
           <ProductTitle>{firstItem.title}</ProductTitle>
-          <ProudctPrice>{firstItem.price}원~</ProudctPrice>
+          <PriceBlock>
+            <ProudctPrice>{firstItem.price}원~</ProudctPrice>
+            <OriginPrice>15000원</OriginPrice>
+          </PriceBlock>
           <ProductContainer>
             <InfoTitle>카테고리</InfoTitle>
             <InfoSubTitle>식품</InfoSubTitle>
@@ -25,7 +28,10 @@ const ProductDetail = () => {
             <InfoTitle>장소</InfoTitle>
             <InfoSubTitle>기숙사C동 앞 광장</InfoSubTitle>
           </ProductContainer>
-          <ParticipateButton>공동구매 참여하기</ParticipateButton>
+          <ButtonRow>
+            <ParticipateButton>공동구매 참여하기</ParticipateButton>
+            <InquiryButton>1 : 1 문의하기</InquiryButton>
+          </ButtonRow>
         </ProductInfo>
       </DetailBody>
       <ProductExplainContainer>
@@ -62,12 +68,13 @@ export default ProductDetail;
 
 const ProductDetailContainer = styled(Container)`
   width: fit-content;
-  padding-top: 55px;
-  gap: 50px;
+  padding: 55px 0 120px 0;
+  gap: 75px;
 `;
 const ProductImage = styled.img`
   width: 448px;
   height: 448px;
+  border-radius: 4px;
 `;
 const DetailBody = styled(Container)`
   flex-direction: row;
@@ -91,13 +98,24 @@ const ProductTitle = styled.p`
   letter-spacig: -0.5px;
 `;
 
+const PriceBlock = styled(Container)`
+  height: 60px;
+
+  align-items: flex-start;
+  gap: 8px;
+`;
 const ProudctPrice = styled.p`
-  height: 91px;
-  padding: 15px 0;
   color: #333;
   ${({ theme }) => theme.fontStyles.Body2};
   line-height: 107%;
   letter-spacing: -0.5px;
+`;
+const OriginPrice = styled.p`
+  color: #B5B5B5;
+  ${({ theme }) => theme.fontStyles.Body6};
+  line-height: 100%;
+  letter-spacing: -0.5px;
+  text-decoration-line: line-through;
 `;
 const ProductContainer = styled.div`
   width: 100%;
@@ -121,12 +139,27 @@ const InfoSubTitle = styled.p`
   line-height: 147%;
 `;
 
+const ButtonRow = styled(Container)`
+  margin-top: 52px;
+  flex-direction: row;
+  gap: 24px;
+`;
 const ParticipateButton = styled(ButtonStyle)`
-  width: 338px;
+  width: 358px;
   height: 56px;
-  margin-top: 22px;
   padding: 0px 10px;
   font-size: 15px;
+`;
+const InquiryButton = styled(ButtonStyle)`
+  width: 155px;
+  height: 56px;
+  padding: 1px 11px;
+  font-size: 15px;
+
+  border: 2px solid #DDD;
+  background: #FFF;
+  color: #B5B5B5;
+  font-weight: 500;
 `;
 
 const ProductExplainContainer = styled(Container)`

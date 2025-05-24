@@ -43,7 +43,8 @@ const Home = () => {
         <RecommendMain>
           {recommendPosts.map((post) => (
             <Items
-              key={post.id}
+              key={post.id} // 리스트 렌더링 시 각 항목을 고유하게 식별
+              id={post.id} // 실제로 컴포넌트에 전달되는 props
               title={post.title}
               price={post.price}
               imageUrl={post.imageUrl}
@@ -61,6 +62,7 @@ const Home = () => {
           {closingPosts.slice(0, 4).map((post) => (
             <Items
               key={post.id}
+              id={post.id}
               title={post.title}
               price={post.price}
               imageUrl={post.imageUrl}
@@ -78,6 +80,7 @@ const Home = () => {
           {recentPosts.slice(0, 4).map((post) => (
             <Items
               key={post.id}
+              id={post.id}
               title={post.title}
               price={post.price}
               imageUrl={post.imageUrl}

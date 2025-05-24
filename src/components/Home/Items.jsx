@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import JoinIcon from '@assets/icons/join-icon.svg?react';
 import PropTypes from 'prop-types';
+
 const FALLBACK_IMAGE =
   'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
 
@@ -19,8 +21,9 @@ function getDday(deadline) {
   return null;
 }
 
-const Items = ({ imageUrl, title, price, deadline }) => {
+const Items = ({ id, imageUrl, title, price, deadline }) => {
   const dday = getDday(deadline);
+  const navigate = useNavigate();
 
   return (
     <ItemsContainer>
@@ -36,7 +39,7 @@ const Items = ({ imageUrl, title, price, deadline }) => {
         />
         {dday && <DdayOverlay>{dday}</DdayOverlay>}
       </ImageWrapper>
-      <JoinButton>
+      <JoinButton onClick={() => navigate(`/detail/${id}`)}>
         <JoinIcon />
         참여하기
       </JoinButton>
@@ -49,6 +52,7 @@ const Items = ({ imageUrl, title, price, deadline }) => {
 };
 
 Items.propTypes = {
+  id: PropTypes.number.isRequired,
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,

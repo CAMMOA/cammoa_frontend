@@ -5,27 +5,28 @@ import Items from '@components/Home/Items';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://13.125.146.232:8080';
-
+const API_URL = import.meta.env.VITE_APP_API_URL || 'http://15.165.99.110:8080';
 
 const Home = () => {
-
   const [recommendPosts, setRecommendPosts] = useState([]);
   const [closingPosts, setClosingPosts] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
 
   useEffect(() => {
     // 추천순
-    axios.get(`${API_URL}/api/posts/recommend`)
-      .then(res => setRecommendPosts(res.data.data || []))
+    axios
+      .get(`${API_URL}/api/posts/recommend`)
+      .then((res) => setRecommendPosts(res.data.data || []))
       .catch(() => setRecommendPosts([]));
     // 마감순
-    axios.get(`${API_URL}/api/posts/closing-soon`)
-      .then(res => setClosingPosts(res.data.data || []))
+    axios
+      .get(`${API_URL}/api/posts/closing-soon`)
+      .then((res) => setClosingPosts(res.data.data || []))
       .catch(() => setClosingPosts([]));
     // 최신순
-    axios.get(`${API_URL}/api/posts/recent`)
-      .then(res => setRecentPosts(res.data.data || []))
+    axios
+      .get(`${API_URL}/api/posts/recent`)
+      .then((res) => setRecentPosts(res.data.data || []))
       .catch(() => setRecentPosts([]));
   }, []);
 
@@ -45,8 +46,8 @@ const Home = () => {
               key={post.id}
               title={post.title}
               price={post.price}
-              imageUrl={post.image}
-              // d-day는 데이터 요청
+              imageUrl={post.imageUrl}
+              deadline={post.deadline}
             />
           ))}
         </RecommendMain>
@@ -63,6 +64,7 @@ const Home = () => {
               title={post.title}
               price={post.price}
               imageUrl={post.imageUrl}
+              deadline={post.deadline}
             />
           ))}
         </RecommendMain>
@@ -79,6 +81,7 @@ const Home = () => {
               title={post.title}
               price={post.price}
               imageUrl={post.imageUrl}
+              deadline={post.deadline}
             />
           ))}
         </RecommendMain>

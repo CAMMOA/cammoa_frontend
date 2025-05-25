@@ -5,7 +5,7 @@ export const login = async (userData) => {
     const response = await api.post('/api/auth/login', userData);
     console.log(response);
     if (response.data.status === 'OK') {
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken } = response.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
       return true;

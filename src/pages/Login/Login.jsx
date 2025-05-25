@@ -2,14 +2,26 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
+import { login } from '@api/signup/login';
+import { useNavigate } from 'react-router';
 
 const Login = () => {
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log({ id, pw });
+
+    const success = await login({
+      email: id,
+      password: pw,
+    });
+
+    if (success) {
+      navigate('/');
+    }
   };
 
   return (

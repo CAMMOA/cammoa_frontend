@@ -5,6 +5,7 @@ import { ButtonStyle } from '@components/shared/ButtonStyle';
 import { signup } from '@api/signup/signup';
 import api from '@api/api';
 import { verifyEmailAuthCode } from '@api/signup/verifyEmailAuthCode';
+import { useNavigate } from 'react-router';
 
 export default function Signup() {
   const [userFormData, setUserFormData] = useState({
@@ -17,6 +18,7 @@ export default function Signup() {
 
   const [emailSent, setEmailSent] = useState(false);
   const [authCode, setAuthCode] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,6 +97,7 @@ export default function Signup() {
       if (response.status === 'CREATED') {
         alert('회원가입이 완료되었습니다.');
         console.log(response);
+        navigate('/login');
       } else {
         alert('회원가입에 실패했습니다.');
         console.log(response);

@@ -108,7 +108,7 @@ export default function Signup() {
       console.error('회원가입 오류:', error);
       switch (status) {
         case 400:
-          alert(errorMessage || '요청이 잘못되었습니다.');
+          alert(errorMessage || '비밀번호를 8자 이상 입력하세요');
           break;
         case 409:
           alert(errorMessage || '요청이 잘못되었습니다.');
@@ -207,7 +207,8 @@ export default function Signup() {
             </InputLabel>
             <AuthButton
               type="button"
-              $disabled={!userFormData.email.includes('@')}
+              $isDisabled={!userFormData.email.includes('@hufs.ac.kr')}
+              disabled={!userFormData.email.includes('@hufs.ac.kr')}
               onClick={handleSendCode}
             >
               인증번호 받기
@@ -317,12 +318,12 @@ const AuthButton = styled.button`
   align-items: center;
 
   border-radius: 3px;
-  border: 1px solid ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
+  border: 1px solid ${({ $isDisabled }) => ($isDisabled ? '#ddd' : '#3092FA')};
 
-  color: ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
+  color: ${({ $isDisabled }) => ($isDisabled ? '#ddd' : '#3092FA')};
   ${({ theme }) => theme.fontStyles.Body7};
   transition: all 0.3s ease;
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
 `;
 
 const AuthConfirm = styled(AuthButton)`

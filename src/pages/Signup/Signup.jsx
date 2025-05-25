@@ -2,17 +2,119 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
+import { signup } from '@api/signup/signup';
+import api from '@api/api';
+import { verifyEmailAuthCode } from '@api/signup/verifyEmailAuthCode';
 
 export default function Signup() {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [pwConfirm, setPwConfirm] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [userFormData, setUserFormData] = useState({
+    nickname: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleSubmit = (e) => {
+  const [emailSent, setEmailSent] = useState(false);
+  const [authCode, setAuthCode] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //인증번호 api
+  const handleSendCode = async () => {
+    try {
+      const response = await api.get(`/api/auth/signup/email/${userFormData.email}`);
+      console.log(response);
+      const { status } = response.data;
+
+      if (status === 'OK') {
+        alert('인증번호가 이메일로 전송되었습니다.');
+        setEmailSent(true);
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 500:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요');
+          break;
+      }
+    }
+  };
+  //인증 api
+  const handleVerifyCode = async () => {
+    try {
+      const res = await verifyEmailAuthCode({
+        email: userFormData.email,
+        authCode,
+      });
+      console.log(res);
+      if (res.status === 'OK') {
+        alert('이메일 인증이 완료되었습니다.');
+      } else {
+        alert('인증번호가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 500:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          break;
+      }
+    }
+  };
+
+  // 회원가입 api
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ id, pw, pwConfirm, name, email });
+
+    try {
+      const response = await signup(userFormData);
+
+      if (response.status === 'CREATED') {
+        alert('회원가입이 완료되었습니다.');
+        console.log(response);
+      } else {
+        alert('회원가입에 실패했습니다.');
+        console.log(response);
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 409:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          break;
+      }
+    }
   };
 
   return (
@@ -34,8 +136,9 @@ export default function Signup() {
               <Input
                 type="text"
                 placeholder="아이디를 입력해주세요"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
+                name="nickname"
+                value={userFormData.nickname}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -48,8 +151,9 @@ export default function Signup() {
               <Input
                 type="password"
                 placeholder="비밀번호를 입력해주세요"
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
+                name="password"
+                value={userFormData.password}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -62,8 +166,9 @@ export default function Signup() {
               <Input
                 type="password"
                 placeholder="비밀번호를 한 번 더 입력해주세요"
-                value={pwConfirm}
-                onChange={(e) => setPwConfirm(e.target.value)}
+                name="confirmPassword"
+                value={userFormData.confirmPassword}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -76,8 +181,9 @@ export default function Signup() {
               <Input
                 type="text"
                 placeholder="이름을 입력해 주세요"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                name="username"
+                value={userFormData.username}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -90,13 +196,37 @@ export default function Signup() {
               <Input
                 type="email"
                 placeholder="예: cammoa@hufs.ac.kr"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={userFormData.email}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
-            <AuthButton>인증번호 받기</AuthButton>
+            <AuthButton
+              type="button"
+              $disabled={!userFormData.email.includes('@')}
+              onClick={handleSendCode}
+            >
+              인증번호 받기
+            </AuthButton>
           </FormRow>
+          {emailSent && (
+            <FormRow>
+              <InputLabel>
+                <InputText />
+                <Input
+                  type="text"
+                  placeholder="인증번호 입력"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  required
+                />
+              </InputLabel>
+              <AuthConfirm type="button" onClick={handleVerifyCode}>
+                인증번호 확인
+              </AuthConfirm>
+            </FormRow>
+          )}
           <ButtonContainer>
             <SubmitButton type="submit">가입하기</SubmitButton>
           </ButtonContainer>
@@ -180,11 +310,21 @@ const AuthButton = styled.button`
   padding: 15px;
   margin-left: 8px;
 
-  border-radius: 3px;
-  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
 
-  color: #ddd;
+  border-radius: 3px;
+  border: 1px solid ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
+
+  color: ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
   ${({ theme }) => theme.fontStyles.Body7};
+  transition: all 0.3s ease;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+`;
+
+const AuthConfirm = styled(AuthButton)`
+  color: #fff;
+  background: #3092fa;
 `;
 const ButtonContainer = styled(Container)`
   width: 100%;

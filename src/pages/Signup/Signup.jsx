@@ -1,22 +1,123 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
-import useFormattedDate from '@hooks/useFormattedDate';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
+import { signup } from '@api/signup/signup';
+import api from '@api/api';
+import { verifyEmailAuthCode } from '@api/signup/verifyEmailAuthCode';
+import { useNavigate } from 'react-router';
 
 export default function Signup() {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [pwConfirm, setPwConfirm] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [gender, setGender] = useState('none');
-  const [agree, setAgree] = useState(false);
-  const { value, handleDateChange } = useFormattedDate();
+  const [userFormData, setUserFormData] = useState({
+    nickname: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleSubmit = (e) => {
+  const [emailSent, setEmailSent] = useState(false);
+  const [authCode, setAuthCode] = useState('');
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //인증번호 api
+  const handleSendCode = async () => {
+    try {
+      const response = await api.get(`/api/auth/signup/email/${userFormData.email}`);
+      console.log(response);
+      const { status } = response.data;
+
+      if (status === 'OK') {
+        alert('인증번호가 이메일로 전송되었습니다.');
+        setEmailSent(true);
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 500:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요');
+          break;
+      }
+    }
+  };
+  //인증 api
+  const handleVerifyCode = async () => {
+    try {
+      const res = await verifyEmailAuthCode({
+        email: userFormData.email,
+        authCode,
+      });
+      console.log(res);
+      if (res.status === 'OK') {
+        alert('이메일 인증이 완료되었습니다.');
+      } else {
+        alert('인증번호가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 500:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          break;
+      }
+    }
+  };
+
+  // 회원가입 api
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ id, pw, pwConfirm, name, email, gender, agree });
+
+    try {
+      const response = await signup(userFormData);
+
+      if (response.status === 'CREATED') {
+        alert('회원가입이 완료되었습니다.');
+        console.log(response);
+        navigate('/login');
+      } else {
+        alert('회원가입에 실패했습니다.');
+        console.log(response);
+      }
+    } catch (error) {
+      const { status, data } = error.response || {};
+      const errorMessage = data?.message;
+      console.error('회원가입 오류:', error);
+      switch (status) {
+        case 400:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        case 409:
+          alert(errorMessage || '요청이 잘못되었습니다.');
+          break;
+        default:
+          alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          break;
+      }
+    }
   };
 
   return (
@@ -38,8 +139,9 @@ export default function Signup() {
               <Input
                 type="text"
                 placeholder="아이디를 입력해주세요"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
+                name="nickname"
+                value={userFormData.nickname}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -52,8 +154,9 @@ export default function Signup() {
               <Input
                 type="password"
                 placeholder="비밀번호를 입력해주세요"
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
+                name="password"
+                value={userFormData.password}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -66,8 +169,9 @@ export default function Signup() {
               <Input
                 type="password"
                 placeholder="비밀번호를 한 번 더 입력해주세요"
-                value={pwConfirm}
-                onChange={(e) => setPwConfirm(e.target.value)}
+                name="confirmPassword"
+                value={userFormData.confirmPassword}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -80,8 +184,9 @@ export default function Signup() {
               <Input
                 type="text"
                 placeholder="이름을 입력해 주세요"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                name="username"
+                value={userFormData.username}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
@@ -94,57 +199,40 @@ export default function Signup() {
               <Input
                 type="email"
                 placeholder="예: cammoa@hufs.ac.kr"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={userFormData.email}
+                onChange={handleChange}
                 required
               />
             </InputLabel>
-            <AuthButton>인증번호 받기</AuthButton>
+            <AuthButton
+              type="button"
+              $disabled={!userFormData.email.includes('@')}
+              onClick={handleSendCode}
+            >
+              인증번호 받기
+            </AuthButton>
           </FormRow>
-          <FormRow>
-            <InputLabel>
-              <InputText>성별</InputText>
-              <GenderGroup>
-                {['male', 'female', 'none'].map((val) => (
-                  <GenderLabel key={val} selected={gender === val}>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value={val}
-                      checked={gender === val}
-                      onChange={() => setGender(val)}
-                    />
-                    {val === 'male' ? '남자' : val === 'female' ? '여자' : '선택안함'}
-                  </GenderLabel>
-                ))}
-              </GenderGroup>
-            </InputLabel>
-          </FormRow>
-          <FormRow>
-            <InputLabel>
-              <InputText> 생년월일</InputText>
-              <DateGroup>
-                <DateInput
+          {emailSent && (
+            <FormRow>
+              <InputLabel>
+                <InputText />
+                <Input
                   type="text"
-                  placeholder="YYYY     /    MM    /    DD"
-                  value={value}
-                  onChange={handleDateChange}
+                  placeholder="인증번호 입력"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  required
                 />
-              </DateGroup>
-            </InputLabel>
-          </FormRow>
-          <CheckFormrow>
-            <InputLabel>
-              <InputText>
-                이용약관동의<RequiredStar>*</RequiredStar>
-              </InputText>
-              <CheckboxLabel>
-                <CheckboxInput type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
-                공동 구매 모집 완료 이메일 수신 동의
-              </CheckboxLabel>
-            </InputLabel>
-          </CheckFormrow>
-          <SubmitButton type="submit">가입하기</SubmitButton>
+              </InputLabel>
+              <AuthConfirm type="button" onClick={handleVerifyCode}>
+                인증번호 확인
+              </AuthConfirm>
+            </FormRow>
+          )}
+          <ButtonContainer>
+            <SubmitButton type="submit">가입하기</SubmitButton>
+          </ButtonContainer>
         </SignupForm>
       </SignupFormContainer>
     </SignupContainer>
@@ -152,7 +240,7 @@ export default function Signup() {
 }
 
 const SignupContainer = styled(Container)`
-  padding-top: 150px;
+  padding-top: 200px;
 `;
 
 const SignupFormContainer = styled(Container)`
@@ -191,7 +279,7 @@ const SignupForm = styled.form`
 
 const FormRow = styled(Container)`
   width: 100%;
-  padding: 10px 20px;
+  padding: 20px 20px;
   flex-direction: row;
 `;
 const InputLabel = styled.label`
@@ -225,65 +313,27 @@ const AuthButton = styled.button`
   padding: 15px;
   margin-left: 8px;
 
-  border-radius: 3px;
-  border: 1px solid #ddd;
-
-  color: #ddd;
-  ${({ theme }) => theme.fontStyles.Body7};
-`;
-
-const GenderGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
-`;
-
-const GenderLabel = styled.label`
   display: flex;
   align-items: center;
-  gap: 6px;
-  input {
-    width: 25px;
-    height: 25px;
-  }
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
 
-const DateGroup = styled(Container)`
-  flex-direction: row;
-  flex: 1;
-
-  height: 46px;
   border-radius: 3px;
-  border: 1px solid #ddd;
+  border: 1px solid ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
+
+  color: ${({ $disabled }) => ($disabled ? '#ddd' : '#3092FA')};
+  ${({ theme }) => theme.fontStyles.Body7};
+  transition: all 0.3s ease;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 `;
 
-const DateInput = styled.input`
+const AuthConfirm = styled(AuthButton)`
+  color: #fff;
+  background: #3092fa;
+`;
+const ButtonContainer = styled(Container)`
   width: 100%;
-  text-align: center;
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
-
-const CheckFormrow = styled(FormRow)`
   margin-top: 20px;
   border-top: 2px solid #333;
 `;
-const CheckboxLabel = styled.label`
-  padding-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  ${({ theme }) => theme.fontStyles.Body4};
-  font-size: 16px;
-`;
-
-const CheckboxInput = styled.input`
-  width: 24px;
-  height: 24px;
-`;
-
 const SubmitButton = styled(ButtonStyle)`
   align-self: center;
 

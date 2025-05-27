@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
-import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
 import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
+import ImageUploader from '@components/Post/ImageUploader';
 
 const Post = () => {
+  const [files, setImages] = useState([]);
+
   const categories = [
     { label: '식품' },
     { label: '상수·음료' },
@@ -14,10 +17,13 @@ const Post = () => {
     { label: '문구류' },
     { label: '화장품' },
   ];
-  const MAX_TEXT = 1500;
-  const MAX_LOCATION = 50;
 
-  const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT);
+  const MAX_TEXT_TITLE = 40;
+  const MAX_TEXT_DESCRIPTION = 1500;
+  const MAX_LOCATION = 40;
+
+  const [title, handlTITLEChange] = useLimitedInput(MAX_TEXT_TITLE);
+  const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT_DESCRIPTION);
   const [location, handlelocationChange] = useLimitedInput(MAX_LOCATION);
   const { value, handleDateChange } = useFormattedDate();
 
@@ -26,21 +32,30 @@ const Post = () => {
       <PostHeader>상품 설명</PostHeader>
       <PostBody>
         <ProductImageContainer>
-          <ProductText>상품 이미지</ProductText>
-          <ProductImage>
-            <Image>
-              <Camera />
-              <ImageSubText>이미지 등록</ImageSubText>
-            </Image>
+          <ImageNameText>
+            상품 이미지<RequiredStar>*</RequiredStar>
+            <CountText>({files.length} / 3)</CountText>
+          </ImageNameText>
+          <ImageManagementContainer>
+            <ImageUploader previewSize={188} maxCount={3} onChange={setImages} />
             <ImageText>
-              이미지는 1:1 비율로 보여지며, 첫 번째로 업로드한 이미지가 대표 이미지로 사용됩니다 :
+              이미지는 1:1 비율로 보여지며, 첫 번째 업로드한 이미지가 대표로 사용됩니다.
             </ImageText>
-          </ProductImage>
+          </ImageManagementContainer>
         </ProductImageContainer>
-        <ProductContainer>
-          <ProductNameText>게시글 제목</ProductNameText>
-          <ProductNameInput placeholder="상품명을 입력해 주세요." />
-        </ProductContainer>
+        <ProductNameContainer>
+          <ProductNameText>
+            상품명<RequiredStar>*</RequiredStar>
+          </ProductNameText>
+          <ProductNameInput
+            value={title}
+            onChange={handlTITLEChange}
+            placeholder="상품명을 입력해 주세요."
+          />
+          <TitleCounter>
+            {title.length}/{MAX_TEXT_TITLE}
+          </TitleCounter>
+        </ProductNameContainer>
         <ProductContainer>
           <ProductNameText>카테고리</ProductNameText>
           <CategoryItemWrapper>
@@ -57,28 +72,34 @@ const Post = () => {
             placeholder="내용을 입력해주세요."
           />
           <CharCount>
-            {explain.length}/{MAX_TEXT}
+            {explain.length}/{MAX_TEXT_DESCRIPTION}
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
       <PostHeader>공동구매 정보</PostHeader>
       <PostBody>
         <ProductContainer>
-          <ProductText>가격</ProductText>
+          <ProductText>
+            가격<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput placeholder="가격을 입력해주세요." />
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
-          <ProductText>인원</ProductText>
+          <ProductText>
+            인원<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput placeholder="인원을 엽력해주세요. (최대 5명)" />
             <InputText>명</InputText>
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
-          <ProductText>기한</ProductText>
+          <ProductText>
+            기한<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               type="text"
@@ -89,7 +110,9 @@ const Post = () => {
           </InputWrapper>
         </ProductContainer>
         <ProductContainer>
-          <ProductText>위치</ProductText>
+          <ProductText>
+            위치<RequiredStar>*</RequiredStar>
+          </ProductText>
           <LocationInputWrapper>
             <ProductInput
               value={location}
@@ -132,6 +155,35 @@ const ProductImageContainer = styled(Container)`
   align-items: flex-start;
   gap: 24px;
 `;
+
+const ImageManagementContainer = styled(Container)`
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+`;
+
+const RequiredStar = styled.span`
+  position: relative;
+  top: -2px;
+  color: #ee6a7b;
+  ${({ theme }) => theme.fontStyles.Body8};
+  line-height: 142%;
+`;
+
+const ImageNameText = styled.p`
+  width: 155px;
+  color: #191919;
+  ${({ theme }) => theme.fontStyles.Body6};
+  line-height: 107%;
+  letter-spacing: -0.5px;
+`;
+
+const CountText = styled.span`
+  color: #999;
+  ${({ theme }) => theme.fontStyles.Body7};
+  padding-left: 25px;
+`;
+
 const ProductText = styled.p`
   width: 155px;
   color: #191919;
@@ -140,28 +192,10 @@ const ProductText = styled.p`
   letter-spacing: -0.5px;
 `;
 
-const ProductImage = styled(Container)`
-  align-items: flex-start;
-  gap: 15px;
-`;
-const Image = styled(Container)`
-  width: 188px;
-  padding: 69px 0px 55px 0px;
-  background: #fafafa;
-
-  gap: 15px;
-`;
 const ImageText = styled.p`
   color: #666;
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 107%;
-`;
-
-const ImageSubText = styled.p`
-  color: #666666;
-  ${({ theme }) => theme.fontStyles.Body7};
-  font-size: 13px;
-  line-height: 193%;
 `;
 
 const ProductContainer = styled(Container)`
@@ -171,6 +205,19 @@ const ProductContainer = styled(Container)`
   flex-direction: row;
   gap: 24px;
 `;
+
+const ProductNameContainer = styled(ProductContainer)`
+  position: relative;
+`;
+
+const TitleCounter = styled.span`
+  position: absolute;
+  right: 100px;
+  color: #8c8c8c;
+  ${({ theme }) => theme.fontStyles.Body7};
+  line-height: 161%;
+`;
+
 const ProductNameText = styled(ProductText)`
   padding: 12px 0;
 `;

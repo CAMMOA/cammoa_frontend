@@ -20,8 +20,14 @@ const ProductDetail = () => {
     setIsLoading(true);
     setHasError(false);
 
+    const token = localStorage.getItem('accessToken');
+
     axios
-      .get(`${API_URL}/api/posts/${post_id}`)
+      .get(`${API_URL}/api/posts/${post_id}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      })
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);

@@ -143,6 +143,9 @@ const Post = () => {
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
+        <EstimatedPrice>
+              공동구매 예상 가격은 <Highlight>{price && numPeople ? Math.floor(price / numPeople).toLocaleString() : '0'}원</Highlight>이에요!
+            </EstimatedPrice>
         <ProductContainer>
           <ProductText>
             인원<RequiredStar>*</RequiredStar>
@@ -266,6 +269,18 @@ const ProductContainer = styled(Container)`
 
   flex-direction: row;
   gap: 24px;
+`;
+
+const EstimatedPrice = styled.p`
+  ${({ theme }) => theme.fontStyles.Body7};
+  width:100%;
+  margin-left:179px;
+  margin-top:-20px;
+  color: #666;
+  line-height:191%;
+`;
+const Highlight = styled.span`
+  color: #3092FA
 `;
 
 const ProductNameContainer = styled(ProductContainer)`

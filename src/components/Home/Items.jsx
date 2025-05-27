@@ -21,9 +21,13 @@ function getDday(deadline) {
   return null;
 }
 
-const Items = ({ id, imageUrl, title, price, deadline }) => {
+const Items = ({ id, imageUrl, title, price, deadline, maxParticipants }) => {
   const dday = getDday(deadline);
   const navigate = useNavigate();
+
+  const unitPrice = maxParticipants
+    ? Math.round(price / maxParticipants).toLocaleString()
+    : price.toLocaleString();
 
   return (
     <ItemsContainer>
@@ -45,7 +49,7 @@ const Items = ({ id, imageUrl, title, price, deadline }) => {
       </JoinButton>
       <ItemInformation>
         <ItemTitle>{title}</ItemTitle>
-        <ItemPrice>{price}원</ItemPrice>
+        <ItemPrice>{unitPrice}원 ~</ItemPrice>
       </ItemInformation>
     </ItemsContainer>
   );
@@ -56,7 +60,8 @@ Items.propTypes = {
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  deadline: PropTypes.string,
+  deadline: PropTypes.string.isRequired,
+  maxParticipants: PropTypes.number.isRequired,
 };
 
 export default Items;

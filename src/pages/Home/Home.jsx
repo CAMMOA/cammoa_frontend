@@ -49,6 +49,7 @@ const Home = () => {
               price={post.price}
               imageUrl={post.imageUrl}
               deadline={post.deadline}
+              maxParticipants={post.maxParticipants}
             />
           ))}
         </RecommendMain>
@@ -67,6 +68,7 @@ const Home = () => {
               price={post.price}
               imageUrl={post.imageUrl}
               deadline={post.deadline}
+              maxParticipants={post.maxParticipants}
             />
           ))}
         </RecommendMain>
@@ -85,6 +87,7 @@ const Home = () => {
               price={post.price}
               imageUrl={post.imageUrl}
               deadline={post.deadline}
+              maxParticipants={post.maxParticipants}
             />
           ))}
         </RecommendMain>

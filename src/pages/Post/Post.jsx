@@ -6,26 +6,68 @@ import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
 import ImageUploader from '@components/Post/ImageUploader';
+import { uploadPostImages } from '@api/post/images';
+import { createPost } from '@api/post/posts';
 
 const Post = () => {
-  const [files, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
+  const categories = ['식품', '상수·음료', '생활용품', '문구류', '화장품'];
+  const [selectedCategory, setSelectedCategory] = useState('생활용품');
 
-  const categories = [
-    { label: '식품' },
-    { label: '상수·음료' },
-    { label: '생활용품' },
-    { label: '문구류' },
-    { label: '화장품' },
-  ];
+  const MAX_TITLE = 40;
+  const MAX_DESC = 1500;
+  const MAX_LOC = 40;
 
-  const MAX_TEXT_TITLE = 40;
-  const MAX_TEXT_DESCRIPTION = 1500;
-  const MAX_LOCATION = 40;
+  const [title, onTitleChange] = useLimitedInput(MAX_TITLE);
+  const [explain, onExplainChange] = useLimitedInput(MAX_DESC);
+  const [location, onLocationChange] = useLimitedInput(MAX_LOC);
+  const { value: deadline, handleDateChange } = useFormattedDate();
+  const [price, setPrice] = useState('');
+  const [numPeople, setNumPeople] = useState('');
+  /*
+  const [chatRoomInfo, setChatRoomInfo] = useState({
+    chatRoomId: null,
+    chatRoomName: '',
+    currentParticipants: 0,
+    maxParticipants: 0,
+  });
+  */
+  const handleSubmit = async () => {
+    try {
+      const post = await createPost({
+        title,
+        description: explain,
+        price: Number(price),
+        deadline: new Date(deadline).toISOString(),
+        category: selectedCategory,
+        place: location,
+        numPeople: Number(numPeople),
+        maxParticipants: 5,
+        status: 'OPEN',
+      });
 
-  const [title, handlTITLEChange] = useLimitedInput(MAX_TEXT_TITLE);
-  const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT_DESCRIPTION);
-  const [location, handlelocationChange] = useLimitedInput(MAX_LOCATION);
-  const { value, handleDateChange } = useFormattedDate();
+      if (files.length > 0) {
+        await uploadPostImages(post.productId, files);
+      }
+
+      console.log('Chat Room ID:', post.chatRoomId);
+      console.log('Chat Room Name:', post.chatRoomName);
+      console.log('Current Participants:', post.currentParticipants);
+      console.log('Max Participants:', post.maxParticipants);
+      /*
+      setChatRoomInfo({
+        chatRoomId: post.chatRoomId,
+        chatRoomName: post.chatRoomName,
+        currentParticipants: post.currentParticipants,
+        maxParticipants: post.maxParticipants,
+      });
+      */
+      alert('게시글이 성공적으로 등록되었습니다.');
+    } catch (err) {
+      console.error('게시글 생성 오류:', err);
+      alert('등록에 실패했습니다.');
+    }
+  };
 
   return (
     <PostContainer>
@@ -34,10 +76,10 @@ const Post = () => {
         <ProductImageContainer>
           <ImageNameText>
             상품 이미지<RequiredStar>*</RequiredStar>
-            <CountText>({files.length} / 3)</CountText>
+            <CountText>({files.length}/3)</CountText>
           </ImageNameText>
           <ImageManagementContainer>
-            <ImageUploader previewSize={188} maxCount={3} onChange={setImages} />
+            <ImageUploader previewSize={188} maxCount={3} onChange={setFiles} />
             <ImageText>
               이미지는 1:1 비율로 보여지며, 첫 번째 업로드한 이미지가 대표로 사용됩니다.
             </ImageText>
@@ -49,30 +91,39 @@ const Post = () => {
           </ProductNameText>
           <ProductNameInput
             value={title}
-            onChange={handlTITLEChange}
+            onChange={onTitleChange}
             placeholder="상품명을 입력해 주세요."
           />
           <TitleCounter>
-            {title.length}/{MAX_TEXT_TITLE}
+            {title.length}/{MAX_TITLE}
           </TitleCounter>
         </ProductNameContainer>
         <ProductContainer>
-          <ProductNameText>카테고리</ProductNameText>
+          <ProductNameText>
+            카테고리<RequiredStar>*</RequiredStar>
+          </ProductNameText>
           <CategoryItemWrapper>
-            {categories.map((item, idx) => (
-              <CategoryTabItem key={idx} label={item.label} active={item.label === '생활용품'} />
+            {categories.map((cat) => (
+              <CategoryTabItem
+                key={cat}
+                label={cat}
+                active={cat === selectedCategory}
+                onClick={() => setSelectedCategory(cat)}
+              />
             ))}
           </CategoryItemWrapper>
         </ProductContainer>
         <ProductPlainContainer>
-          <ProductText>설명</ProductText>
+          <ProductText>
+            설명<RequiredStar>*</RequiredStar>
+          </ProductText>
           <ProductTextarea
             value={explain}
-            onChange={handlExplainChange}
+            onChange={onExplainChange}
             placeholder="내용을 입력해주세요."
           />
           <CharCount>
-            {explain.length}/{MAX_TEXT_DESCRIPTION}
+            {explain.length}/{MAX_DESC}
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
@@ -83,7 +134,12 @@ const Post = () => {
             가격<RequiredStar>*</RequiredStar>
           </ProductText>
           <InputWrapper>
-            <ProductInput placeholder="가격을 입력해주세요." />
+            <ProductInput
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="가격을 입력해 주세요."
+            />
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
@@ -92,7 +148,12 @@ const Post = () => {
             인원<RequiredStar>*</RequiredStar>
           </ProductText>
           <InputWrapper>
-            <ProductInput placeholder="인원을 엽력해주세요. (최대 5명)" />
+            <ProductInput
+              type="number"
+              value={numPeople}
+              onChange={(e) => setNumPeople(e.target.value)}
+              placeholder="인원을 입력해 주세요."
+            />
             <InputText>명</InputText>
           </InputWrapper>
         </ProductContainer>
@@ -103,9 +164,9 @@ const Post = () => {
           <InputWrapper>
             <ProductInput
               type="text"
-              placeholder="YYYY / MM / DD"
-              value={value}
+              value={deadline}
               onChange={handleDateChange}
+              placeholder="YYYY / MM / DD"
             />
           </InputWrapper>
         </ProductContainer>
@@ -116,19 +177,20 @@ const Post = () => {
           <LocationInputWrapper>
             <ProductInput
               value={location}
-              onChange={handlelocationChange}
+              onChange={onLocationChange}
               placeholder="거래할 위치를 입력해 주세요."
             />
             <Counter>
-              {location.length}/{MAX_LOCATION}
+              {location.length}/{MAX_LOC}
             </Counter>
           </LocationInputWrapper>
         </ProductContainer>
       </PostBody>
-      <RegisterButton>등록하기</RegisterButton>
+      <RegisterButton onClick={handleSubmit}>등록하기</RegisterButton>
     </PostContainer>
   );
 };
+
 export default Post;
 
 const PostContainer = styled(Container)`

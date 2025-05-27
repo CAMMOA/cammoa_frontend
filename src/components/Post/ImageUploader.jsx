@@ -102,6 +102,6 @@ const RepresentativeImageText = styled.p`
 
 ImageUploader.propTypes = {
   previewSize: PropTypes.number,
-  maxCount:   PropTypes.number,
-  onChange:   PropTypes.func
+  maxCount: PropTypes.number,
+  onChange: PropTypes.func,
 };

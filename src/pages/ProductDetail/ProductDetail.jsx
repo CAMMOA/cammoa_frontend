@@ -31,10 +31,12 @@ const ProductDetail = () => {
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);
-          const images =
-            res.data.data.imageUrls && res.data.data.imageUrls.length > 0
-              ? res.data.data.imageUrls
-              : [];
+          let images = [];
+          if (res.data.data.imageUrls && res.data.data.imageUrls.length > 0) {
+            images = res.data.data.imageUrls;
+          } else if (res.data.data.imageUrl) {
+            images = [res.data.data.imageUrl];
+          }
           setImgList(images);
           setIsLoading(false);
         } else {
@@ -54,7 +56,7 @@ const ProductDetail = () => {
   return (
     <ProductDetailContainer>
       <DetailBody>
-        <ProductImage images={imgList} title={detail.title} />
+        <ProductImage images={imgList} title={detail?.title} />
         <ProductInfo detail={detail} />
       </DetailBody>
       <ProductExplainContainer>

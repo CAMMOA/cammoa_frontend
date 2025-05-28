@@ -4,17 +4,11 @@ import Item from '@components/Home/Items';
 import { Container } from '@components/shared/UIStyles';
 import SadIcon from '@assets/icons/sad-icon.svg?react';
 
-const SearchItem = ({ query, searchedResult }) => {
+const SearchItem = ({ searchedResult }) => {
   return (
     <>
       {searchedResult.length === 0 ? (
         <>
-          <SearchHeader>
-            <HeaderSubText>
-              <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 공동구매를 발견하지
-              못했어요.`
-            </HeaderSubText>
-          </SearchHeader>
           <NoresultContainer>
             <SadIcon />
             <NoresultTextContainer>
@@ -33,12 +27,6 @@ const SearchItem = ({ query, searchedResult }) => {
             console.log(item);
             return (
               <>
-                <SearchHeader>
-                  <HeaderSubText>
-                    <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 공동구매들을
-                    발견했어요!`
-                  </HeaderSubText>
-                </SearchHeader>
                 <Item
                   key={item.productId}
                   title={item.title}
@@ -68,23 +56,8 @@ SearchItem.propTypes = {
 
 export default SearchItem;
 
-const SearchHeader = styled(Container)`
-  width: 1065px;
-  padding: 5px 0;
-  margin-bottom: 45px;
-
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-`;
-
-const HeaderSubText = styled.p`
-  color: #333;
-  ${({ theme }) => theme.fontStyles.Body6};
-  font-weight: 500;
-  line-height: 201%;
-`;
-
 const NoresultContainer = styled(Container)`
+  margin-top: 45px;
   padding; 60px 0;
   gap: 30px;
 `;
@@ -99,16 +72,13 @@ const MainText = styled.p``;
 const SubTextContainer = styled(Container)`
   width: fit-content;
   gap: 15px;
-
   align-items: flex-start;
 `;
 const SubText = styled.p``;
 
 const SearchItemContainer = styled(Container)`
   width: 1065px;
-
   flex-direction: row;
-
   flex-wrap: wrap;
 
   row-gap: 10px;

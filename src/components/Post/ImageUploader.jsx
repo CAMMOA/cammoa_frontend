@@ -13,14 +13,35 @@ export default function ImageUploader({ previewSize = 188, maxCount = 3, onChang
   };
 
   const handleFilesChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, maxCount);
-    const newPreviews = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
-    setPreviews(newPreviews);
-    onChange?.(newPreviews.map((p) => p.file));
+    const files = Array.from(e.target.files);
+    let updated = [];
+
+    if (previews.length < maxCount) {
+      const slots = maxCount - previews.length;
+      const toAdd = files.slice(0, slots).map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+      }));
+      updated = [...previews, ...toAdd];
+    } else {
+      const toAdd = files.slice(0, maxCount).map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+      }));
+      updated = toAdd;
+    }
+
+    setPreviews(updated);
+    onChange?.(updated.map((p) => p.file));
     e.target.value = '';
   };
 
-  useEffect(() => () => previews.forEach((p) => URL.revokeObjectURL(p.url)), [previews]);
+  useEffect(
+    () => () => {
+      previews.forEach((p) => URL.revokeObjectURL(p.url));
+    },
+    [previews]
+  );
 
   return (
     <ProductImageContainer>
@@ -62,7 +83,7 @@ const UploadImage = styled(Container)`
   height: ${({ size }) => size}px;
   background: #fafafa;
   border: 1px solid #b2b2b2;
-  padding: 69px 0px 55px 0px;
+  padding: 69px 0 55px;
   justify-content: center;
   cursor: pointer;
   gap: 15px;

@@ -9,63 +9,87 @@ import ImageUploader from '@components/Post/ImageUploader';
 import { uploadPostImages } from '@api/post/images';
 import { createPost } from '@api/post/posts';
 
-const Post = () => {
+const categories = [
+  { label: '식품', code: 'FOOD' },
+  { label: '생수·음료', code: 'WATER_DRINK' },
+  { label: '생활용품', code: 'LIVING' },
+  { label: '문구류', code: 'STATIONERY' },
+  { label: '화장품', code: 'BEAUTY' },
+];
+
+export default function Post() {
   const [files, setFiles] = useState([]);
-  const categories = ['식품', '상수·음료', '생활용품', '문구류', '화장품'];
-  const [selectedCategory, setSelectedCategory] = useState('생활용품');
+  const [selectedCategory, setSelectedCategory] = useState(categories[2].label);
 
   const MAX_TITLE = 40;
   const MAX_DESC = 1500;
   const MAX_LOC = 40;
 
   const [title, onTitleChange] = useLimitedInput(MAX_TITLE);
-  const [explain, onExplainChange] = useLimitedInput(MAX_DESC);
-  const [location, onLocationChange] = useLimitedInput(MAX_LOC);
-  const { value: deadline, handleDateChange } = useFormattedDate();
+  const [description, onDescriptionChange] = useLimitedInput(MAX_DESC);
+  const [place, onPlaceChange] = useLimitedInput(MAX_LOC);
+  const { value: dateValue, handleDateChange } = useFormattedDate();
   const [price, setPrice] = useState('');
-  const [numPeople, setNumPeople] = useState('');
-  /*
-  const [chatRoomInfo, setChatRoomInfo] = useState({
-    chatRoomId: null,
-    chatRoomName: '',
-    currentParticipants: 0,
-    maxParticipants: 0,
-  });
-  */
+  const [people, setPeople] = useState('');
+
   const handleSubmit = async () => {
+    if (!title || !description || !price || !dateValue || !people || !place) {
+      alert('모든 필수 항목을 입력해 주세요.');
+      return;
+    }
+    const maxParticipants = Number(people);
+    if (isNaN(maxParticipants) || maxParticipants < 2) {
+      alert('인원은 2명 이상으로 입력해 주세요.');
+      return;
+    }
+
+    const formattedDeadline = dateValue.replace(/\s*\/\s*/g, '-') + 'T23:59:59';
+    const categoryCode = categories.find((c) => c.label === selectedCategory).code;
+
+    const payload = {
+      title,
+      description,
+      image: files.length ? URL.createObjectURL(files[0]) : 'temp',
+      price: Number(price),
+      deadline: formattedDeadline,
+      category: categoryCode,
+      place,
+      numPeople: 1,
+      maxParticipants,
+      status: 'OPEN',
+    };
+
+    console.log('▶ createPost payload:', payload);
+
     try {
-      const post = await createPost({
-        title,
-        description: explain,
-        price: Number(price),
-        deadline: new Date(deadline).toISOString(),
-        category: selectedCategory,
-        place: location,
-        numPeople: Number(numPeople),
-        maxParticipants: 5,
-        status: 'OPEN',
-      });
+      const result = await createPost(payload);
+      const postData = result.data;
+      console.log('▶ Post created:', postData);
 
       if (files.length > 0) {
-        await uploadPostImages(post.productId, files);
+        await uploadPostImages(postData.productId, files);
       }
 
-      console.log('Chat Room ID:', post.chatRoomId);
-      console.log('Chat Room Name:', post.chatRoomName);
-      console.log('Current Participants:', post.currentParticipants);
-      console.log('Max Participants:', post.maxParticipants);
-      /*
-      setChatRoomInfo({
-        chatRoomId: post.chatRoomId,
-        chatRoomName: post.chatRoomName,
-        currentParticipants: post.currentParticipants,
-        maxParticipants: post.maxParticipants,
-      });
-      */
+      console.log('Chat Room ID:', postData.chatRoomId);
+      console.log('Chat Room Name:', postData.chatRoomName);
+      console.log('Current Participants:', postData.currentParticipants);
+      console.log('Max Participants:', postData.maxParticipants);
+
       alert('게시글이 성공적으로 등록되었습니다.');
     } catch (err) {
-      console.error('게시글 생성 오류:', err);
-      alert('등록에 실패했습니다.');
+      console.error('서버 에러 응답:', err.response?.data);
+      const errCode = err.response?.data?.error;
+      if (errCode === 'INVALID_DEADLINE') {
+        alert('마감일은 현재보다 이후여야 합니다.');
+      } else if (errCode === 'INVALID_MAX_PARTICIPANTS') {
+        alert('최대 인원은 현재 인원보다 커야 합니다.');
+      } else if (errCode === 'INVALID_TOKEN') {
+        alert('로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.');
+      } else if (errCode === 'USER_NOT_FOUND') {
+        alert('사용자를 찾을 수 없습니다. 다시 로그인해주세요.');
+      } else {
+        alert(err.response?.data?.message || '등록에 실패했습니다.');
+      }
     }
   };
 
@@ -85,6 +109,7 @@ const Post = () => {
             </ImageText>
           </ImageManagementContainer>
         </ProductImageContainer>
+
         <ProductNameContainer>
           <ProductNameText>
             상품명<RequiredStar>*</RequiredStar>
@@ -98,6 +123,7 @@ const Post = () => {
             {title.length}/{MAX_TITLE}
           </TitleCounter>
         </ProductNameContainer>
+
         <ProductContainer>
           <ProductNameText>
             카테고리<RequiredStar>*</RequiredStar>
@@ -105,28 +131,30 @@ const Post = () => {
           <CategoryItemWrapper>
             {categories.map((cat) => (
               <CategoryTabItem
-                key={cat}
-                label={cat}
-                active={cat === selectedCategory}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.code}
+                label={cat.label}
+                active={cat.label === selectedCategory}
+                onClick={() => setSelectedCategory(cat.label)}
               />
             ))}
           </CategoryItemWrapper>
         </ProductContainer>
+
         <ProductPlainContainer>
           <ProductText>
             설명<RequiredStar>*</RequiredStar>
           </ProductText>
           <ProductTextarea
-            value={explain}
-            onChange={onExplainChange}
+            value={description}
+            onChange={onDescriptionChange}
             placeholder="내용을 입력해주세요."
           />
           <CharCount>
-            {explain.length}/{MAX_DESC}
+            {description.length}/{MAX_DESC}
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
+
       <PostHeader>공동구매 정보</PostHeader>
       <PostBody>
         <ProductContainer>
@@ -143,9 +171,15 @@ const Post = () => {
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
+
         <EstimatedPrice>
-              공동구매 예상 가격은 <Highlight>{price && numPeople ? Math.floor(price / numPeople).toLocaleString() : '0'}원</Highlight>이에요!
-            </EstimatedPrice>
+          공동구매 예상 가격은{' '}
+          <Highlight>
+            {price && people ? Math.floor(price / people).toLocaleString() : '0'}원
+          </Highlight>
+          이에요!
+        </EstimatedPrice>
+
         <ProductContainer>
           <ProductText>
             인원<RequiredStar>*</RequiredStar>
@@ -153,13 +187,14 @@ const Post = () => {
           <InputWrapper>
             <ProductInput
               type="number"
-              value={numPeople}
-              onChange={(e) => setNumPeople(e.target.value)}
+              value={people}
+              onChange={(e) => setPeople(e.target.value)}
               placeholder="인원을 입력해 주세요."
             />
             <InputText>명</InputText>
           </InputWrapper>
         </ProductContainer>
+
         <ProductContainer>
           <ProductText>
             기한<RequiredStar>*</RequiredStar>
@@ -167,34 +202,34 @@ const Post = () => {
           <InputWrapper>
             <ProductInput
               type="text"
-              value={deadline}
+              value={dateValue}
               onChange={handleDateChange}
               placeholder="YYYY / MM / DD"
             />
           </InputWrapper>
         </ProductContainer>
+
         <ProductContainer>
           <ProductText>
             위치<RequiredStar>*</RequiredStar>
           </ProductText>
           <LocationInputWrapper>
             <ProductInput
-              value={location}
-              onChange={onLocationChange}
+              value={place}
+              onChange={onPlaceChange}
               placeholder="거래할 위치를 입력해 주세요."
             />
             <Counter>
-              {location.length}/{MAX_LOC}
+              {place.length}/{MAX_LOC}
             </Counter>
           </LocationInputWrapper>
         </ProductContainer>
       </PostBody>
+
       <RegisterButton onClick={handleSubmit}>등록하기</RegisterButton>
     </PostContainer>
   );
-};
-
-export default Post;
+}
 
 const PostContainer = styled(Container)`
   margin-top: 20px;
@@ -220,13 +255,11 @@ const ProductImageContainer = styled(Container)`
   align-items: flex-start;
   gap: 24px;
 `;
-
 const ImageManagementContainer = styled(Container)`
   flex-direction: column;
   align-items: flex-start;
   gap: 15px;
 `;
-
 const RequiredStar = styled.span`
   position: relative;
   top: -2px;
@@ -234,7 +267,6 @@ const RequiredStar = styled.span`
   ${({ theme }) => theme.fontStyles.Body8};
   line-height: 142%;
 `;
-
 const ImageNameText = styled.p`
   width: 155px;
   color: #191919;
@@ -242,13 +274,11 @@ const ImageNameText = styled.p`
   line-height: 107%;
   letter-spacing: -0.5px;
 `;
-
 const CountText = styled.span`
   color: #999;
   ${({ theme }) => theme.fontStyles.Body7};
   padding-left: 25px;
 `;
-
 const ProductText = styled.p`
   width: 155px;
   color: #191919;
@@ -256,37 +286,31 @@ const ProductText = styled.p`
   line-height: 107%;
   letter-spacing: -0.5px;
 `;
-
 const ImageText = styled.p`
   color: #666;
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 107%;
 `;
-
 const ProductContainer = styled(Container)`
   width: 100%;
   padding: 32px 0;
-
   flex-direction: row;
   gap: 24px;
 `;
-
 const EstimatedPrice = styled.p`
   ${({ theme }) => theme.fontStyles.Body7};
-  width:100%;
-  margin-left:179px;
-  margin-top:-20px;
+  width: 100%;
+  margin-left: 179px;
+  margin-top: -20px;
   color: #666;
-  line-height:191%;
+  line-height: 191%;
 `;
 const Highlight = styled.span`
-  color: #3092FA
+  color: #3092fa;
 `;
-
 const ProductNameContainer = styled(ProductContainer)`
   position: relative;
 `;
-
 const TitleCounter = styled.span`
   position: absolute;
   right: 100px;
@@ -294,14 +318,12 @@ const TitleCounter = styled.span`
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 161%;
 `;
-
 const ProductNameText = styled(ProductText)`
   padding: 12px 0;
 `;
 const ProductNameInput = styled.input`
   width: 75%;
   padding: 16px;
-
   color: #333333;
   ${({ theme }) => theme.fontStyles.Body7};
   &::placeholder {
@@ -323,7 +345,6 @@ const ProductTextarea = styled.textarea`
   width: 75%;
   height: 165px;
   padding: 20px;
-
   resize: none;
   border: 2px solid #b2b2b2;
   color: #333333;
@@ -333,7 +354,6 @@ const ProductTextarea = styled.textarea`
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 161%;
 `;
-
 const CharCount = styled.span`
   position: absolute;
   bottom: 50px;

@@ -15,6 +15,7 @@ const CategoryTabItem = ({ label }) => {
     </Tab>
   );
 };
+
 CategoryTabItem.propTypes = {
   label: PropTypes.string.isRequired,
 };

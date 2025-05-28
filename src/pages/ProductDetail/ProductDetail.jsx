@@ -31,12 +31,10 @@ const ProductDetail = () => {
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);
-          let images = [];
-          if (res.data.data.imageUrls && res.data.data.imageUrls.length > 0) {
-            images = res.data.data.imageUrls;
-          } else if (res.data.data.imageUrl) {
-            images = [res.data.data.imageUrl];
-          }
+          const images =
+            Array.isArray(res.data.data.imageUrl) && res.data.data.imageUrl.length > 0
+              ? res.data.data.imageUrl
+              : [];
           setImgList(images);
           setIsLoading(false);
         } else {

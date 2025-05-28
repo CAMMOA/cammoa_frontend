@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { PageWrapper, Container } from '@components/shared/UIStyles';
+import { PageWrapper } from '@components/shared/UIStyles';
 import { useSearchParams } from 'react-router';
 import { useState, useEffect } from 'react';
-import { mockItems } from '@components/SearchItem/Mock/SearchItemData';
 import SearchItem from '@components/SearchItem/SearchItem';
+import api from '@api/api';
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,16 +12,24 @@ const SearchPage = () => {
   const [searchData, setSearchData] = useState([]);
 
   useEffect(() => {
-    if (!query) return;
+    const fetchSearchResults = async () => {
+      if (!query) return;
 
-    setSearchData(mockItems);
+      try {
+        const response = await api.get(`/api/posts/search`, {
+          params: { keyword: query },
+        });
+        console.log(response);
+        setSearchData(response.data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSearchResults();
   }, [query]);
 
   return (
     <SearchContainer>
-      <SearchHeader>
-        <HeaderSubText>공동구매들을 발견했어요!</HeaderSubText>
-      </SearchHeader>
       <SearchItem query={query} searchedResult={searchData} />
     </SearchContainer>
   );
@@ -32,19 +40,4 @@ export default SearchPage;
 const SearchContainer = styled(PageWrapper)`
   margin-top: 45px;
   gap: 45px;
-`;
-
-const SearchHeader = styled(Container)`
-  width: 1065px;
-  padding: 5px 0;
-
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-`;
-
-const HeaderSubText = styled.p`
-  color: #333;
-  ${({ theme }) => theme.fontStyles.Body6};
-  font-weight: 500;
-  line-height: 201%;
 `;

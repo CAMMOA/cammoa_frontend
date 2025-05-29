@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import ProductImage from '@components/ProductDetail/ProductImage';
 import ProductInfo from '@components/ProductDetail/ProductInfo';
-
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://15.165.99.110:8080';
+import api from '@api/api';
 
 const ProductDetail = () => {
   const { post_id } = useParams();
@@ -19,15 +17,8 @@ const ProductDetail = () => {
     if (!post_id) return;
     setIsLoading(true);
     setHasError(false);
-
-    const token = localStorage.getItem('accessToken');
-
-    axios
-      .get(`${API_URL}/api/posts/${post_id}`, {
-        headers: {
-          Authorization: token ? `Bearer ${token}` : undefined,
-        },
-      })
+    api
+      .get(`/api/posts/${post_id}`)
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);

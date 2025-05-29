@@ -2,10 +2,8 @@ import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
 import BannerIcon from '@assets/icons/png/banner.png';
 import Items from '@components/Home/Items';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://15.165.99.110:8080';
+import api from '@api/api';
 
 const Home = () => {
   const [recommendPosts, setRecommendPosts] = useState([]);
@@ -14,18 +12,18 @@ const Home = () => {
 
   useEffect(() => {
     // 추천순
-    axios
-      .get(`${API_URL}/api/posts/recommend`)
+    api
+      .get(`/api/posts/recommend`)
       .then((res) => setRecommendPosts(res.data.data || []))
       .catch(() => setRecommendPosts([]));
     // 마감순
-    axios
-      .get(`${API_URL}/api/posts/closing-soon`)
+    api
+      .get(`/api/posts/closing-soon`)
       .then((res) => setClosingPosts(res.data.data || []))
       .catch(() => setClosingPosts([]));
     // 최신순
-    axios
-      .get(`${API_URL}/api/posts/recent`)
+    api
+      .get(`/api/posts/recent`)
       .then((res) => setRecentPosts(res.data.data || []))
       .catch(() => setRecentPosts([]));
   }, []);

@@ -7,7 +7,7 @@ const FALLBACK_IMAGE =
   'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
 
 // D-day 계산 함수
-function getDday(deadline) {
+export function getDday(deadline) {
   if (!deadline) return null;
 
   const now = new Date();

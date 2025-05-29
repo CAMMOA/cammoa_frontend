@@ -28,10 +28,13 @@ const SearchItem = ({ searchedResult }) => {
             return (
               <>
                 <Item
+                  id={item.id}
                   key={item.productId}
                   title={item.title}
                   price={item.price}
                   imageUrl={item.imageUrl}
+                  deadline={item.deadline}
+                  maxParticipants={item.maxParticipants}
                 />
               </>
             );

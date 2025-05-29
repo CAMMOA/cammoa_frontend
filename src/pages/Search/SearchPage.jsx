@@ -8,7 +8,7 @@ import api from '@api/api';
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
-
+  const type = searchParams.get('type') || 'keyword';
   const [searchData, setSearchData] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const SearchPage = () => {
 
       try {
         const response = await api.get(`/api/posts/search`, {
-          params: { keyword: query },
+          params: type === 'category' ? { category: query } : { keyword: query },
         });
         console.log(response);
         setSearchData(response.data.data);
@@ -26,7 +26,7 @@ const SearchPage = () => {
       }
     };
     fetchSearchResults();
-  }, [query]);
+  }, [query, type]);
 
   return (
     <SearchContainer>

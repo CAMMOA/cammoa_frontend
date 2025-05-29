@@ -5,22 +5,29 @@ import DrinkIcon from '@assets/icons/category/drink-icon.svg?react';
 import HouseholdIcon from '@assets/icons/category/household-icon.svg?react';
 import StationeryIcon from '@assets/icons/category/stationery-icon.svg?react';
 import CosmecticIcon from '@assets/icons/category/cosmectic-icon.svg?react';
+import { useNavigate } from 'react-router';
 
 const categories = [
-  { icon: FoodIcon, label: '식품' },
-  { icon: DrinkIcon, label: '생수 · 음료' },
-  { icon: HouseholdIcon, label: '생활용품' },
-  { icon: StationeryIcon, label: '문구류' },
-  { icon: CosmecticIcon, label: '화장품' },
+  { icon: FoodIcon, label: '식품', code: 'FOOD' },
+  { icon: DrinkIcon, label: '생수 · 음료', code: 'WATER_DRINK' },
+  { icon: HouseholdIcon, label: '생활용품', code: 'LIVING' },
+  { icon: StationeryIcon, label: '문구류', code: 'STATIONERY' },
+  { icon: CosmecticIcon, label: '화장품', code: 'BEAUTY' },
 ];
 
 const UserMenuDropdown = () => {
+  const navigate = useNavigate();
+
+  const handleClick = (code) => {
+    navigate(`/search?query=${code}&type=category`);
+  };
+
   return (
     <CategoryModal>
       {categories.map((category, index) => {
         const Icon = category.icon;
         return (
-          <CategoryItem key={index}>
+          <CategoryItem key={index} onClick={() => handleClick(category.code)}>
             <Icon />
             <CategoryText>{category.label}</CategoryText>
           </CategoryItem>

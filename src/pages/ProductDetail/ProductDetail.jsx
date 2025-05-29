@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import ProductImage from '@components/ProductDetail/ProductImage';
 import ProductInfo from '@components/ProductDetail/ProductInfo';
-
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://15.165.99.110:8080';
+import api from '@api/api';
 
 const ProductDetail = () => {
   const { post_id } = useParams();
@@ -19,15 +17,14 @@ const ProductDetail = () => {
     if (!post_id) return;
     setIsLoading(true);
     setHasError(false);
-
-    axios
-      .get(`${API_URL}/api/posts/${post_id}`)
+    api
+      .get(`/api/posts/${post_id}`)
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);
           const images =
-            res.data.data.imageUrls && res.data.data.imageUrls.length > 0
-              ? res.data.data.imageUrls
+            Array.isArray(res.data.data.imageUrl) && res.data.data.imageUrl.length > 0
+              ? res.data.data.imageUrl
               : [];
           setImgList(images);
           setIsLoading(false);
@@ -48,7 +45,7 @@ const ProductDetail = () => {
   return (
     <ProductDetailContainer>
       <DetailBody>
-        <ProductImage images={imgList} title={detail.title} />
+        <ProductImage images={imgList} title={detail?.title} />
         <ProductInfo detail={detail} />
       </DetailBody>
       <ProductExplainContainer>

@@ -35,7 +35,7 @@ const ProductInfoAndButtons = ({ detail }) => {
   const created = formatDate(detail.createdAt || detail.updatedAt);
   const deadline = formatDate(detail.deadline);
 
-  const isLoggedIn = !!localStorage.getItem('user');
+  const isLoggedIn = !!localStorage.getItem('accessToken');
   const handleParticipate = () => {
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');

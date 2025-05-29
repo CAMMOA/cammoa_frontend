@@ -1,28 +1,56 @@
 import styled from 'styled-components';
-import { PageWrapper, Container } from '@components/shared/UIStyles';
+import { Container, PageWrapper } from '@components/shared/UIStyles';
 import { useSearchParams } from 'react-router';
 import { useState, useEffect } from 'react';
-import { mockItems } from '@components/SearchItem/Mock/SearchItemData';
 import SearchItem from '@components/SearchItem/SearchItem';
+import api from '@api/api';
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
-
+  const type = searchParams.get('type') || 'keyword';
   const [searchData, setSearchData] = useState([]);
 
   useEffect(() => {
-    if (!query) return;
+    const fetchSearchResults = async () => {
+      if (!query) return;
 
-    setSearchData(mockItems);
-  }, [query]);
+      try {
+        const response = await api.get(`/api/posts/search`, {
+          params: type === 'category' ? { category: query } : { keyword: query },
+        });
+        console.log(response);
+        setSearchData(response.data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSearchResults();
+  }, [query, type]);
 
   return (
     <SearchContainer>
       <SearchHeader>
-        <HeaderSubText>공동구매들을 발견했어요!</HeaderSubText>
+        <HeaderSubText>
+          {searchData.length === 0 ? (
+            <>
+              <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 검색 결과가 없습니다.
+            </>
+          ) : (
+            <>
+              <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 공동구매들을
+              발견했어요!
+            </>
+          )}
+        </HeaderSubText>
       </SearchHeader>
-      <SearchItem query={query} searchedResult={searchData} />
+      {searchData.length > 0 && (
+        <ResultCountText>
+          진행중인 공동구매 총&nbsp;
+          <span style={{ color: '#3092FA' }}>{searchData.length}</span>건
+        </ResultCountText>
+      )}
+      <SearchItem searchedResult={searchData} />
     </SearchContainer>
   );
 };
@@ -47,4 +75,15 @@ const HeaderSubText = styled.p`
   ${({ theme }) => theme.fontStyles.Body6};
   font-weight: 500;
   line-height: 201%;
+`;
+
+const ResultCountText = styled(HeaderSubText)`
+  width: 100%;
+  height: 32.2px;
+  margin-bottom: -40px;
+
+  font-size: 14px
+  line-height:230%;
+  letter-spacing: -0.26px;
+
 `;

@@ -29,9 +29,9 @@ const Post = () => {
   const [images, setImages] = useState([]);
   const deadline = value.replace(/\s*\/\s*/g, '-') + 'T23:59:59';
 
-  const handleImageChange = fileList => {
-  const newFiles = Array.from(fileList);
-    setImages(prev => {
+  const handleImageChange = (fileList) => {
+    const newFiles = Array.from(fileList);
+    setImages((prev) => {
       const combined = [...prev, ...newFiles];
       return combined.length > 3 ? newFiles : combined;
     });
@@ -58,16 +58,12 @@ const Post = () => {
         status: 'OPEN',
       };
 
-      const postRes = await axios.post(
-        'http://15.165.99.110:8080/api/posts',
-        requestBody,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const postRes = await axios.post('http://15.165.99.110:8080/api/posts', requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       const productId = postRes.data.data.productId;
 
@@ -109,29 +105,35 @@ const Post = () => {
 
   const convertCategoryToEnum = (label) => {
     switch (label) {
-      case '식품': return 'FOOD';
-      case '생수·음료': return 'WATER_DRINK';
-      case '생활용품': return 'LIVING';
-      case '문구류': return 'STATIONERY';
-      case '화장품': return 'BEAUTY';
-      default: return 'LIVING';
+      case '식품':
+        return 'FOOD';
+      case '생수·음료':
+        return 'WATER_DRINK';
+      case '생활용품':
+        return 'LIVING';
+      case '문구류':
+        return 'STATIONERY';
+      case '화장품':
+        return 'BEAUTY';
+      default:
+        return 'LIVING';
     }
   };
-
 
   return (
     <PostContainer>
       <PostHeader>상품 설명</PostHeader>
       <PostBody>
         <ProductImageContainer>
-          <ProductText>상품 이미지</ProductText>
-            <ImageUpload
-              images={images}
-              onAddImage={files => handleImageChange(files)}
-            />
+          <ProductText>
+            상품 이미지<RequiredStar>*</RequiredStar>
+          </ProductText>
+          <ImageUpload images={images} onAddImage={(files) => handleImageChange(files)} />
         </ProductImageContainer>
         <ProductContainer>
-          <ProductNameText>게시글 제목</ProductNameText>
+          <ProductNameText>
+            게시글 제목<RequiredStar>*</RequiredStar>
+          </ProductNameText>
           <ProductNameInput
             placeholder="상품명을 입력해 주세요."
             value={title}
@@ -160,14 +162,18 @@ const Post = () => {
             onChange={handlExplainChange}
             placeholder="내용을 입력해주세요."
           />
-          <CharCount>{explain.length}/{MAX_TEXT}</CharCount>
+          <CharCount>
+            {explain.length}/{MAX_TEXT}
+          </CharCount>
         </ProductPlainContainer>
       </PostBody>
 
       <PostHeader>공동구매 정보</PostHeader>
       <PostBody>
         <ProductContainer>
-          <ProductText>가격</ProductText>
+          <ProductText>
+            가격<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               placeholder="가격을 입력해주세요."
@@ -179,7 +185,9 @@ const Post = () => {
         </ProductContainer>
 
         <ProductContainer>
-          <ProductText>인원</ProductText>
+          <ProductText>
+            인원<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               placeholder="인원을 입력해주세요. (최대 5명)"
@@ -191,7 +199,9 @@ const Post = () => {
         </ProductContainer>
 
         <ProductContainer>
-          <ProductText>기한</ProductText>
+          <ProductText>
+            기한<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               type="text"
@@ -203,14 +213,18 @@ const Post = () => {
         </ProductContainer>
 
         <ProductContainer>
-          <ProductText>위치</ProductText>
+          <ProductText>
+            위치<RequiredStar>*</RequiredStar>
+          </ProductText>
           <LocationInputWrapper>
             <ProductInput
               value={location}
               onChange={handlelocationChange}
               placeholder="거래할 위치를 입력해 주세요."
             />
-            <Counter>{location.length}/{MAX_LOCATION}</Counter>
+            <Counter>
+              {location.length}/{MAX_LOCATION}
+            </Counter>
           </LocationInputWrapper>
         </ProductContainer>
       </PostBody>
@@ -221,7 +235,6 @@ const Post = () => {
 };
 
 export default Post;
-
 
 const PostContainer = styled(Container)`
   margin-top: 20px;
@@ -249,6 +262,14 @@ const ProductImageContainer = styled(Container)`
   flex-direction: row;
   align-items: flex-start;
   gap: 24px;
+`;
+
+const RequiredStar = styled.span`
+  position: relative;
+  top: -2px;
+  color: #ee6a7b;
+  ${({ theme }) => theme.fontStyles.Body8};
+  line-height: 142%;
 `;
 
 const ProductText = styled.p`

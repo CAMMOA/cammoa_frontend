@@ -4,32 +4,43 @@ import LeftIcon from '@assets/icons/image_left.svg?react';
 import RightIcon from '@assets/icons/image_right.svg?react';
 import PropTypes from 'prop-types';
 
-const FALLBACK_IMAGES = [
-  'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510',
-  'https://shop-phinf.pstatic.net/20220422_214/1650588789863JwK9d_JPEG/51724573370488899_275771259.jpg?type=m510',
-  'https://shop-phinf.pstatic.net/20220428_121/16511356475725D8ES_JPEG/52271475307941281_252680570.jpg?type=m510',
-];
+const FALLBACK_IMAGE =
+  'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
 
 const ProductImageCarousel = ({ images = [], title }) => {
+  const initialImages = images && images.length > 0 ? images : [FALLBACK_IMAGE];
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const displayImages = images.length > 0 ? images : FALLBACK_IMAGES;
+  const [imgSrc, setImgSrc] = useState(initialImages[0]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
+    const validImages = images && images.length > 0 ? images : [FALLBACK_IMAGE];
     setCurrentIndex(0);
+    setImgSrc(validImages[0]);
+    setError(false);
   }, [images]);
 
-  const handleImgError = (e) => {
-    if (!FALLBACK_IMAGES.includes(e.target.src)) {
-      e.target.src = FALLBACK_IMAGES[0];
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setImgSrc(initialImages[currentIndex - 1]);
+      setError(false);
     }
   };
 
-  const handlePrev = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
-  };
   const handleNext = () => {
-    if (currentIndex < displayImages.length - 1) setCurrentIndex(currentIndex + 1);
+    if (currentIndex < initialImages.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setImgSrc(initialImages[currentIndex + 1]);
+      setError(false);
+    }
+  };
+
+  const handleImgError = (e) => {
+    if (!error && e.currentTarget.src !== FALLBACK_IMAGE) {
+      setImgSrc(FALLBACK_IMAGE);
+      setError(true);
+    }
   };
 
   return (
@@ -42,12 +53,12 @@ const ProductImageCarousel = ({ images = [], title }) => {
       >
         <LeftIcon width={26} height={28} />
       </NavButton>
-      <ProductImage src={displayImages[currentIndex]} alt={title} onError={handleImgError} />
+      <ProductImage src={imgSrc} alt={title} onError={handleImgError} />
       <NavButton
         $right
-        disabled={currentIndex === displayImages.length - 1}
+        disabled={currentIndex === initialImages.length - 1}
         onClick={handleNext}
-        style={{ opacity: currentIndex === displayImages.length - 1 ? 0.5 : 1 }}
+        style={{ opacity: currentIndex === initialImages.length - 1 ? 0.5 : 1 }}
       >
         <RightIcon width={26} height={28} />
       </NavButton>

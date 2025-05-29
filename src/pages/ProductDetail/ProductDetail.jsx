@@ -20,14 +20,20 @@ const ProductDetail = () => {
     setIsLoading(true);
     setHasError(false);
 
+    const token = localStorage.getItem('accessToken');
+
     axios
-      .get(`${API_URL}/api/posts/${post_id}`)
+      .get(`${API_URL}/api/posts/${post_id}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      })
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);
           const images =
-            res.data.data.imageUrls && res.data.data.imageUrls.length > 0
-              ? res.data.data.imageUrls
+            Array.isArray(res.data.data.imageUrl) && res.data.data.imageUrl.length > 0
+              ? res.data.data.imageUrl
               : [];
           setImgList(images);
           setIsLoading(false);
@@ -48,7 +54,7 @@ const ProductDetail = () => {
   return (
     <ProductDetailContainer>
       <DetailBody>
-        <ProductImage images={imgList} title={detail.title} />
+        <ProductImage images={imgList} title={detail?.title} />
         <ProductInfo detail={detail} />
       </DetailBody>
       <ProductExplainContainer>

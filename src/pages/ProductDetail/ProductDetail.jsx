@@ -6,8 +6,6 @@ import ProductImage from '@components/ProductDetail/ProductImage';
 import ProductInfo from '@components/ProductDetail/ProductInfo';
 import api from '@api/api';
 
-const API_URL = import.meta.env.VITE_APP_API_URL || 'http://15.165.99.110:8080';
-
 const ProductDetail = () => {
   const { post_id } = useParams();
   const [detail, setDetail] = useState(null);
@@ -21,7 +19,7 @@ const ProductDetail = () => {
     setHasError(false);
 
     api
-      .get(`${API_URL}/api/posts/${post_id}`)
+      .get(`/api/posts/${post_id}`)
       .then((res) => {
         if (res.data.status === 'OK' && res.data.data) {
           setDetail(res.data.data);

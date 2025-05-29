@@ -17,7 +17,6 @@ const ProductDetail = () => {
     if (!post_id) return;
     setIsLoading(true);
     setHasError(false);
-
     api
       .get(`/api/posts/${post_id}`)
       .then((res) => {

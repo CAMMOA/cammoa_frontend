@@ -20,12 +20,12 @@ const Header = () => {
         <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
       </AccountArea>
       <MainHeader>
-        <Logo onClick={() => navigate('/')}></Logo>
+        <Logo onClick={() => (window.location.href = '/')}></Logo>
         <SearchBar></SearchBar>
         <FeaturePanel>
           <FeatureText onClick={() => navigate('/post')}>공구 올리기</FeatureText>
           <Divider></Divider>
-          <FeatureText>마이 페이지</FeatureText>
+          <FeatureText onClick={() => navigate('/mypage')}>마이 페이지</FeatureText>
           <Divider></Divider>
           <FeatureText>모아톡</FeatureText>
         </FeaturePanel>

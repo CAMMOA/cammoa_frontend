@@ -13,17 +13,17 @@ const Home = () => {
   useEffect(() => {
     // 추천순
     api
-      .get('/api/posts/recommend')
+      .get(`/api/posts/recommend`)
       .then((res) => setRecommendPosts(res.data.data || []))
       .catch(() => setRecommendPosts([]));
     // 마감순
     api
-      .get('/api/posts/closing-soon')
+      .get(`/api/posts/closing-soon`)
       .then((res) => setClosingPosts(res.data.data || []))
       .catch(() => setClosingPosts([]));
     // 최신순
     api
-      .get('/api/posts/recent')
+      .get(`/api/posts/recent`)
       .then((res) => setRecentPosts(res.data.data || []))
       .catch(() => setRecentPosts([]));
   }, []);

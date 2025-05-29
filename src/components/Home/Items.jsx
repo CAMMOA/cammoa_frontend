@@ -1,11 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import JoinIcon from '@assets/icons/join-icon.svg?react';
 import PropTypes from 'prop-types';
+
 const FALLBACK_IMAGE =
   'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
 
 // D-day 계산 함수
-function getDday(deadline) {
+export function getDday(deadline) {
   if (!deadline) return null;
 
   const now = new Date();
@@ -19,8 +21,13 @@ function getDday(deadline) {
   return null;
 }
 
-const Items = ({ imageUrl, title, price, deadline }) => {
+const Items = ({ id, imageUrl, title, price, deadline, maxParticipants }) => {
   const dday = getDday(deadline);
+  const navigate = useNavigate();
+
+  const unitPrice = maxParticipants
+    ? Math.round(price / maxParticipants).toLocaleString()
+    : price.toLocaleString();
 
   return (
     <ItemsContainer>
@@ -36,29 +43,31 @@ const Items = ({ imageUrl, title, price, deadline }) => {
         />
         {dday && <DdayOverlay>{dday}</DdayOverlay>}
       </ImageWrapper>
-      <JoinButton>
+      <JoinButton onClick={() => navigate(`/detail/${id}`)}>
         <JoinIcon />
         참여하기
       </JoinButton>
       <ItemInformation>
         <ItemTitle>{title}</ItemTitle>
-        <ItemPrice>{price}원</ItemPrice>
+        <ItemPrice>{unitPrice}원 ~</ItemPrice>
       </ItemInformation>
     </ItemsContainer>
   );
 };
 
 Items.propTypes = {
+  id: PropTypes.number.isRequired,
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  deadline: PropTypes.string,
+  deadline: PropTypes.string.isRequired,
+  maxParticipants: PropTypes.number.isRequired,
 };
 
 export default Items;
 
 const ItemsContainer = styled.div`
-  width: 245px;
+  width: 230px;
   margin-right: 23px;
   margin-bottom: 40px;
 

@@ -1,32 +1,134 @@
-import { useState } from 'react';
+// ✅ MyPage.jsx (디버깅 로그 포함)
+
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import UserProfile from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
+import axios from 'axios';
+
+const API_URL = 'http://15.165.99.110:8080';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
-
+  const [userId, setUserId] = useState(null);
+  const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+  const [hostedItems, setHostedItems] = useState([]);
+  const [joinedItems, setJoinedItems] = useState([]);
 
-  const handleChangePassword = () => {
+  // 사용자 정보 조회
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.log('⛔ accessToken 없음');
+      return;
+    }
+
+    axios
+      .get(`${API_URL}/api/auth/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log('👤 사용자 정보 응답:', res.data);
+        if (res.data.status === 'OK') {
+          setUserId(res.data.data.userId);
+          setEmail(res.data.data.email);
+        }
+      })
+      .catch((err) => console.error('❌ 사용자 정보 조회 실패:', err));
+  }, []);
+
+  // 주최/참여한 공동구매 목록 조회
+  useEffect(() => {
+    console.log('📢 userId 바뀜:', userId);
+    if (!userId) return;
+
+    const token = localStorage.getItem('accessToken');
+
+    axios
+      .get(`${API_URL}/api/auth/users/${userId}/group-buyings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log('✅ 주최한 공구 응답:', res.data);
+        console.log('✅ 주최한 개수:', res.data.data?.length);
+        setHostedItems(res.data.data);
+      })
+      .catch((err) => {
+        console.error('❌ 주최한 공구 에러:', err.response?.status, err.response?.data);
+      });
+
+    axios
+      .get(`${API_URL}/api/auth/users/${userId}/participated-group-buyings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log('✅ 참여한 공구 응답:', res.data);
+        console.log('✅ 참여한 개수:', res.data.data?.length);
+        setJoinedItems(res.data.data);
+      })
+      .catch((err) => {
+        console.error('❌ 참여한 공구 에러:', err.response?.status, err.response?.data);
+      });
+  }, [userId]);
+
+  const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setPasswordMessage('❌ 새 비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    setPasswordMessage('✅ 비밀번호가 성공적으로 변경되었습니다.');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.post(
+        `${API_URL}/api/auth/users/change-password`,
+        { email, currentPassword, newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.status === 'OK') {
+        setPasswordMessage('✅ 비밀번호가 성공적으로 변경되었습니다.');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setPasswordMessage('❌ 비밀번호 변경에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('비밀번호 변경 실패:', error);
+      const msg = error.response?.data?.message || '서버 오류 발생';
+      setPasswordMessage(`❌ ${msg}`);
+    }
   };
 
   const handleWithdraw = async () => {
     if (!window.confirm('정말로 탈퇴하시겠습니까?')) return;
+    if (!userId) {
+      alert('사용자 정보가 없습니다.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.delete(`${API_URL}/api/auth/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.status === 'OK') {
+        alert('회원 탈퇴가 완료되었습니다.');
+        window.location.href = '/';
+      } else {
+        alert('회원 탈퇴에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('회원 탈퇴 실패:', error);
+      alert('서버 오류로 탈퇴에 실패했습니다.');
+    }
   };
 
   const handleEdit = (id) => console.log('edit', id);
@@ -42,7 +144,7 @@ const MyPage = () => {
             <UserProfile />
           </AvatarContainer>
           <Username>지나가는 감자</Username>
-          <Email>asdfasdf@hufs.ac.kr</Email>
+          <Email>{email}</Email>
         </ProfileSection>
 
         <PasswordSection>
@@ -78,8 +180,7 @@ const MyPage = () => {
 
           <ButtonRow>
             <ChangeButton type="button" onClick={handleChangePassword}>
-              <EditIcon />
-              변경하기
+              <EditIcon /> 변경하기
             </ChangeButton>
             <WithdrawButton type="button" onClick={handleWithdraw}>
               탈퇴하기
@@ -101,6 +202,7 @@ const MyPage = () => {
 
         <ProductItemList
           mode={tab}
+          items={tab === 'hosted' ? hostedItems : joinedItems}
           onEdit={handleEdit}
           onChat={handleChat}
           onDelete={handleDelete}
@@ -113,6 +215,7 @@ const MyPage = () => {
 
 export default MyPage;
 
+// ✅ 스타일 정의는 동일
 const MyPageContainer = styled(Container)`
   width: 1065px;
   padding-top: 55px;
@@ -122,7 +225,6 @@ const MyPageContainer = styled(Container)`
 const ProfileContainer = styled(Container)`
   width: 100%;
   height: 330px;
-
   flex-direction: row;
   align-items: stretch;
   gap: 30px;
@@ -230,7 +332,6 @@ const TabContainer = styled(Container)`
 const Tab = styled(Container)`
   width: fit-content;
   padding: 17px 60px;
-
   ${({ theme }) => theme.fontStyles.Body6};
   color: ${({ $active }) => ($active ? '#3092FA' : '#9CA3AF')};
   border-bottom: ${({ $active }) => ($active ? '2px solid #3092FA' : 'none')};

@@ -5,13 +5,28 @@ import { Container } from '@components/shared/UIStyles';
 import ChatIcon from '@assets/icons/chat-icon.svg?react';
 import TrashIcon from '@assets/icons/trash-icon.svg?react';
 
+// D-day 계산 함수
+const getDday = (deadline) => {
+  if (!deadline) return null;
+
+  const now = new Date();
+  const end = new Date(deadline);
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  const diff = Math.ceil((endDate - nowDate) / (1000 * 60 * 60 * 24));
+
+  if (diff === 0) return 'D - day';
+  if (diff > 0) return `D - ${diff}`;
+  return '마감됨';
+};
+
 export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCancel }) {
   return (
     <Items
       imageUrl={item.imageUrl}
       title={item.title}
-      deadLine={`D - ${item.deadLine}`}
-      detailText={`${item.price.toLocaleString()}원~`}
+      deadLine={getDday(item.deadline)}
+      detailText={item.price ? `${item.price.toLocaleString()}원~` : '가격 미정'}
     >
       <Actions mode={mode}>
         {mode === 'hosted' ? (
@@ -42,7 +57,7 @@ ProductItem.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     imageUrl: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    deadLine: PropTypes.number.isRequired,
+    deadline: PropTypes.string.isRequired,
     price: PropTypes.number,
     hostName: PropTypes.string,
   }).isRequired,

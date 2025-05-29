@@ -58,11 +58,11 @@ export default Login;
 
 const LoginContainer = styled(Container)`
   justify-content: center;
-  padding-top: 225px;
+  padding-top: 153px;
 `;
 
 const LoginForm = styled.form`
-  width: 440px;
+  width: 340px;
 
   display: flex;
   flex-direction: column;
@@ -73,12 +73,13 @@ const LoginForm = styled.form`
 const LoginTitle = styled.p`
   margin-bottom: 20px;
   text-algin: center;
-  ${({ theme }) => theme.fontStyles.Body2};
+  ${({ theme }) => theme.fontStyles.Body4};
+  font-size: 20px;
 `;
 
 const Input = styled.input`
-  height: 85px;
-  padding: 0px 20px;
+  height: 55px;
+  padding: 0px 16px;
 
   display: flex;
   flex-direction: column;
@@ -89,7 +90,7 @@ const Input = styled.input`
   border: 1px solid #ddd;
 
   color: #757575;
-  ${({ theme }) => theme.fontStyles.Body6};
+  ${({ theme }) => theme.fontStyles.Body7};
   font-weight: 700;
   letter-spacing: -0.6px;
 `;
@@ -106,22 +107,24 @@ const ButtonContainer = styled(Container)`
 `;
 
 const LoginButton = styled(ButtonStyle)`
-  height: 85px;
+  height: 55px;
   padding: 19px 10px;
 
   align-self: stretch;
-  ${({ theme }) => theme.fontStyles.Body4};
+  ${({ theme }) => theme.fontStyles.Body6};
+  font-weight: 700;
+  line-height: 100%;
 `;
 const SignUpButton = styled.button`
-  height: 85px;
-  padding: 19px 11px;
+  height: 55px;
+  padding: 19px 10px;
   border-radius: 3px;
   border: 1px solid #3092fa;
 
   align-self: stretch;
   color: #3092fa;
 
-  ${({ theme }) => theme.fontStyles.Body4};
+  ${({ theme }) => theme.fontStyles.Body6};
   font-weight: 700;
   line-height: 100%;
 `;

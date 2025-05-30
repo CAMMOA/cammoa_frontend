@@ -6,7 +6,7 @@ import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
 import { useState } from 'react';
 import ImageUpload from '@components/Post/ImageUpload';
-import { createPost, uploadPostImages, updatePostMainImage } from '@api/post/post';
+import { createPost, uploadPostImages, updatePostMainImage, deletePost } from '@api/post/post';
 
 const Post = () => {
   const categories = [
@@ -39,28 +39,29 @@ const Post = () => {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const requestBody = {
+      title,
+      description: explain,
+      category: convertCategoryToEnum(selectedCategory),
+      price: Number(price),
+      maxParticipants: Number(people),
+      numPeople: 1,
+      image: 'temp',
+      deadline,
+      place: location,
+      status: 'OPEN',
+    };
+
+    let productId = null;
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      const requestBody = {
-        title,
-        description: explain,
-        category: convertCategoryToEnum(selectedCategory),
-        price: Number(price),
-        maxParticipants: Number(people),
-        numPeople: 1,
-        image: 'temp',
-        deadline,
-        place: location,
-        status: 'OPEN',
-      };
-
       const postRes = await createPost(requestBody);
-      const productId = postRes.data.data.productId;
+      productId = postRes.data.data.productId;
 
       if (images.length > 0) {
         const formData = new FormData();
@@ -74,11 +75,24 @@ const Post = () => {
 
       alert('게시글이 성공적으로 등록되었습니다!');
     } catch (error) {
-      console.error('등록 실패:', error);
-      alert('게시글 등록에 실패했습니다.');
+      console.error('등록 중 에러:', error);
+
+      if (productId) {
+        try {
+          await deletePost(productId);
+          console.log(`롤백: post ${productId} 삭제 완료`);
+        } catch (delErr) {
+          console.error('롤백 삭제 실패:', delErr);
+        }
+      }
+
+      if (error.response?.status === 500) {
+        alert('이미지는 1MB 미만의 용량을 첨부해주세요.');
+      } else {
+        alert('게시글 등록에 실패했습니다.');
+      }
     }
   };
-
   const convertCategoryToEnum = (label) => {
     switch (label) {
       case '식품':

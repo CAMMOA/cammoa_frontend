@@ -9,3 +9,5 @@ export const uploadPostImages = (postId, formData) =>
 
 export const updatePostMainImage = (postId, imageUrl) =>
   api.patch(`/api/posts/${postId}`, { image: imageUrl });
+
+export const deletePost = (postId) => api.delete(`/api/posts/${postId}`);

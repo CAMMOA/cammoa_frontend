@@ -4,7 +4,7 @@ import Camera from '@assets/icons/image-icon.svg?react';
 import { Container } from '@components/shared/UIStyles';
 import PropTypes from 'prop-types';
 
-export default function ImageUpload({ images, onAddImage }) {
+export default function ImageUpload({ images, onAddImage, onRemoveImage }) {
   const inputRef = useRef();
 
   const handleClick = () => inputRef.current.click();
@@ -32,6 +32,7 @@ export default function ImageUpload({ images, onAddImage }) {
           {images.map((file, idx) => (
             <Preview key={idx}>
               <img src={URL.createObjectURL(file)} alt={`preview-${idx}`} />
+              <DeleteButton onClick={() => onRemoveImage(idx)}>×</DeleteButton>
               {idx === 0 && <RepresentativeImageText>대표 이미지</RepresentativeImageText>}
             </Preview>
           ))}
@@ -43,6 +44,12 @@ export default function ImageUpload({ images, onAddImage }) {
     </ImageUploadContainer>
   );
 }
+
+ImageUpload.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
+  onAddImage: PropTypes.func.isRequired,
+  onRemoveImage: PropTypes.func.isRequired,
+};
 
 const ImageUploadContainer = styled(Container)`
   gap: 15px;
@@ -93,6 +100,23 @@ const Preview = styled(Container)`
   }
 `;
 
+/* 삭제 버튼 스타일 */
+const DeleteButton = styled.button`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
 const RepresentativeImageText = styled.div`
   position: absolute;
   top: 8px;
@@ -114,8 +138,3 @@ const InfoText = styled.p`
 const ImageInput = styled.input`
   display: none;
 `;
-
-ImageUpload.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
-  onAddImage: PropTypes.func.isRequired,
-};

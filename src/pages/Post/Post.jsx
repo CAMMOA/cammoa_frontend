@@ -130,7 +130,11 @@ const Post = () => {
             상품 이미지<RequiredStar>*</RequiredStar>
             <ImageCountText>({images.length} / 3)</ImageCountText>
           </ProductText>
-          <ImageUpload images={images} onAddImage={(files) => handleImageChange(files)} />
+          <ImageUpload
+            images={images}
+            onAddImage={(files) => handleImageChange(files)}
+            onRemoveImage={(idx) => setImages(prev => prev.filter((_, i) => i !== idx))}
+          />
         </ProductImageContainer>
         <ProductContainer>
           <ProductNameText>
@@ -189,9 +193,13 @@ const Post = () => {
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
-          <EstimatedPrice>
-              공동구매 예상 가격은 <Highlight>{price && people ? Math.floor(price / people).toLocaleString() : '0'}원</Highlight>이에요!
-            </EstimatedPrice>
+        <EstimatedPrice>
+          공동구매 예상 가격은{' '}
+          <Highlight>
+            {price && people ? Math.floor(price / people).toLocaleString() : '0'}원
+          </Highlight>
+          이에요!
+        </EstimatedPrice>
         <ProductContainer>
           <ProductText>
             인원<RequiredStar>*</RequiredStar>
@@ -404,13 +412,13 @@ const RegisterButton = styled(ButtonStyle)`
 
 const EstimatedPrice = styled.p`
   ${({ theme }) => theme.fontStyles.Body7};
-  width:100%;
+  width: 100%;
   margin: -25px 0 30px 180px;
   color: #666;
-  line-height:191%;
+  line-height: 191%;
 `;
 
 const Highlight = styled.span`
-  color: #3092FA;
-  font-weight:700;
+  color: #3092fa;
+  font-weight: 700;
 `;

@@ -28,7 +28,7 @@ const SearchItem = ({ searchedResult }) => {
             return (
               <>
                 <Item
-                  id={item.id}
+                  id={item.productId}
                   key={item.productId}
                   title={item.title}
                   price={item.price}

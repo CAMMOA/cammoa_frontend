@@ -161,6 +161,9 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
+          {userFormData.password.length > 0 && userFormData.password.length < 8 && (
+            <ErrorMessage>최소 8자 이상 입력</ErrorMessage>
+          )}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -176,6 +179,10 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
+          {userFormData.confirmPassword.length > 0 &&
+            userFormData.confirmPassword !== userFormData.password && (
+              <ErrorMessage>동일한 비밀번호를 입력</ErrorMessage>
+            )}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -306,6 +313,15 @@ const Input = styled.input`
 
   color: #757575;
   ${({ theme }) => theme.fontStyles.Body6};
+  font-weight: 700;
+`;
+
+const ErrorMessage = styled.p`
+  width: 311px;
+  margin-top: -10px;
+
+  color: red;
+  font-size: 13px;
   font-weight: 700;
 `;
 

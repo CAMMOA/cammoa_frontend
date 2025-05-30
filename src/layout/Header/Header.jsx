@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Container } from '@components/shared/UIStyles';
 import LogoIcon from '@assets/icons/logo-icon.svg?react';
 import SearchBar from '@layout/SearchBar/SearchBar';
@@ -11,6 +11,17 @@ import { useNavigate } from 'react-router';
 const Header = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const navigate = useNavigate();
+  const categoryRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!categoryRef.current?.contains(e.target)) {
+        setIsCategoryOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <HeaderContainer>
@@ -30,7 +41,7 @@ const Header = () => {
           <FeatureText>모아톡</FeatureText>
         </FeaturePanel>
       </MainHeader>
-      <CategoryContainer>
+      <CategoryContainer ref={categoryRef}>
         <Category onClick={() => setIsCategoryOpen((o) => !o)}>
           <CategoryMarker />
           <CategoryText>카테고리</CategoryText>
@@ -61,7 +72,7 @@ const HeaderContainer = styled(Container)`
 `;
 
 const AccountArea = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   height: ${pxToRem(35)};
   padding: ${pxToRem(12)} ${pxToRem(5)};
   white-space: nowrap;
@@ -85,7 +96,7 @@ const Divider = styled.span`
 `;
 
 const MainHeader = styled(Container)`
-  width: 1075px;
+  width: 1050px;
   height: ${pxToRem(65)};
   padding: ${pxToRem(12)} 0;
 
@@ -122,7 +133,7 @@ const FeatureText = styled.p`
 `;
 
 const CategoryContainer = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   height: ${pxToRem(55)};
   white-space: nowrap;
   position: relative;

@@ -22,7 +22,7 @@ const SearchBar = () => {
         type="text"
         placeholder="검색어를 입력해주세요"
       />
-      <SearchButton type="submit"></SearchButton>
+      <SearchButton type="submit" onClick={handleSearch}></SearchButton>
     </SearchBarForm>
   );
 };
@@ -30,7 +30,7 @@ const SearchBar = () => {
 export default SearchBar;
 
 const SearchBarForm = styled.form`
-  width: ${pxToRem(470)};
+  width: 471px;
   height: ${pxToRem(65)};
   padding: ${pxToRem(12)} ${pxToRem(2)};
 

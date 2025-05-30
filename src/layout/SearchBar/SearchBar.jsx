@@ -22,7 +22,7 @@ const SearchBar = () => {
         type="text"
         placeholder="검색어를 입력해주세요"
       />
-      <SearchButton type="submit"></SearchButton>
+      <SearchButton type="submit" onClick={handleSearch}></SearchButton>
     </SearchBarForm>
   );
 };

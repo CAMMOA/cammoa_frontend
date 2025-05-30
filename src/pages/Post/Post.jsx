@@ -4,9 +4,9 @@ import CategoryTabItem from '@components/Post/categoryItem';
 import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
-import axios from 'axios';
 import { useState } from 'react';
 import ImageUpload from '@components/Post/ImageUpload';
+import { createPost, uploadPostImages, updatePostMainImage } from '@api/post/post';
 
 const Post = () => {
   const categories = [
@@ -59,42 +59,17 @@ const Post = () => {
         status: 'OPEN',
       };
 
-      const postRes = await axios.post('http://15.165.99.110:8080/api/posts', requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
+      const postRes = await createPost(requestBody);
       const productId = postRes.data.data.productId;
 
       if (images.length > 0) {
         const formData = new FormData();
         images.forEach((img) => formData.append('images', img));
 
-        const imageUploadRes = await axios.post(
-          `http://15.165.99.110:8080/api/posts/${productId}/images`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const imgRes = await uploadPostImages(productId, formData);
+        const uploadedUrls = imgRes.data.data;
 
-        const uploadedUrls = imageUploadRes.data.data;
-
-        await axios.patch(
-          `http://15.165.99.110:8080/api/posts/${productId}`,
-          { image: uploadedUrls[0] },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        await updatePostMainImage(productId, uploadedUrls[0]);
       }
 
       alert('게시글이 성공적으로 등록되었습니다!');
@@ -132,8 +107,8 @@ const Post = () => {
           </ProductText>
           <ImageUpload
             images={images}
-            onAddImage={(files) => handleImageChange(files)}
-            onRemoveImage={(idx) => setImages(prev => prev.filter((_, i) => i !== idx))}
+            onAddImage={handleImageChange}
+            onRemoveImage={(idx) => setImages((prev) => prev.filter((_, i) => i !== idx))}
           />
         </ProductImageContainer>
         <ProductContainer>

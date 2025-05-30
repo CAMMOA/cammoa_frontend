@@ -100,7 +100,6 @@ const Preview = styled(Container)`
   }
 `;
 
-/* 삭제 버튼 스타일 */
 const DeleteButton = styled.button`
   position: absolute;
   top: 4px;

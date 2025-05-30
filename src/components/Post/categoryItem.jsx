@@ -21,6 +21,9 @@ const Tab = styled.button`
   flex: 1;
   padding: 15.5px 0;
   border: 1px solid #b2b2b2;
+  &:not(:last-child) {
+    border-right: none;
+  }
   background-color: transparent;
   cursor: pointer;
 

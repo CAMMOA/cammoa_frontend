@@ -16,14 +16,15 @@ const Post = () => {
     { label: '문구류' },
     { label: '화장품' },
   ];
+  const MAX_TITLE = 40;
   const MAX_TEXT = 1500;
-  const MAX_LOCATION = 50;
+  const MAX_LOCATION = 40;
 
+  const [title, handleTitleChange] = useLimitedInput(MAX_TITLE);
   const [explain, handlExplainChange] = useLimitedInput(MAX_TEXT);
   const [location, handlelocationChange] = useLimitedInput(MAX_LOCATION);
   const { value, handleDateChange } = useFormattedDate();
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [people, setPeople] = useState('');
   const [images, setImages] = useState([]);
@@ -127,6 +128,7 @@ const Post = () => {
         <ProductImageContainer>
           <ProductText>
             상품 이미지<RequiredStar>*</RequiredStar>
+            <ImageCountText>({images.length} / 3)</ImageCountText>
           </ProductText>
           <ImageUpload images={images} onAddImage={(files) => handleImageChange(files)} />
         </ProductImageContainer>
@@ -134,13 +136,17 @@ const Post = () => {
           <ProductNameText>
             게시글 제목<RequiredStar>*</RequiredStar>
           </ProductNameText>
-          <ProductNameInput
-            placeholder="상품명을 입력해 주세요."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <TitleInputWrapper>
+            <ProductNameInput
+              placeholder="상품명을 입력해 주세요."
+              value={title}
+              onChange={handleTitleChange}
+            />
+            <TitleCountText>
+              {title.length}/{MAX_TITLE}
+            </TitleCountText>
+          </TitleInputWrapper>
         </ProductContainer>
-
         <ProductContainer>
           <ProductNameText>카테고리</ProductNameText>
           <CategoryItemWrapper>
@@ -183,7 +189,9 @@ const Post = () => {
             <InputText>원</InputText>
           </InputWrapper>
         </ProductContainer>
-
+          <EstimatedPrice>
+              공동구매 예상 가격은 <Highlight>{price && people ? Math.floor(price / people).toLocaleString() : '0'}원</Highlight>이에요!
+            </EstimatedPrice>
         <ProductContainer>
           <ProductText>
             인원<RequiredStar>*</RequiredStar>
@@ -264,6 +272,12 @@ const ProductImageContainer = styled(Container)`
   gap: 24px;
 `;
 
+const ImageCountText = styled.span`
+  ${({ theme }) => theme.fontStyles.Body7};
+  padding-left: 30px;
+  color: #666;
+`;
+
 const RequiredStar = styled.span`
   position: relative;
   top: -2px;
@@ -293,7 +307,7 @@ const ProductNameText = styled(ProductText)`
 `;
 
 const ProductNameInput = styled.input`
-  width: 75%;
+  width: 100%;
   padding: 16px;
 
   color: #333333;
@@ -303,6 +317,21 @@ const ProductNameInput = styled.input`
   }
   border-radius: 2px;
   border: 1px solid #b2b2b2;
+`;
+
+const TitleInputWrapper = styled.div`
+  position: relative;
+  width: 75%;
+`;
+
+const TitleCountText = styled.span`
+  ${({ theme }) => theme.fontStyles.Body7};
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  color: #8c8c8c;
+  ${({ theme }) => theme.fontStyles.Body7};
+  line-height: 161%;
 `;
 
 const CategoryItemWrapper = styled.div`
@@ -322,7 +351,8 @@ const ProductTextarea = styled.textarea`
   padding: 20px;
 
   resize: none;
-  border: 2px solid #b2b2b2;
+  border: 1px solid #b2b2b2;
+  border-radius: 2px;
   color: #333333;
   &::placeholder {
     color: #8c8c8c;
@@ -370,4 +400,17 @@ const RegisterButton = styled(ButtonStyle)`
   margin: 70px 0 50px 0;
   width: 240px;
   height: 56px;
+`;
+
+const EstimatedPrice = styled.p`
+  ${({ theme }) => theme.fontStyles.Body7};
+  width:100%;
+  margin: -25px 0 30px 180px;
+  color: #666;
+  line-height:191%;
+`;
+
+const Highlight = styled.span`
+  color: #3092FA;
+  font-weight:700;
 `;

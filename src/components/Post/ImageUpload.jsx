@@ -38,7 +38,7 @@ export default function ImageUpload({ images, onAddImage }) {
         </PreviewContainer>
       </ImageContainer>
       <InfoText>
-        이미지는 1:1 비율로 보여지며, 첫 번째로 업로드한 이미지가 대표 이미지로 사용됩니다.
+        이미지는 1:1 비율로 보여지며, 첫 번째로 업로드한 이미지가 대표 이미지로 사용됩니다 :)
       </InfoText>
     </ImageUploadContainer>
   );

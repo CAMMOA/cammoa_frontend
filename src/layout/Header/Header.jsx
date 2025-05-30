@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Container } from '@components/shared/UIStyles';
 import LogoIcon from '@assets/icons/logo-icon.svg?react';
 import SearchBar from '@layout/SearchBar/SearchBar';
@@ -11,6 +11,17 @@ import { useNavigate } from 'react-router';
 const Header = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const navigate = useNavigate();
+  const categoryRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!categoryRef.current?.contains(e.target)) {
+        setIsCategoryOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <HeaderContainer>
@@ -30,7 +41,7 @@ const Header = () => {
           <FeatureText>모아톡</FeatureText>
         </FeaturePanel>
       </MainHeader>
-      <CategoryContainer>
+      <CategoryContainer ref={categoryRef}>
         <Category onClick={() => setIsCategoryOpen((o) => !o)}>
           <CategoryMarker />
           <CategoryText>카테고리</CategoryText>

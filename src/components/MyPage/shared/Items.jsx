@@ -2,12 +2,12 @@ import { Container } from '@components/shared/UIStyles';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-export default function Items({ imageUrl, title, deadLine, detailText, children }) {
+export default function Items({ imageUrl, title, deadline, detailText, children, onClick }) {
   return (
     <ProductItemContainer>
-      <ProductImageContainer>
+      <ProductImageContainer onClick={onClick}>
         <img src={imageUrl} alt={title} />
-        <DeadLine $visible={!!deadLine}>{deadLine}</DeadLine>
+        <DeadLine $visible={!!deadline}>{deadline}</DeadLine>
       </ProductImageContainer>
       <ProductContentContainer>
         <Title>{title}</Title>
@@ -30,6 +30,7 @@ const ProductImageContainer = styled(Container)`
   position: relative;
   width: 100%;
   height: 222px;
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -73,7 +74,8 @@ const Price = styled.p`
 Items.propTypes = {
   imageUrl: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  deadLine: PropTypes.string,
+  deadline: PropTypes.string,
   detailText: PropTypes.string.isRequired,
   children: PropTypes.node,
+  onClick: PropTypes.func,
 };

@@ -1,5 +1,3 @@
-// ✅ MyPage.jsx (디버깅 로그 포함)
-
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
@@ -7,6 +5,7 @@ import UserProfile from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'http://15.165.99.110:8080';
 
@@ -20,8 +19,9 @@ const MyPage = () => {
   const [passwordMessage, setPasswordMessage] = useState('');
   const [hostedItems, setHostedItems] = useState([]);
   const [joinedItems, setJoinedItems] = useState([]);
+  const navigate = useNavigate();
+  const [nickname, setNickname] = useState('');
 
-  // 사용자 정보 조회
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -38,12 +38,12 @@ const MyPage = () => {
         if (res.data.status === 'OK') {
           setUserId(res.data.data.userId);
           setEmail(res.data.data.email);
+          setNickname(res.data.data.nickname);
         }
       })
       .catch((err) => console.error('❌ 사용자 정보 조회 실패:', err));
   }, []);
 
-  // 주최/참여한 공동구매 목록 조회
   useEffect(() => {
     console.log('📢 userId 바뀜:', userId);
     if (!userId) return;
@@ -106,8 +106,94 @@ const MyPage = () => {
     }
   };
 
-  const handleWithdraw = async () => {
-    if (!window.confirm('정말로 탈퇴하시겠습니까?')) return;
+  /* 회원탈퇴
+const handleWithdraw = async () => {
+  const confirmMsg =
+    '정말로 탈퇴하시겠습니까?\n' +
+    '탈퇴 시 회원 정보가 완전히 삭제되며 복구할 수 없습니다.';
+  if (!window.confirm(confirmMsg)) return;
+
+  if (hostedItems.length > 0 || joinedItems.length > 0) {
+    alert(
+      '모든 주최 및 참여 중인 공동구매를 삭제 또는 취소하신 후 탈퇴하실 수 있습니다.'
+    );
+    return;
+  }
+
+  if (!userId) {
+    alert('사용자 정보가 없습니다.');
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem('accessToken');
+    console.log('🔐 탈퇴 요청 페이로드:', { password: currentPassword });
+
+    const response = await axios.delete(
+      `${API_URL}/api/auth/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: { password: currentPassword },
+      }
+    );
+
+    if (response.data.status === 'OK') {
+      alert('회원 탈퇴가 완료되었습니다.');
+      localStorage.removeItem('accessToken');
+      navigate('/');
+    } else {
+      alert(`탈퇴 실패: ${response.data.message || '알 수 없는 오류'}`);
+    }
+  } catch (error) {
+    const errData = error.response?.data;
+    console.error('회원 탈퇴 실패 응답 바디:', errData);
+
+    const errStatus = errData?.status || errData?.errorEnum;
+    switch (errStatus) {
+      case 'INVALID_PASSWORD':
+        alert('비밀번호가 일치하지 않습니다.');
+        break;
+      case 'USER_NOT_FOUND':
+        alert('존재하지 않는 사용자입니다.');
+        break;
+      default:
+        alert(
+          '죄송합니다. 현재 탈퇴를 처리할 수 없는 상태입니다.\n' +
+          '잠시 후 다시 시도하시거나, 문제가 지속되면 고객센터에 문의해 주세요.'
+        );
+    }
+  }
+};
+*/
+
+  const handleDelete = async (postId) => {
+    if (!window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      await axios.delete(`${API_URL}/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert('게시글이 삭제되었습니다.');
+      setHostedItems((prev) => prev.filter((item) => item.productId !== postId));
+    } catch (error) {
+      const message = error.response?.data?.message;
+      const messageMap = {
+        'Cannot delete the post because other users have already joined':
+          '다른 참여자가 있어 게시글을 삭제할 수 없습니다.',
+        'Post not found': '게시글이 존재하지 않거나 이미 삭제되었습니다.',
+        'You do not have permission to access this post': '해당 게시글을 삭제할 권한이 없습니다.',
+      };
+      alert(messageMap[message] || message || '삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleCancel = async (postId) => {
+    if (!window.confirm('정말로 이 공구 참여를 취소하시겠습니까?')) return;
     if (!userId) {
       alert('사용자 정보가 없습니다.');
       return;
@@ -115,26 +201,23 @@ const MyPage = () => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await axios.delete(`${API_URL}/api/auth/users/${userId}`, {
+      await axios.delete(`${API_URL}/api/group-buyings/${postId}/participants/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.data.status === 'OK') {
-        alert('회원 탈퇴가 완료되었습니다.');
-        window.location.href = '/';
-      } else {
-        alert('회원 탈퇴에 실패했습니다.');
-      }
+      alert('참여가 취소되었습니다.');
+      setJoinedItems((prev) => prev.filter((item) => item.productId !== postId));
     } catch (error) {
-      console.error('회원 탈퇴 실패:', error);
-      alert('서버 오류로 탈퇴에 실패했습니다.');
+      console.error('❌ 참여 취소 실패:', error.response?.data);
+      alert(error.response?.data?.message || '참여 취소 중 오류가 발생했습니다.');
     }
   };
 
-  const handleEdit = (id) => console.log('edit', id);
+  const handleEdit = (postId) => {
+    navigate(`/edit/${postId}`);
+  };
+
   const handleChat = (id) => console.log('chat', id);
-  const handleDelete = (id) => console.log('delete', id);
-  const handleCancel = (id) => console.log('cancel', id);
 
   return (
     <MyPageContainer>
@@ -143,7 +226,7 @@ const MyPage = () => {
           <AvatarContainer>
             <UserProfile />
           </AvatarContainer>
-          <Username>지나가는 감자</Username>
+          <Username>{nickname}</Username>
           <Email>{email}</Email>
         </ProfileSection>
 
@@ -182,9 +265,7 @@ const MyPage = () => {
             <ChangeButton type="button" onClick={handleChangePassword}>
               <EditIcon /> 변경하기
             </ChangeButton>
-            <WithdrawButton type="button" onClick={handleWithdraw}>
-              탈퇴하기
-            </WithdrawButton>
+            <WithdrawButton type="button">탈퇴하기</WithdrawButton>
           </ButtonRow>
         </PasswordSection>
       </ProfileContainer>
@@ -215,7 +296,6 @@ const MyPage = () => {
 
 export default MyPage;
 
-// ✅ 스타일 정의는 동일
 const MyPageContainer = styled(Container)`
   width: 1065px;
   padding-top: 55px;

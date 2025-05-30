@@ -4,8 +4,8 @@ import Items from '@components/MyPage/shared/Items';
 import { Container } from '@components/shared/UIStyles';
 import ChatIcon from '@assets/icons/chat-icon.svg?react';
 import TrashIcon from '@assets/icons/trash-icon.svg?react';
+import { useNavigate } from 'react-router-dom';
 
-// D-day 계산 함수
 const getDday = (deadline) => {
   if (!deadline) return null;
 
@@ -21,12 +21,14 @@ const getDday = (deadline) => {
 };
 
 export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCancel }) {
+  const navigate = useNavigate();
   return (
     <Items
       imageUrl={item.imageUrl}
       title={item.title}
-      deadLine={getDday(item.deadline)}
+      deadline={getDday(item.deadline)}
       detailText={item.price ? `${item.price.toLocaleString()}원~` : '가격 미정'}
+      onClick={() => navigate(`/detail/${item.id}`)}
     >
       <Actions mode={mode}>
         {mode === 'hosted' ? (

@@ -20,8 +20,14 @@ export default function ProductItemList({ mode, items, onEdit, onChat, onDelete,
         <ListContainer>
           {items.map((item) => (
             <ProductItem
-              key={item.productId} // 백엔드 응답 기준
-              item={item}
+              key={item.productId}
+              item={{
+                id: item.productId,
+                imageUrl: item.imageUrl,
+                title: item.title,
+                price: item.price,
+                deadline: item.deadline,
+              }}
               mode={mode}
               onEdit={onEdit}
               onChat={onChat}
@@ -44,7 +50,6 @@ ProductItemList.propTypes = {
   onCancel: PropTypes.func,
 };
 
-// 스타일 정의는 동일
 const CountText = styled.div`
   ${({ theme }) => theme.fontStyles.Body6};
   margin-bottom: 30px;

@@ -241,11 +241,11 @@ export default function Signup() {
 }
 
 const SignupContainer = styled(Container)`
-  padding-top: 200px;
+  padding-top: 153px;
 `;
 
 const SignupFormContainer = styled(Container)`
-  width: 680px;
+  width: 640px;
   gap: 12px;
 `;
 const HeaderArea = styled(Header)`
@@ -293,7 +293,7 @@ const InputText = styled.p`
   width: 139px;
   padding: 12px 0;
   color: #333;
-  ${({ theme }) => theme.fontStyles.Body6};
+  ${({ theme }) => theme.fontStyles.Body7};
   font-weight: 700;
   line-height: 144%;
 `;

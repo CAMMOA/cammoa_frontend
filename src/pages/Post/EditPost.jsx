@@ -31,32 +31,26 @@ const EditPost = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [people, setPeople] = useState('');
-  const [images, setImages] = useState([]);
+  const [existingUrls, setExistingUrls] = useState([]);
+  const [newFiles, setNewFiles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('생활용품');
   const [location, handleLocationChange] = useLimitedInput(MAX_LOCATION);
   const [explain, handleExplainChange] = useLimitedInput(MAX_TEXT);
   const { value, setValue } = useFormattedDate();
 
   const handleImageChange = (e) => {
-    const newFiles = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...newFiles]);
+    const files = Array.from(e.target.files);
+    setNewFiles((prev) => [...prev, ...files]);
   };
 
   useEffect(() => {
-    console.log('🚀 useEffect 진입');
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        console.log('🛡 accessToken:', token);
-        console.log('📌 postId:', postId);
-
         const res = await axios.get(`${API_URL}/api/posts/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = res.data.data;
-        console.log('✅ 게시글 상세 응답:', data);
-
         setTitle(data.title);
         setPrice(data.price);
         setPeople(data.maxParticipants);
@@ -64,6 +58,7 @@ const EditPost = () => {
         setValue(data.deadline.slice(0, 10).replace(/-/g, ' / '));
         handleLocationChange({ target: { value: data.place } });
         handleExplainChange({ target: { value: data.description } });
+        setExistingUrls(data.imageUrl ? [data.imageUrl] : []);
       } catch (err) {
         console.error('❌ 게시글 상세 불러오기 실패:', err);
       }
@@ -94,25 +89,23 @@ const EditPost = () => {
         },
       });
 
-      if (images.length > 0) {
+      if (newFiles.length > 0) {
         const formData = new FormData();
-        images.forEach((img) => formData.append('images', img));
-
+        newFiles.forEach((file) => formData.append('images', file));
         const imageUploadRes = await axios.post(`${API_URL}/api/posts/${postId}/images`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
         });
-
         const uploadedUrls = imageUploadRes.data.data;
         await axios.patch(
           `${API_URL}/api/posts/${postId}`,
           { image: uploadedUrls[0] },
           {
             headers: {
-              'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -159,7 +152,7 @@ const EditPost = () => {
         return '생활용품';
     }
   };
-  
+
   return (
     <PostContainer>
       <PostHeader>상품 설명</PostHeader>
@@ -178,12 +171,17 @@ const EditPost = () => {
               />
               <ImageSubText>이미지 등록</ImageSubText>
             </Image>
-            <ImageText>
-              이미지는 1:1 비율로 보여지며, 첫 번째로 업로드한 이미지가 대표 이미지로 사용됩니다 :
-            </ImageText>
+            <ImageText>이미지는 1:1 비율로 보여집니다.</ImageText>
             <PreviewContainer>
-              {images.map((file, idx) => (
-                <PreviewImage key={idx} src={URL.createObjectURL(file)} alt={`preview-${idx}`} />
+              {existingUrls.map((url, idx) => (
+                <PreviewImage key={`url-${idx}`} src={url} alt={`preview-${idx}`} />
+              ))}
+              {newFiles.map((file, idx) => (
+                <PreviewImage
+                  key={`file-${idx}`}
+                  src={URL.createObjectURL(file)}
+                  alt={`preview-${idx}`}
+                />
               ))}
             </PreviewContainer>
           </ProductImage>

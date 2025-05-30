@@ -241,7 +241,7 @@ export default function Signup() {
 }
 
 const SignupContainer = styled(Container)`
-  padding-top: 153px;
+  padding: 153px 0 136px 0;
 `;
 
 const SignupFormContainer = styled(Container)`
@@ -340,6 +340,6 @@ const SubmitButton = styled(ButtonStyle)`
 
   width: 240px;
   height: 56px;
-  margin-top: 40px;
+  margin: 40px;
   border: none;
 `;

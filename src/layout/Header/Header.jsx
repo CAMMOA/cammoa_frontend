@@ -72,7 +72,7 @@ const HeaderContainer = styled(Container)`
 `;
 
 const AccountArea = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   height: ${pxToRem(35)};
   padding: ${pxToRem(12)} ${pxToRem(5)};
   white-space: nowrap;
@@ -96,7 +96,7 @@ const Divider = styled.span`
 `;
 
 const MainHeader = styled(Container)`
-  width: 1075px;
+  width: 1050px;
   height: ${pxToRem(65)};
   padding: ${pxToRem(12)} 0;
 
@@ -133,7 +133,7 @@ const FeatureText = styled.p`
 `;
 
 const CategoryContainer = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   height: ${pxToRem(55)};
   white-space: nowrap;
   position: relative;

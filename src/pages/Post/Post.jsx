@@ -148,7 +148,13 @@ const Post = () => {
                 key={idx}
                 label={item.label}
                 active={item.label === selectedCategory}
-                onClick={() => setSelectedCategory(item.label)}
+                onClick={() => {
+                  if (item.label === selectedCategory) {
+                    setSelectedCategory('');
+                  } else {
+                    setSelectedCategory(item.label);
+                  }
+                }}
               />
             ))}
           </CategoryItemWrapper>
@@ -333,6 +339,7 @@ const TitleCountText = styled.span`
 
 const CategoryItemWrapper = styled.div`
   width: 75%;
+  height: 46px;
   display: flex;
 `;
 

@@ -20,8 +20,10 @@ export default CategoryTabItem;
 const Tab = styled.button`
   flex: 1;
   padding: 15.5px 0;
-  border: 1px solid #b2b2b2;
-  background-color: transparent;
+  border: 1px solid #8c8c8c;
+  &:not(:last-child) {
+    border-right: none;
+  }
   cursor: pointer;
 
   color: #8c8c8c;
@@ -31,8 +33,13 @@ const Tab = styled.button`
   ${({ $active }) =>
     $active &&
     `
-    font-weight: bold;
-    border-color: #3092FA;
-    color: #333;
+    pdding:1px;
+    border: 2px solid #3092FA;
+    line-height: 94%;
+    color:#333;
+    ${({ theme }) => theme.fontStyles.Body7};
+    &:not(:last-child) {
+      border-right: 2px solid #3092FA;
+    }
   `}
 `;

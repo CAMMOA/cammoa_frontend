@@ -25,34 +25,36 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <AccountArea>
-        <AccountText onClick={() => navigate('/signup')}>회원가입</AccountText>
-        <Divider></Divider>
-        <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
-      </AccountArea>
-      <MainHeader>
-        <Logo onClick={() => (window.location.href = '/')}></Logo>
-        <SearchBar></SearchBar>
-        <FeaturePanel>
-          <FeatureText onClick={() => navigate('/post')}>공구 올리기</FeatureText>
+      <InnerHeader>
+        <AccountArea>
+          <AccountText onClick={() => navigate('/signup')}>회원가입</AccountText>
           <Divider></Divider>
-          <FeatureText onClick={() => navigate('/mypage')}>마이 페이지</FeatureText>
-          <Divider></Divider>
-          <FeatureText>모아톡</FeatureText>
-        </FeaturePanel>
-      </MainHeader>
-      <CategoryContainer ref={categoryRef}>
-        <Category onClick={() => setIsCategoryOpen((o) => !o)}>
-          <CategoryMarker />
-          <CategoryText>카테고리</CategoryText>
-        </Category>
-        {isCategoryOpen && <UserMenuDropdown />}
+          <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
+        </AccountArea>
+        <MainHeader>
+          <Logo onClick={() => (window.location.href = '/')}></Logo>
+          <SearchBar></SearchBar>
+          <FeaturePanel>
+            <FeatureText onClick={() => navigate('/post')}>공구 올리기</FeatureText>
+            <Divider></Divider>
+            <FeatureText onClick={() => navigate('/mypage')}>마이 페이지</FeatureText>
+            <Divider></Divider>
+            <FeatureText>모아톡</FeatureText>
+          </FeaturePanel>
+        </MainHeader>
+        <CategoryContainer ref={categoryRef}>
+          <Category onClick={() => setIsCategoryOpen((o) => !o)}>
+            <CategoryMarker />
+            <CategoryText>카테고리</CategoryText>
+          </Category>
+          {isCategoryOpen && <UserMenuDropdown />}
 
-        <GroupPurchase>
-          <CategoryText>곧 마감 공구</CategoryText>
-          <CategoryText>최신 공구</CategoryText>
-        </GroupPurchase>
-      </CategoryContainer>
+          <GroupPurchase>
+            <CategoryText>곧 마감 공구</CategoryText>
+            <CategoryText>최신 공구</CategoryText>
+          </GroupPurchase>
+        </CategoryContainer>
+      </InnerHeader>
     </HeaderContainer>
   );
 };
@@ -70,9 +72,13 @@ const HeaderContainer = styled(Container)`
   justify-content: center;
   box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.07);
 `;
-
-const AccountArea = styled(Container)`
+const InnerHeader = styled(Container)`
   width: 1050px;
+  margin-right: 75px;
+  justify-content: center;
+`;
+const AccountArea = styled(Container)`
+  width: 100%;
   height: ${pxToRem(35)};
   padding: ${pxToRem(12)} ${pxToRem(5)};
   white-space: nowrap;
@@ -96,7 +102,7 @@ const Divider = styled.span`
 `;
 
 const MainHeader = styled(Container)`
-  width: 1050px;
+  width: 100%;
   height: ${pxToRem(65)};
   padding: ${pxToRem(12)} 0;
 
@@ -133,7 +139,7 @@ const FeatureText = styled.p`
 `;
 
 const CategoryContainer = styled(Container)`
-  width: 1050px;
+  width: 100%;
   height: ${pxToRem(55)};
   white-space: nowrap;
   position: relative;

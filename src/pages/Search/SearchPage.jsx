@@ -63,7 +63,7 @@ const SearchContainer = styled(PageWrapper)`
 `;
 
 const SearchHeader = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   padding: 5px 0;
 
   border-top: 1px solid #000;

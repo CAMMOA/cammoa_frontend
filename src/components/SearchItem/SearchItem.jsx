@@ -80,10 +80,9 @@ const SubTextContainer = styled(Container)`
 const SubText = styled.p``;
 
 const SearchItemContainer = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   flex-direction: row;
   flex-wrap: wrap;
 
   row-gap: 10px;
-  column-gap: 25px;
 `;

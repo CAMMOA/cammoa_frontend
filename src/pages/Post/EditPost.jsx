@@ -1,15 +1,13 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import CategoryTabItem from '@components/Post/categoryItem';
 import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
-import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ImageUpload from '@components/Post/ImageUpload';
-import axios from 'axios';
-
-const API_URL = 'http://15.165.99.110:8080';
+import { getPostDetail, updatePost, uploadPostImages, deletePostImage } from '@api/post/editpost';
 
 const EditPost = () => {
   const { postId } = useParams();
@@ -80,34 +78,24 @@ const EditPost = () => {
 
   const handleRemoveImage = async (idx) => {
     const target = images[idx];
+
     if (typeof target === 'string') {
       try {
-        const token = localStorage.getItem('accessToken');
-        await axios.delete(`${API_URL}/api/posts/${postId}/images`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          data: { imageUrl: target },
-        });
+        await deletePostImage(postId, target);
       } catch (err) {
         console.error('❌ 이미지 삭제 실패:', err);
         alert('이미지 삭제에 실패했습니다.');
         return;
       }
     }
+
     setImages((prev) => prev.filter((_, i) => i !== idx));
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
-
-        const res = await axios.get(`${API_URL}/api/posts/${postId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await getPostDetail(postId);
         const data = res.data.data;
 
         setTitle(data.title);
@@ -117,6 +105,7 @@ const EditPost = () => {
         setValue(data.deadline.slice(0, 10).replace(/-/g, ' / '));
         handleLocationChange({ target: { value: data.place } });
         handleExplainChange({ target: { value: data.description } });
+
         setImages(
           Array.isArray(data.imageUrl) ? data.imageUrl : data.imageUrl ? [data.imageUrl] : []
         );
@@ -124,6 +113,7 @@ const EditPost = () => {
         console.error('❌ 게시글 상세 불러오기 실패:', err);
       }
     };
+
     fetchData();
   }, [postId]);
 
@@ -132,26 +122,18 @@ const EditPost = () => {
       alert('원활한 공동구매를 위해 이미지를 넣어주세요');
       return;
     }
+
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
       const existingUrls = images.filter((img) => typeof img === 'string');
       const newFiles = images.filter((img) => img instanceof File);
       let uploadedUrls = [];
+
       if (newFiles.length > 0) {
         const formData = new FormData();
         newFiles.forEach((file) => formData.append('images', file));
 
         try {
-          const imgRes = await axios.post(`${API_URL}/api/posts/${postId}/images`, formData, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+          const imgRes = await uploadPostImages(postId, formData);
           uploadedUrls = imgRes.data.data;
         } catch (err) {
           console.error('❌ 이미지 업로드 중 에러:', err);
@@ -171,6 +153,7 @@ const EditPost = () => {
             : null;
 
       const deadlineISO = value.replace(/\s*\/\s*/g, '-') + 'T23:59:59';
+
       const body = {
         title,
         description: explain,
@@ -183,12 +166,7 @@ const EditPost = () => {
         ...(mainImageUrl && { image: mainImageUrl }),
       };
 
-      await axios.patch(`${API_URL}/api/posts/${postId}`, body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await updatePost(postId, body);
 
       alert('게시글이 성공적으로 수정되었습니다.');
       navigate('/mypage');

@@ -4,10 +4,15 @@ import { Container } from '@components/shared/UIStyles';
 import UserProfile from '@assets/icons/user-image.svg?react';
 import EditIcon from '@assets/icons/edit-icon.svg?react';
 import ProductItemList from '@components/MyPage/ProductItemList';
-import axios from 'axios';
+import {
+  getCurrentUser,
+  getHostedGroupBuyings,
+  getParticipatedGroupBuyings,
+  changePassword,
+  deletePost,
+  cancelParticipation,
+} from '@api/mypage/mypage';
 import { useNavigate } from 'react-router-dom';
-
-const API_URL = 'http://15.165.99.110:8080';
 
 const MyPage = () => {
   const [tab, setTab] = useState('hosted');
@@ -29,10 +34,7 @@ const MyPage = () => {
       return;
     }
 
-    axios
-      .get(`${API_URL}/api/auth/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    getCurrentUser()
       .then((res) => {
         console.log('👤 사용자 정보 응답:', res.data);
         if (res.data.status === 'OK') {
@@ -48,11 +50,7 @@ const MyPage = () => {
     console.log('📢 userId 바뀜:', userId);
     if (!userId) return;
 
-    const token = localStorage.getItem('accessToken');
-    axios
-      .get(`${API_URL}/api/auth/users/${userId}/group-buyings`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    getHostedGroupBuyings(userId)
       .then((res) => {
         console.log('✅ 주최한 공구 응답:', res.data);
         const data = res.data.data || [];
@@ -84,10 +82,7 @@ const MyPage = () => {
         );
       });
 
-    axios
-      .get(`${API_URL}/api/auth/users/${userId}/participated-group-buyings`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    getParticipatedGroupBuyings(userId)
       .then((res) => {
         console.log('✅ 참여한 공구 응답:', res.data);
         const data = res.data.data || [];
@@ -125,13 +120,7 @@ const MyPage = () => {
     }
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.post(
-        `${API_URL}/api/auth/users/change-password`,
-        { email, currentPassword, newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      const response = await changePassword({ email, currentPassword, newPassword });
       if (response.data.status === 'OK') {
         setPasswordMessage('✅ 비밀번호가 성공적으로 변경되었습니다.');
         setCurrentPassword('');
@@ -158,11 +147,7 @@ const MyPage = () => {
     if (!window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('accessToken');
-      await axios.delete(`${API_URL}/api/posts/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await deletePost(postId);
       alert('게시글이 삭제되었습니다.');
       setHostedItems((prev) => prev.filter((item) => item.productId !== postId));
     } catch (error) {
@@ -185,11 +170,7 @@ const MyPage = () => {
     }
 
     try {
-      const token = localStorage.getItem('accessToken');
-      await axios.delete(`${API_URL}/api/group-buyings/${postId}/participants/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      await cancelParticipation(postId, userId);
       alert('참여가 취소되었습니다.');
       setJoinedItems((prev) => prev.filter((item) => item.productId !== postId));
     } catch (error) {
@@ -202,7 +183,9 @@ const MyPage = () => {
     navigate(`/edit/${postId}`);
   };
 
-  const handleChat = (id) => console.log('chat', id);
+  const handleChat = (id) => {
+    console.log('chat', id);
+  };
 
   return (
     <MyPageContainer>

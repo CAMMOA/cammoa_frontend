@@ -14,6 +14,7 @@ const ProductDetail = () => {
   const [imgList, setImgList] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (!post_id) return;
     setIsLoading(true);
     setHasError(false);

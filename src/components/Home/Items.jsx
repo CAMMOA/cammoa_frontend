@@ -67,7 +67,7 @@ Items.propTypes = {
 export default Items;
 
 const ItemsContainer = styled.div`
-  width: 230px;
+  width: 245px;
   margin-right: 23px;
   margin-bottom: 40px;
 

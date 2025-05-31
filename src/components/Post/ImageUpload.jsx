@@ -29,13 +29,17 @@ export default function ImageUpload({ images, onAddImage, onRemoveImage }) {
           />
         </Image>
         <PreviewContainer>
-          {images.map((file, idx) => (
-            <Preview key={idx}>
-              <img src={URL.createObjectURL(file)} alt={`preview-${idx}`} />
-              <DeleteButton onClick={() => onRemoveImage(idx)}>×</DeleteButton>
-              {idx === 0 && <RepresentativeImageText>대표 이미지</RepresentativeImageText>}
-            </Preview>
-          ))}
+          {images.map((file, idx) => {
+            const src = typeof file === 'string' ? file : URL.createObjectURL(file);
+
+            return (
+              <Preview key={idx}>
+                <img src={src} alt={`preview-${idx}`} />
+                <DeleteButton onClick={() => onRemoveImage(idx)}>×</DeleteButton>
+                {idx === 0 && <RepresentativeImageText>대표 이미지</RepresentativeImageText>}
+              </Preview>
+            );
+          })}
         </PreviewContainer>
       </ImageContainer>
       <InfoText>
@@ -46,7 +50,8 @@ export default function ImageUpload({ images, onAddImage, onRemoveImage }) {
 }
 
 ImageUpload.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.instanceOf(File)).isRequired,
+  images: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.instanceOf(File), PropTypes.string]))
+    .isRequired,
   onAddImage: PropTypes.func.isRequired,
   onRemoveImage: PropTypes.func.isRequired,
 };

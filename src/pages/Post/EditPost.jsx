@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
-import Camera from '@assets/icons/image-icon.svg?react';
 import CategoryTabItem from '@components/Post/categoryItem';
 import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
-import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ImageUpload from '@components/Post/ImageUpload';
+import axios from 'axios';
 
 const API_URL = 'http://15.165.99.110:8080';
 
@@ -22,102 +22,19 @@ const EditPost = () => {
     { label: '문구류' },
     { label: '화장품' },
   ];
-  const MAX_TEXT = 1500;
-  const MAX_LOCATION = 50;
 
-  const fileInputRef = useRef(null);
-  const handleImageBoxClick = () => fileInputRef.current?.click();
+  const MAX_TITLE = 40;
+  const MAX_TEXT = 1500;
+  const MAX_LOCATION = 40;
 
   const [title, setTitle] = useState('');
+  const [explain, handleExplainChange] = useLimitedInput(MAX_TEXT);
+  const [location, handleLocationChange] = useLimitedInput(MAX_LOCATION);
+  const { value, handleDateChange, setValue } = useFormattedDate();
+  const [selectedCategory, setSelectedCategory] = useState('생활용품');
   const [price, setPrice] = useState('');
   const [people, setPeople] = useState('');
-  const [existingUrls, setExistingUrls] = useState([]);
-  const [newFiles, setNewFiles] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('생활용품');
-  const [location, handleLocationChange] = useLimitedInput(MAX_LOCATION);
-  const [explain, handleExplainChange] = useLimitedInput(MAX_TEXT);
-  const { value, setValue } = useFormattedDate();
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setNewFiles((prev) => [...prev, ...files]);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const res = await axios.get(`${API_URL}/api/posts/${postId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = res.data.data;
-        setTitle(data.title);
-        setPrice(data.price);
-        setPeople(data.maxParticipants);
-        setSelectedCategory(convertCategoryToLabel(data.category));
-        setValue(data.deadline.slice(0, 10).replace(/-/g, ' / '));
-        handleLocationChange({ target: { value: data.place } });
-        handleExplainChange({ target: { value: data.description } });
-        setExistingUrls(data.imageUrl ? [data.imageUrl] : []);
-      } catch (err) {
-        console.error('❌ 게시글 상세 불러오기 실패:', err);
-      }
-    };
-    fetchData();
-  }, [postId]);
-
-  const handleSubmit = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const deadline = value.replace(/\s*\/\s*/g, '-') + 'T23:59:59';
-
-      const requestBody = {
-        title,
-        description: explain,
-        category: convertCategoryToEnum(selectedCategory),
-        price: Number(price),
-        maxParticipants: Number(people),
-        deadline,
-        place: location,
-        status: 'OPEN',
-      };
-
-      await axios.patch(`${API_URL}/api/posts/${postId}`, requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (newFiles.length > 0) {
-        const formData = new FormData();
-        newFiles.forEach((file) => formData.append('images', file));
-        const imageUploadRes = await axios.post(`${API_URL}/api/posts/${postId}/images`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const uploadedUrls = imageUploadRes.data.data;
-        await axios.patch(
-          `${API_URL}/api/posts/${postId}`,
-          { image: uploadedUrls[0] },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      }
-
-      alert('게시글이 수정되었습니다.');
-      navigate('/mypage');
-    } catch (error) {
-      console.error('수정 실패:', error);
-      alert('게시글 수정에 실패했습니다.');
-    }
-  };
+  const [images, setImages] = useState([]);
 
   const convertCategoryToEnum = (label) => {
     switch (label) {
@@ -153,47 +70,165 @@ const EditPost = () => {
     }
   };
 
+  const handleImageChange = (fileList) => {
+    const newFiles = Array.from(fileList);
+    setImages((prev) => {
+      const combined = [...prev, ...newFiles];
+      return combined.length > 3 ? newFiles : combined;
+    });
+  };
+
+  const handleRemoveImage = async (idx) => {
+    const target = images[idx];
+    if (typeof target === 'string') {
+      try {
+        const token = localStorage.getItem('accessToken');
+        await axios.delete(`${API_URL}/api/posts/${postId}/images`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          data: { imageUrl: target },
+        });
+      } catch (err) {
+        console.error('❌ 이미지 삭제 실패:', err);
+        alert('이미지 삭제에 실패했습니다.');
+        return;
+      }
+    }
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+
+        const res = await axios.get(`${API_URL}/api/posts/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = res.data.data;
+
+        setTitle(data.title);
+        setPrice(data.price.toString());
+        setPeople(data.maxParticipants.toString());
+        setSelectedCategory(convertCategoryToLabel(data.category));
+        setValue(data.deadline.slice(0, 10).replace(/-/g, ' / '));
+        handleLocationChange({ target: { value: data.place } });
+        handleExplainChange({ target: { value: data.description } });
+        setImages(
+          Array.isArray(data.imageUrl) ? data.imageUrl : data.imageUrl ? [data.imageUrl] : []
+        );
+      } catch (err) {
+        console.error('❌ 게시글 상세 불러오기 실패:', err);
+      }
+    };
+    fetchData();
+  }, [postId]);
+
+  const handleSubmit = async () => {
+    if (images.length === 0) {
+      alert('원활한 공동구매를 위해 이미지를 넣어주세요');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+      const existingUrls = images.filter((img) => typeof img === 'string');
+      const newFiles = images.filter((img) => img instanceof File);
+      let uploadedUrls = [];
+      if (newFiles.length > 0) {
+        const formData = new FormData();
+        newFiles.forEach((file) => formData.append('images', file));
+
+        try {
+          const imgRes = await axios.post(`${API_URL}/api/posts/${postId}/images`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          uploadedUrls = imgRes.data.data;
+        } catch (err) {
+          console.error('❌ 이미지 업로드 중 에러:', err);
+          if (err.response?.status === 500) {
+            alert('이미지는 1MB 미만의 용량을 첨부해주세요.');
+          } else {
+            alert('이미지 업로드에 실패했습니다.');
+          }
+          return;
+        }
+      }
+      const mainImageUrl =
+        existingUrls.length > 0
+          ? existingUrls[0]
+          : uploadedUrls.length > 0
+            ? uploadedUrls[0]
+            : null;
+
+      const deadlineISO = value.replace(/\s*\/\s*/g, '-') + 'T23:59:59';
+      const body = {
+        title,
+        description: explain,
+        category: convertCategoryToEnum(selectedCategory),
+        price: Number(price),
+        maxParticipants: Number(people),
+        place: location,
+        deadline: deadlineISO,
+        status: 'OPEN',
+        ...(mainImageUrl && { image: mainImageUrl }),
+      };
+
+      await axios.patch(`${API_URL}/api/posts/${postId}`, body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      alert('게시글이 성공적으로 수정되었습니다.');
+      navigate('/mypage');
+    } catch (error) {
+      console.error('수정 실패:', error);
+      alert('게시글 수정에 실패했습니다.');
+    }
+  };
+
   return (
     <PostContainer>
-      <PostHeader>상품 설명</PostHeader>
+      <PostHeader>게시글 수정</PostHeader>
+
       <PostBody>
         <ProductImageContainer>
-          <ProductText>상품 이미지</ProductText>
-          <ProductImage>
-            <Image onClick={handleImageBoxClick}>
-              <Camera />
-              <HiddenFileInput
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                ref={fileInputRef}
-              />
-              <ImageSubText>이미지 등록</ImageSubText>
-            </Image>
-            <ImageText>이미지는 1:1 비율로 보여집니다.</ImageText>
-            <PreviewContainer>
-              {existingUrls.map((url, idx) => (
-                <PreviewImage key={`url-${idx}`} src={url} alt={`preview-${idx}`} />
-              ))}
-              {newFiles.map((file, idx) => (
-                <PreviewImage
-                  key={`file-${idx}`}
-                  src={URL.createObjectURL(file)}
-                  alt={`preview-${idx}`}
-                />
-              ))}
-            </PreviewContainer>
-          </ProductImage>
+          <ProductText>
+            상품 이미지<RequiredStar>*</RequiredStar>
+            <ImageCountText>({images.length} / 3)</ImageCountText>
+          </ProductText>
+          <ImageUpload
+            images={images}
+            onAddImage={handleImageChange}
+            onRemoveImage={handleRemoveImage}
+          />
         </ProductImageContainer>
 
         <ProductContainer>
-          <ProductNameText>게시글 제목</ProductNameText>
-          <ProductNameInput
-            placeholder="상품명을 입력해 주세요."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <ProductNameText>
+            게시글 제목<RequiredStar>*</RequiredStar>
+          </ProductNameText>
+          <TitleInputWrapper>
+            <ProductNameInput
+              placeholder="상품명을 입력해 주세요."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <TitleCountText>
+              {title.length}/{MAX_TITLE}
+            </TitleCountText>
+          </TitleInputWrapper>
         </ProductContainer>
 
         <ProductContainer>
@@ -204,7 +239,13 @@ const EditPost = () => {
                 key={idx}
                 label={item.label}
                 active={item.label === selectedCategory}
-                onClick={() => setSelectedCategory(item.label)}
+                onClick={() => {
+                  if (item.label === selectedCategory) {
+                    setSelectedCategory('');
+                  } else {
+                    setSelectedCategory(item.label);
+                  }
+                }}
               />
             ))}
           </CategoryItemWrapper>
@@ -222,11 +263,13 @@ const EditPost = () => {
           </CharCount>
         </ProductPlainContainer>
       </PostBody>
-
       <PostHeader>공동구매 정보</PostHeader>
+
       <PostBody>
         <ProductContainer>
-          <ProductText>가격</ProductText>
+          <ProductText>
+            가격<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               placeholder="가격을 입력해주세요."
@@ -237,8 +280,18 @@ const EditPost = () => {
           </InputWrapper>
         </ProductContainer>
 
+        <EstimatedPrice>
+          공동구매 예상 단가는{' '}
+          <Highlight>
+            {price && people ? Math.floor(Number(price) / Number(people)).toLocaleString() : '0'}원
+          </Highlight>
+          이에요!
+        </EstimatedPrice>
+
         <ProductContainer>
-          <ProductText>인원</ProductText>
+          <ProductText>
+            인원<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               placeholder="인원을 입력해주세요. (최대 5명)"
@@ -250,19 +303,23 @@ const EditPost = () => {
         </ProductContainer>
 
         <ProductContainer>
-          <ProductText>기한</ProductText>
+          <ProductText>
+            기한<RequiredStar>*</RequiredStar>
+          </ProductText>
           <InputWrapper>
             <ProductInput
               type="text"
               placeholder="YYYY / MM / DD"
               value={value}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={handleDateChange}
             />
           </InputWrapper>
         </ProductContainer>
 
         <ProductContainer>
-          <ProductText>위치</ProductText>
+          <ProductText>
+            위치<RequiredStar>*</RequiredStar>
+          </ProductText>
           <LocationInputWrapper>
             <ProductInput
               value={location}
@@ -286,6 +343,7 @@ export default EditPost;
 const PostContainer = styled(Container)`
   margin-top: 20px;
 `;
+
 const PostHeader = styled.p`
   width: 1065px;
   padding: 37px 0;
@@ -297,16 +355,33 @@ const PostHeader = styled.p`
   line-height: 107%;
   letter-spacing: -0.5px;
 `;
+
 const PostBody = styled(Container)`
   width: 1065px;
   align-items: flex-start;
 `;
+
 const ProductImageContainer = styled(Container)`
   padding: 32px 0;
   flex-direction: row;
   align-items: flex-start;
   gap: 24px;
 `;
+
+const ImageCountText = styled.span`
+  ${({ theme }) => theme.fontStyles.Body7};
+  padding-left: 8px;
+  color: #666;
+`;
+
+const RequiredStar = styled.span`
+  position: relative;
+  top: -2px;
+  color: #ee6a7b;
+  ${({ theme }) => theme.fontStyles.Body8};
+  line-height: 142%;
+`;
+
 const ProductText = styled.p`
   width: 155px;
   color: #191919;
@@ -315,42 +390,19 @@ const ProductText = styled.p`
   letter-spacing: -0.5px;
 `;
 
-const ProductImage = styled(Container)`
-  align-items: flex-start;
-  gap: 15px;
-`;
-const Image = styled(Container)`
-  width: 188px;
-  padding: 69px 0px 55px 0px;
-  background: #fafafa;
-
-  gap: 15px;
-`;
-const ImageText = styled.p`
-  color: #666;
-  ${({ theme }) => theme.fontStyles.Body7};
-  line-height: 107%;
-`;
-
-const ImageSubText = styled.p`
-  color: #666666;
-  ${({ theme }) => theme.fontStyles.Body7};
-  font-size: 13px;
-  line-height: 193%;
-`;
-
 const ProductContainer = styled(Container)`
   width: 100%;
   padding: 32px 0;
-
   flex-direction: row;
   gap: 24px;
 `;
+
 const ProductNameText = styled(ProductText)`
   padding: 12px 0;
 `;
+
 const ProductNameInput = styled.input`
-  width: 75%;
+  width: 100%;
   padding: 16px;
 
   color: #333333;
@@ -361,22 +413,41 @@ const ProductNameInput = styled.input`
   border-radius: 2px;
   border: 1px solid #b2b2b2;
 `;
+
+const TitleInputWrapper = styled.div`
+  position: relative;
+  width: 75%;
+`;
+
+const TitleCountText = styled.span`
+  ${({ theme }) => theme.fontStyles.Body7};
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  color: #8c8c8c;
+  line-height: 161%;
+`;
+
 const CategoryItemWrapper = styled.div`
   width: 75%;
+  height: 46px;
   display: flex;
 `;
+
 const ProductPlainContainer = styled(ProductContainer)`
   margin-bottom: 20px;
   align-items: flex-start;
   position: relative;
 `;
+
 const ProductTextarea = styled.textarea`
   width: 75%;
   height: 165px;
   padding: 20px;
 
   resize: none;
-  border: 2px solid #b2b2b2;
+  border: 1px solid #b2b2b2;
+  border-radius: 2px;
   color: #333333;
   &::placeholder {
     color: #8c8c8c;
@@ -393,13 +464,16 @@ const CharCount = styled.span`
   ${({ theme }) => theme.fontStyles.Body7};
   line-height: 161%;
 `;
+
 const InputWrapper = styled.div`
   width: 30%;
   position: relative;
 `;
+
 const ProductInput = styled(ProductNameInput)`
   width: 100%;
 `;
+
 const InputText = styled.span`
   position: absolute;
   top: 16px;
@@ -407,34 +481,31 @@ const InputText = styled.span`
   color: #8c8c8c;
   ${({ theme }) => theme.fontStyles.Body7};
 `;
+
 const LocationInputWrapper = styled(InputWrapper)`
   width: 75%;
 `;
+
 const Counter = styled(CharCount)`
   top: 14px;
   right: 16px;
 `;
+
 const RegisterButton = styled(ButtonStyle)`
   margin: 70px 0 50px 0;
   width: 240px;
   height: 56px;
 `;
 
-const PreviewContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+const EstimatedPrice = styled.p`
+  ${({ theme }) => theme.fontStyles.Body7};
+  width: 100%;
+  margin: -25px 0 30px 180px;
+  color: #666;
+  line-height: 191%;
 `;
 
-const PreviewImage = styled.img`
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const HiddenFileInput = styled.input`
-  display: none;
+const Highlight = styled.span`
+  color: #3092fa;
+  font-weight: 700;
 `;

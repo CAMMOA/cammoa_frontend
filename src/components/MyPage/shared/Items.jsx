@@ -3,11 +3,19 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 export default function Items({ imageUrl, title, deadline, detailText, children, onClick }) {
+  const isClosed = deadline === '마감됨';
+
   return (
     <ProductItemContainer>
       <ProductImageContainer onClick={onClick}>
         <img src={imageUrl} alt={title} />
-        <DeadLine $visible={!!deadline}>{deadline}</DeadLine>
+        {isClosed ? (
+          <ClosedOverlay>
+            <ClosedText>마감</ClosedText>
+          </ClosedOverlay>
+        ) : (
+          <DeadLine $visible={!!deadline}>{deadline}</DeadLine>
+        )}
       </ProductImageContainer>
       <ProductContentContainer>
         <Title>{title}</Title>
@@ -18,14 +26,23 @@ export default function Items({ imageUrl, title, deadline, detailText, children,
   );
 }
 
+Items.propTypes = {
+  imageUrl: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  deadline: PropTypes.string,
+  detailText: PropTypes.string.isRequired,
+  children: PropTypes.node,
+  onClick: PropTypes.func,
+};
+
 const ProductItemContainer = styled(Container)`
   width: 247px;
   border-radius: 4px;
   border: 1px solid #ddd;
   padding: 15px;
-
   gap: 15px;
 `;
+
 const ProductImageContainer = styled(Container)`
   position: relative;
   width: 100%;
@@ -51,6 +68,27 @@ const DeadLine = styled.div`
   display: ${({ $visible }) => ($visible ? 'block' : 'none')};
 `;
 
+const ClosedOverlay = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 96px;
+  height: 96px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3); /* 반투명 검정 (원 안쪽 배경) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ClosedText = styled.span`
+  color: #ffffff;
+  ${({ theme }) => theme.fontStyles.Body6};
+  font-weight: 700;
+`;
+
 const ProductContentContainer = styled(Container)`
   width: 100%;
   align-items: flex-start;
@@ -70,12 +108,3 @@ const Price = styled.p`
   font-weight: 800;
   padding: 5px 0;
 `;
-
-Items.propTypes = {
-  imageUrl: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  deadline: PropTypes.string,
-  detailText: PropTypes.string.isRequired,
-  children: PropTypes.node,
-  onClick: PropTypes.func,
-};

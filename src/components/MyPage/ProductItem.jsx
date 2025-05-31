@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Items from '@components/MyPage/shared/Items';
 import { Container } from '@components/shared/UIStyles';
-import ChatIcon from '@assets/icons/chat-icon.svg?react';
-import TrashIcon from '@assets/icons/trash-icon.svg?react';
 import { useNavigate } from 'react-router-dom';
+import ChatIconBase from '@assets/icons/chat-icon.svg?react';
+import TrashIconBase from '@assets/icons/trash-icon.svg?react';
 
 const getDday = (deadline) => {
   if (!deadline) return null;
@@ -22,6 +22,7 @@ const getDday = (deadline) => {
 
 export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCancel }) {
   const navigate = useNavigate();
+
   return (
     <Items
       imageUrl={item.imageUrl}
@@ -33,20 +34,24 @@ export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCa
       <Actions mode={mode}>
         {mode === 'hosted' ? (
           <ButtonContainer>
-            <ModificationButton onClick={() => onEdit(item.id)}>수정하기</ModificationButton>
-            <IconButton onClick={() => onChat(item.id)}>
+            <ModificationButton onClick={() => onEdit(item.id)}>
+              수정하기
+            </ModificationButton>
+            <ChatButton onClick={() => onChat(item.id)}>
               <ChatIcon />
-            </IconButton>
-            <IconButton onClick={() => onDelete(item.id)}>
+            </ChatButton>
+            <TrashButton onClick={() => onDelete(item.id)}>
               <TrashIcon />
-            </IconButton>
+            </TrashButton>
           </ButtonContainer>
         ) : (
           <ButtonContainer>
-            <CancelButton onClick={() => onCancel(item.id)}>취소하기</CancelButton>
-            <IconButton onClick={() => onChat(item.id)}>
+            <CancelButton onClick={() => onCancel(item.id)}>
+              취소하기
+            </CancelButton>
+            <ChatButton onClick={() => onChat(item.id)}>
               <ChatIcon />
-            </IconButton>
+            </ChatButton>
           </ButtonContainer>
         )}
       </Actions>
@@ -69,7 +74,6 @@ ProductItem.propTypes = {
   onDelete: PropTypes.func,
   onCancel: PropTypes.func,
 };
-
 const ButtonContainer = styled(Container)`
   width: 100%;
   height: 35px;
@@ -83,39 +87,88 @@ const ModificationButton = styled.button`
   width: 139px;
   height: 100%;
   padding: 4px 0;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   ${({ theme }) => theme.fontStyles.Body6};
   line-height: 193.25%;
-
   border: 1px solid #ddd;
   border-radius: 4px;
-`;
 
-const IconButton = styled.button`
-  width: 35px;
-  height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  &:hover {
+    border-color: #ccc;
+  }
 `;
 
 const CancelButton = styled.button`
   width: 177px;
   height: 100%;
   padding: 4px 0;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   ${({ theme }) => theme.fontStyles.Body6};
   line-height: 193.25%;
-
   border: 1px solid #ddd;
   border-radius: 4px;
+
+  &:hover {
+    border-color: #ccc;
+  }
+`;
+
+const ChatIcon = styled(ChatIconBase)`
+  & path {
+    fill: currentColor;
+  }
+`;
+
+const TrashIcon = styled(TrashIconBase)`
+  & path {
+    fill: currentColor;
+  }
+`;
+
+const ChatButton = styled.button`
+  width: 35px;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666666;
+
+  &:hover {
+    color: #3092FA;
+    border-color: #3092fa;
+  }
+
+  & > svg {
+    width: 22px;
+    height: 22px;
+  }
+`;
+
+const TrashButton = styled.button`
+  width: 35px;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666666;
+
+  &:hover {
+    color: #EE6A7B;
+    border-color: #ee6a7b;
+  }
+
+  & > svg {
+    width: 22px;
+    height: 22px;
+  }
 `;
 
 const Actions = styled.div``;

@@ -9,14 +9,18 @@ export default function Items({ imageUrl, title, deadline, detailText, children,
     <ProductItemContainer>
       <ProductImageContainer onClick={onClick}>
         <img src={imageUrl} alt={title} />
-        {isClosed ? (
-          <ClosedOverlay>
-            <ClosedText>마감</ClosedText>
-          </ClosedOverlay>
-        ) : (
-          <DeadLine $visible={!!deadline}>{deadline}</DeadLine>
+
+        {isClosed && (
+          <>
+            <ClosedImageStyle />
+            <ClosedCircleStyle>
+              <ClosedText>마감</ClosedText>
+            </ClosedCircleStyle>
+          </>
         )}
+        {!isClosed && <DeadLine $visible={!!deadline}>{deadline}</DeadLine>}
       </ProductImageContainer>
+
       <ProductContentContainer>
         <Title>{title}</Title>
         <Price>{detailText}</Price>
@@ -68,7 +72,17 @@ const DeadLine = styled.div`
   display: ${({ $visible }) => ($visible ? 'block' : 'none')};
 `;
 
-const ClosedOverlay = styled.div`
+const ClosedImageStyle = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* 50% 투명도 */
+  z-index: 1;
+`;
+
+const ClosedCircleStyle = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -77,10 +91,10 @@ const ClosedOverlay = styled.div`
   height: 96px;
   border: 2px solid #ffffff;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.3); /* 반투명 검정 (원 안쪽 배경) */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 `;
 
 const ClosedText = styled.span`

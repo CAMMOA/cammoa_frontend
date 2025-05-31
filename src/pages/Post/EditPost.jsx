@@ -98,7 +98,7 @@ const EditPost = () => {
     }
     setImages((prev) => prev.filter((_, i) => i !== idx));
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const fetchData = async () => {
       try {

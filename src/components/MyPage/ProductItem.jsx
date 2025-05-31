@@ -34,9 +34,7 @@ export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCa
       <Actions mode={mode}>
         {mode === 'hosted' ? (
           <ButtonContainer>
-            <ModificationButton onClick={() => onEdit(item.id)}>
-              수정하기
-            </ModificationButton>
+            <ModificationButton onClick={() => onEdit(item.id)}>수정하기</ModificationButton>
             <ChatButton onClick={() => onChat(item.id)}>
               <ChatIcon />
             </ChatButton>
@@ -46,9 +44,7 @@ export default function ProductItem({ item, mode, onEdit, onChat, onDelete, onCa
           </ButtonContainer>
         ) : (
           <ButtonContainer>
-            <CancelButton onClick={() => onCancel(item.id)}>
-              취소하기
-            </CancelButton>
+            <CancelButton onClick={() => onCancel(item.id)}>취소하기</CancelButton>
             <ChatButton onClick={() => onChat(item.id)}>
               <ChatIcon />
             </ChatButton>
@@ -140,7 +136,7 @@ const ChatButton = styled.button`
   color: #666666;
 
   &:hover {
-    color: #3092FA;
+    color: #3092fa;
     border-color: #3092fa;
   }
 
@@ -161,7 +157,7 @@ const TrashButton = styled.button`
   color: #666666;
 
   &:hover {
-    color: #EE6A7B;
+    color: #ee6a7b;
     border-color: #ee6a7b;
   }
 

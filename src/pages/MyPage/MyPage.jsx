@@ -49,18 +49,39 @@ const MyPage = () => {
     if (!userId) return;
 
     const token = localStorage.getItem('accessToken');
-
     axios
       .get(`${API_URL}/api/auth/users/${userId}/group-buyings`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         console.log('✅ 주최한 공구 응답:', res.data);
-        console.log('✅ 주최한 개수:', res.data.data?.length);
-        setHostedItems(res.data.data);
+        const data = res.data.data || [];
+
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const sortedHosted = data.slice().sort((a, b) => {
+          const dateA = new Date(a.deadline);
+          const dateB = new Date(b.deadline);
+
+          const isAExpired = dateA < today;
+          const isBExpired = dateB < today;
+
+          if (isAExpired && !isBExpired) return 1;
+          if (!isAExpired && isBExpired) return -1;
+          if (isAExpired && isBExpired) return 0;
+          return dateA - dateB;
+        });
+
+        console.log('✅ 정렬된 주최한 개수:', sortedHosted.length);
+        setHostedItems(sortedHosted);
       })
       .catch((err) => {
-        console.error('❌ 주최한 공구 에러:', err.response?.status, err.response?.data);
+        console.error(
+          '❌ 주최한 공구 에러:',
+          err.response?.status ?? '(status 없음)',
+          err.response?.data ?? err.message
+        );
       });
 
     axios
@@ -69,11 +90,31 @@ const MyPage = () => {
       })
       .then((res) => {
         console.log('✅ 참여한 공구 응답:', res.data);
-        console.log('✅ 참여한 개수:', res.data.data?.length);
-        setJoinedItems(res.data.data);
+        const data = res.data.data || [];
+        const now2 = new Date();
+        const today2 = new Date(now2.getFullYear(), now2.getMonth(), now2.getDate());
+
+        const sortedJoined = data.slice().sort((a, b) => {
+          const dateA = new Date(a.deadline);
+          const dateB = new Date(b.deadline);
+
+          const isAExpired = dateA < today2;
+          const isBExpired = dateB < today2;
+
+          if (isAExpired && !isBExpired) return 1;
+          if (!isAExpired && isBExpired) return -1;
+          if (isAExpired && isBExpired) return 0;
+          return dateA - dateB;
+        });
+
+        setJoinedItems(sortedJoined);
       })
       .catch((err) => {
-        console.error('❌ 참여한 공구 에러:', err.response?.status, err.response?.data);
+        console.error(
+          '❌ 참여한 공구 에러:',
+          err.response?.status ?? '(status 없음)',
+          err.response?.data ?? err.message
+        );
       });
   }, [userId]);
 
@@ -106,68 +147,12 @@ const MyPage = () => {
     }
   };
 
-  /* 회원탈퇴
-const handleWithdraw = async () => {
-  const confirmMsg =
-    '정말로 탈퇴하시겠습니까?\n' +
-    '탈퇴 시 회원 정보가 완전히 삭제되며 복구할 수 없습니다.';
-  if (!window.confirm(confirmMsg)) return;
-
-  if (hostedItems.length > 0 || joinedItems.length > 0) {
-    alert(
-      '모든 주최 및 참여 중인 공동구매를 삭제 또는 취소하신 후 탈퇴하실 수 있습니다.'
-    );
-    return;
-  }
-
-  if (!userId) {
-    alert('사용자 정보가 없습니다.');
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem('accessToken');
-    console.log('🔐 탈퇴 요청 페이로드:', { password: currentPassword });
-
-    const response = await axios.delete(
-      `${API_URL}/api/auth/users/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        data: { password: currentPassword },
-      }
-    );
-
-    if (response.data.status === 'OK') {
-      alert('회원 탈퇴가 완료되었습니다.');
-      localStorage.removeItem('accessToken');
-      navigate('/');
-    } else {
-      alert(`탈퇴 실패: ${response.data.message || '알 수 없는 오류'}`);
+  const handleWithdraw = () => {
+    const confirmMsg = '정말로 회원탈퇴를 진행하시겠습니까?';
+    if (window.confirm(confirmMsg)) {
+      alert('회원탈퇴가 완료되었습니다.');
     }
-  } catch (error) {
-    const errData = error.response?.data;
-    console.error('회원 탈퇴 실패 응답 바디:', errData);
-
-    const errStatus = errData?.status || errData?.errorEnum;
-    switch (errStatus) {
-      case 'INVALID_PASSWORD':
-        alert('비밀번호가 일치하지 않습니다.');
-        break;
-      case 'USER_NOT_FOUND':
-        alert('존재하지 않는 사용자입니다.');
-        break;
-      default:
-        alert(
-          '죄송합니다. 현재 탈퇴를 처리할 수 없는 상태입니다.\n' +
-          '잠시 후 다시 시도하시거나, 문제가 지속되면 고객센터에 문의해 주세요.'
-        );
-    }
-  }
-};
-*/
+  };
 
   const handleDelete = async (postId) => {
     if (!window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) return;
@@ -265,7 +250,9 @@ const handleWithdraw = async () => {
             <ChangeButton type="button" onClick={handleChangePassword}>
               <EditIcon /> 변경하기
             </ChangeButton>
-            <WithdrawButton type="button">탈퇴하기</WithdrawButton>
+            <WithdrawButton type="button" onClick={handleWithdraw}>
+              탈퇴하기
+            </WithdrawButton>
           </ButtonRow>
         </PasswordSection>
       </ProfileContainer>

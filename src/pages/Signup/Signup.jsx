@@ -161,6 +161,9 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
+          {userFormData.password.length > 0 && userFormData.password.length < 8 && (
+            <ErrorMessage>최소 8자 이상 입력</ErrorMessage>
+          )}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -176,6 +179,10 @@ export default function Signup() {
               />
             </InputLabel>
           </FormRow>
+          {userFormData.confirmPassword.length > 0 &&
+            userFormData.confirmPassword !== userFormData.password && (
+              <ErrorMessage>동일한 비밀번호를 입력</ErrorMessage>
+            )}
           <FormRow>
             <InputLabel>
               <InputText>
@@ -241,7 +248,7 @@ export default function Signup() {
 }
 
 const SignupContainer = styled(Container)`
-  padding-top: 153px;
+  padding: 153px 0 136px 0;
 `;
 
 const SignupFormContainer = styled(Container)`
@@ -309,6 +316,15 @@ const Input = styled.input`
   font-weight: 700;
 `;
 
+const ErrorMessage = styled.p`
+  width: 311px;
+  margin-top: -10px;
+
+  color: red;
+  font-size: 13px;
+  font-weight: 700;
+`;
+
 const AuthButton = styled.button`
   height: 46px;
   padding: 15px;
@@ -340,6 +356,6 @@ const SubmitButton = styled(ButtonStyle)`
 
   width: 240px;
   height: 56px;
-  margin-top: 40px;
+  margin: 40px;
   border: none;
 `;

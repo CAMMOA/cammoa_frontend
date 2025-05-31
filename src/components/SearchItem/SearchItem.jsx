@@ -28,7 +28,7 @@ const SearchItem = ({ searchedResult }) => {
             return (
               <>
                 <Item
-                  id={item.id}
+                  id={item.productId}
                   key={item.productId}
                   title={item.title}
                   price={item.price}
@@ -80,10 +80,9 @@ const SubTextContainer = styled(Container)`
 const SubText = styled.p``;
 
 const SearchItemContainer = styled(Container)`
-  width: 1065px;
+  width: 1050px;
   flex-direction: row;
   flex-wrap: wrap;
 
   row-gap: 10px;
-  column-gap: 25px;
 `;

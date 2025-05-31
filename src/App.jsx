@@ -8,6 +8,7 @@ import MyPage from '@pages/MyPage/MyPage';
 import Chat from '@pages/Chat/Chat';
 import Signup from '@pages/Signup/Signup';
 import ProductDetail from '@pages/ProductDetail/ProductDetail';
+import EditPost from '@pages/Post/EditPost';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/mypage" element={<MyPage />} />
           <Route path="chat" element={<Chat />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/edit/:postId" element={<EditPost />} />
         </Route>
       </Routes>
     </BrowserRouter>

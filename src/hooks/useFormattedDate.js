@@ -16,7 +16,7 @@ const useFormattedDate = () => {
     setValue(input);
   };
 
-  return { value, handleDateChange };
+  return { value, setValue, handleDateChange };
 };
 
 export default useFormattedDate;

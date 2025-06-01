@@ -29,6 +29,7 @@ const useAuth = () => {
 
       return response.status;
     } catch (error) {
+      alert('로그아웃 아직 구현중');
       console.error('로그아웃 실패: ', error);
     }
   }, []);

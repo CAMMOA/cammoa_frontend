@@ -31,7 +31,7 @@ const Login = () => {
 
         <EmailInput
           type="text"
-          placeholder="아이디를 입력해주세요"
+          placeholder="이메일을 입력해주세요"
           value={id}
           onChange={(e) => setId(e.target.value)}
           required

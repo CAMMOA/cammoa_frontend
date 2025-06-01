@@ -48,11 +48,6 @@ const Header = () => {
             <CategoryText>카테고리</CategoryText>
           </Category>
           {isCategoryOpen && <UserMenuDropdown />}
-
-          <GroupPurchase>
-            <CategoryText>곧 마감 공구</CategoryText>
-            <CategoryText>최신 공구</CategoryText>
-          </GroupPurchase>
         </CategoryContainer>
       </InnerHeader>
     </HeaderContainer>
@@ -74,7 +69,6 @@ const HeaderContainer = styled(Container)`
 `;
 const InnerHeader = styled(Container)`
   width: 1050px;
-  margin-right: 75px;
   justify-content: center;
 `;
 const AccountArea = styled(Container)`
@@ -160,17 +154,6 @@ const Category = styled.div`
 `;
 const CategoryMarker = styled(CategoryIcon)`
   margin-right: 14px;
-`;
-
-const GroupPurchase = styled.div`
-  widht: ${pxToRem(300)};
-  height: ${pxToRem(56)};
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  gap: ${pxToRem(88)};
 `;
 const CategoryText = styled.p`
   ${({ theme }) => {

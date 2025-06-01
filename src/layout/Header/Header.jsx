@@ -7,11 +7,14 @@ import pxToRem from '@utils/pxToRem';
 import CategoryIcon from '@assets/icons/category/category-icon.svg?react';
 import UserMenuDropdown from '@components/UserMenuDropdown/UserMenuDropdown';
 import { useNavigate } from 'react-router';
+import useAuth from '@hooks/useAuth';
 
 const Header = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const navigate = useNavigate();
   const categoryRef = useRef();
+
+  const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -27,9 +30,15 @@ const Header = () => {
     <HeaderContainer>
       <InnerHeader>
         <AccountArea>
-          <AccountText onClick={() => navigate('/signup')}>회원가입</AccountText>
-          <Divider></Divider>
-          <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
+          {isAuthenticated ? (
+            <AccountText onClick={logout}>로그아웃</AccountText>
+          ) : (
+            <>
+              <AccountText onClick={() => navigate('/signup')}>회원가입</AccountText>
+              <Divider />
+              <AccountText onClick={() => navigate('/login')}>로그인</AccountText>
+            </>
+          )}
         </AccountArea>
         <MainHeader>
           <Logo onClick={() => (window.location.href = '/')}></Logo>

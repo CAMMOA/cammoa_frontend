@@ -11,6 +11,16 @@ const SearchPage = () => {
   const type = searchParams.get('type') || 'keyword';
   const [searchData, setSearchData] = useState([]);
 
+  const CATEGORY_MAP = {
+    FOOD: '식품',
+    WATER_DRINK: '생수 · 음료',
+    LIVING: '생활용품',
+    STATIONERY: '문구류',
+    BEAUTY: '화장품',
+  };
+
+  const displayQuery = type === 'category' && CATEGORY_MAP[query] ? CATEGORY_MAP[query] : query;
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!query) return;
@@ -34,11 +44,12 @@ const SearchPage = () => {
         <HeaderSubText>
           {searchData.length === 0 ? (
             <>
-              <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 검색 결과가 없습니다.
+              <span style={{ color: '#3092FA' }}>{`{${displayQuery}}`}</span> 에 대한 검색 결과가
+              없습니다.
             </>
           ) : (
             <>
-              <span style={{ color: '#3092FA' }}>{`{${query}}`}</span> 에 대한 공동구매들을
+              <span style={{ color: '#3092FA' }}>{`{${displayQuery}}`}</span> 에 대한 공동구매들을
               발견했어요!
             </>
           )}

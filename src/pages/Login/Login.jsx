@@ -20,7 +20,7 @@ const Login = () => {
     });
 
     if (success) {
-      navigate('/');
+      window.location.href = '/';
     }
   };
 
@@ -31,7 +31,7 @@ const Login = () => {
 
         <EmailInput
           type="text"
-          placeholder="아이디를 입력해주세요"
+          placeholder="이메일을 입력해주세요"
           value={id}
           onChange={(e) => setId(e.target.value)}
           required
@@ -47,7 +47,9 @@ const Login = () => {
 
         <ButtonContainer>
           <LoginButton type="submit">로그인</LoginButton>
-          <SignUpButton type="button">회원가입</SignUpButton>
+          <SignUpButton type="button" onClick={() => navigate('/signup')}>
+            회원가입
+          </SignUpButton>
         </ButtonContainer>
       </LoginForm>
     </LoginContainer>

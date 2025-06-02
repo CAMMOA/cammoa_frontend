@@ -42,6 +42,7 @@ const ProductDetail = () => {
 
   if (isLoading) return <div>로딩 중...</div>;
   if (hasError || !detail) return <div>게시글을 불러올 수 없습니다.</div>;
+  if (!detail) return <div />;
 
   return (
     <ProductDetailContainer>

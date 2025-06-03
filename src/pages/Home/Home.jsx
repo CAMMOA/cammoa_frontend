@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { Container, Header } from '@components/shared/UIStyles';
 import BannerIcon from '@assets/icons/png/banner.png';
+import BannerIcon_DARK from '@assets/icons/png/banner_dark.png';
+import BannerIcon_Gray from '@assets/icons/png/banner_grayscale.png';
+import BannerSlider from '@components/Home/BannerSlider';
 import Items from '@components/Home/Items';
 import { useEffect, useState } from 'react';
 import api from '@api/api';
@@ -9,6 +12,7 @@ const Home = () => {
   const [recommendPosts, setRecommendPosts] = useState([]);
   const [closingPosts, setClosingPosts] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
+  const bannerImages = [BannerIcon, BannerIcon_DARK, BannerIcon_Gray];
 
   useEffect(() => {
     // 추천순
@@ -31,7 +35,11 @@ const Home = () => {
   return (
     <HomeContainer>
       <BannerContainer>
-        <BannerImage src={BannerIcon} alt="banner" />
+        <BannerSlider
+          images={bannerImages}
+          interval={5000} // 슬라이드 변경 시간 (ms)
+          height="350px"
+        />
       </BannerContainer>
       <RecommendContainer>
         <RecommendHeader>
@@ -103,10 +111,6 @@ const HomeContainer = styled(Container)`
 const BannerContainer = styled(Container)`
   width: 1050px;
   padding-bottom: 40px;
-`;
-const BannerImage = styled.img`
-  width: 100%;
-  height: fit-content;
 `;
 
 const RecommendContainer = styled(Container)`

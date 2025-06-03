@@ -48,7 +48,7 @@ const Header = () => {
             <Divider></Divider>
             <FeatureText onClick={() => navigate('/mypage')}>마이 페이지</FeatureText>
             <Divider></Divider>
-            <FeatureText>모아톡</FeatureText>
+            <FeatureText onClick={() => navigate('/chat')}>모아톡</FeatureText>
           </FeaturePanel>
         </MainHeader>
         <CategoryContainer ref={categoryRef}>

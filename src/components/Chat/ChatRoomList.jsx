@@ -1,50 +1,52 @@
+import api from '@api/api';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import QuitButtonIcon from '@assets/chat/quit-button.svg?react';
+import GroupImage from '@assets/chat/group-image.svg';
 import { Container } from '@components/shared/UIStyles';
-import { Avatar } from './shared/Avatar';
+import { Avatar } from '@components/Chat/shared/Avatar';
 
-// 채팅방 목록 아이템
-export function ChatRoomItem({ room, active, onClick }) {
-  return (
-    <ChatRoomItemBox $active={active} onClick={onClick}>
-      <AvatarWrapper>
-        <Avatar src={room.avatar} alt={room.title} />
-        {room.unreadCount > 0 && !room.isRead && <UnreadDot />}
-      </AvatarWrapper>
-      <RoomInfo>
-        <RoomTitleRow>
-          <RoomTitle>{room.title}</RoomTitle>
-          <RoomTime>{room.time}</RoomTime>
-        </RoomTitleRow>
-        <RoomLastMsg>{room.lastMessage}</RoomLastMsg>
-      </RoomInfo>
-    </ChatRoomItemBox>
-  );
-}
+export function ChatRoomList({ activeRoomId, onRoomClick }) {
+  const [rooms, setRooms] = useState([]);
+  const [error, setError] = useState(null);
 
-ChatRoomItem.propTypes = {
-  room: PropTypes.shape({
-    avatar: PropTypes.string,
-    title: PropTypes.string,
-    unreadCount: PropTypes.number,
-    isRead: PropTypes.bool,
-    time: PropTypes.string,
-    lastMessage: PropTypes.string,
-  }).isRequired,
-  active: PropTypes.bool,
-  onClick: PropTypes.func,
-};
+  // 채팅방 목록 조회
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const res = await api.get('/api/auth/users/chats');
+        console.log('채팅방 목록:', res.data.data);
+        if (res.data.status === 'OK' && Array.isArray(res.data.data)) {
+          setRooms(res.data.data);
+          setError(null);
+        } else {
+          setRooms([]);
+          setError('채팅방 목록을 불러오지 못했습니다.');
+        }
+      } catch (e) {
+        if (e.response?.status === 404) {
+          setError('해당 유저가 존재하지 않습니다.');
+        } else {
+          setError('채팅방 목록을 불러오는 중 오류가 발생했습니다.');
+        }
+        setRooms([]);
+      }
+    };
+    fetchRooms();
+  }, []);
 
-export function ChatRoomList({ rooms, activeRoomId, onRoomClick }) {
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
+  }
+
   return (
     <ChatRoomListBox>
       {rooms.map((room) => (
         <ChatRoomItem
-          key={room.id}
+          key={room.roomId}
           room={room}
-          active={room.id === activeRoomId}
-          onClick={() => onRoomClick(room.id)}
+          active={room.roomId === activeRoomId}
+          onClick={() => onRoomClick(room.roomId)}
         />
       ))}
     </ChatRoomListBox>
@@ -52,37 +54,68 @@ export function ChatRoomList({ rooms, activeRoomId, onRoomClick }) {
 }
 
 ChatRoomList.propTypes = {
-  rooms: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      avatar: PropTypes.string,
-      title: PropTypes.string,
-      unreadCount: PropTypes.number,
-      isRead: PropTypes.bool,
-      time: PropTypes.string,
-      lastMessage: PropTypes.string,
-    })
-  ).isRequired,
+  rooms: PropTypes.arrayOf(PropTypes.object).isRequired,
   activeRoomId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onRoomClick: PropTypes.func,
+  onRoomClick: PropTypes.func.isRequired,
 };
 
-export function QuitButton({ onQuit }) {
-  const handleClick = () => {
-    if (window.confirm('채팅방을 나가고 공동구매 참여를 취소하시겠습니까?')) {
-      if (onQuit) onQuit();
+export default ChatRoomList;
+
+function ChatRoomItem({ room, active, onClick }) {
+  const getTime = (timeStr) => {
+    if (!timeStr || typeof timeStr !== 'string') return '';
+    // ISO 8601 형태에서 HH:MM만 추출
+    if (timeStr.length >= 16 && timeStr[10] === 'T') {
+      return timeStr.slice(11, 16);
     }
+    // 혹시 "14:28:55" 형태면 앞 5글자만
+    if (timeStr.length >= 5) {
+      return timeStr.slice(0, 5);
+    }
+    return '';
   };
+
+  // unreadMessageCount가 0이면 토글 비활성, 1 이상이면 활성
   return (
-    <QuitButtonWrapper onClick={handleClick}>
-      <QuitButtonIcon width={32} height={32} />
-    </QuitButtonWrapper>
+    <ChatRoomItemBox $active={active} onClick={onClick}>
+      <AvatarWrapper>
+        <Avatar src={GroupImage} alt={room.roomName} />
+        {room.unreadMessageCount > 0 && <UnreadDot />}
+      </AvatarWrapper>
+      <RoomInfo>
+        <RoomTitleRow>
+          <RoomTitle>{room.roomName}</RoomTitle>
+          <RoomTime>{getTime(room.lastMessage?.time)}</RoomTime>
+        </RoomTitleRow>
+        <RoomLastMsg>{room.lastMessage?.content || ''}</RoomLastMsg>
+      </RoomInfo>
+    </ChatRoomItemBox>
   );
 }
 
-QuitButton.propTypes = {
-  onQuit: PropTypes.func,
+ChatRoomItem.propTypes = {
+  room: PropTypes.shape({
+    roomId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    roomName: PropTypes.string.isRequired,
+    unreadMessageCount: PropTypes.number,
+    lastMessage: PropTypes.shape({
+      content: PropTypes.string,
+      time: PropTypes.string,
+    }),
+  }).isRequired,
+  active: PropTypes.bool,
+  onClick: PropTypes.func.isRequired,
 };
+
+const ChatRoomListBox = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
 
 const ChatRoomItemBox = styled(Container)`
   flex-direction: row;
@@ -93,7 +126,6 @@ const ChatRoomItemBox = styled(Container)`
 `;
 
 const AvatarWrapper = styled.div`
-  position: relative;
   display: inline-block;
 `;
 
@@ -145,24 +177,16 @@ const RoomLastMsg = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  align-self: flex-start;
+  text-align: left;
 `;
 
-const ChatRoomListBox = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-`;
-
-const QuitButtonWrapper = styled.button`
-  width: 32px;
-  height: 32px;
-
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
+const ErrorMessage = styled(Container)`
+  ${({ theme }) => theme.fontStyles.Body7};
+  font-weight: 500;
+  color: #6b7280;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  text-align: center;
 `;

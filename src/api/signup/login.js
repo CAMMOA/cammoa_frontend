@@ -5,9 +5,11 @@ export const login = async (userData) => {
     const response = await api.post('/api/auth/login', userData);
     console.log(response);
     if (response.data.status === 'OK') {
-      const { accessToken, refreshToken } = response.data.data;
+      const { accessToken, refreshToken, userId, email } = response.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userEmail', email);
       return true;
     } else {
       alert('로그인 실패!');

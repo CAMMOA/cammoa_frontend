@@ -1,3 +1,4 @@
+import api from '@api/api';
 import styled from 'styled-components';
 import { Container } from '@components/shared/UIStyles';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
@@ -27,25 +28,78 @@ function formatDate(dateStr) {
 const ProductInfoAndButtons = ({ detail }) => {
   const navigate = useNavigate();
 
+  const postId = detail.productId || detail.id;
+
   const originPrice = detail.price;
-  const unitPrice = detail.maxParticipants
-    ? Math.round(detail.price / detail.maxParticipants).toLocaleString()
-    : detail.price.toLocaleString();
+  const maxParticipants = detail.maxParticipants || 1;
+  const currentParticipants = detail.currentParticipants || 0;
+  const unitPrice = Math.round(originPrice / maxParticipants).toLocaleString();
 
   const created = formatDate(detail.createdAt || detail.updatedAt);
   const deadline = formatDate(detail.deadline);
 
   const isLoggedIn = !!localStorage.getItem('accessToken');
-  const handleParticipate = () => {
+  const isClosed = currentParticipants >= maxParticipants;
+
+  // 공동구매 참여 버튼 클릭 시
+  const handleParticipate = async () => {
     if (!isLoggedIn) {
-      alert('로그인 후 이용해주세요.');
-      navigate('/Login');
-    } else {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+    if (!detail.productId) {
+      alert('잘못된 상품 정보입니다.');
+      return;
+    }
+
+    try {
+      // 1. 공동구매 상태 확인
+      const statusRes = await api.get(`/api/group-buyings/${postId}/status`);
+      const isJoined = statusRes.data?.data?.isJoined;
+
+      if (isJoined) {
+        if (window.confirm('이미 참여한 공동구매입니다! 채팅화면으로 이동하시겠습니까?')) {
+          navigate('/chat');
+        }
+        return;
+      }
+
       if (window.confirm('공동구매에 참여하시겠습니까?')) {
-        navigate('/chat');
+        const joinRes = await api.post('/api/group-buyings/join', { postId });
+        console.log('공동구매 참여 성공, joinRes:', joinRes.data);
+        const chatRes = await api.post(`/api/posts/${postId}/chat/join`);
+        console.log('채팅방 입장 성공, chatRes:', chatRes.data);
+        if (chatRes.data.status === 'OK' && chatRes.data.data?.roomId) {
+          const roomId = chatRes.data.data.roomId;
+          navigate('/chat', { state: { roomId } });
+        } else {
+          alert('채팅방 입장에 실패했습니다.');
+        }
+      }
+    } catch (e) {
+      console.error('공동구매 참여 실패:', e.response?.data || e);
+      const msg = e.response?.data?.message || '';
+      if (e.response?.status === 409 && msg.includes('already joined')) {
+        if (window.confirm('이미 참여한 공동구매입니다! 채팅화면으로 이동하시겠습니까?')) {
+          navigate('/chat');
+        }
+      } else if (msg.includes('closed')) {
+        alert('마감된 공동구매입니다.');
+      } else if (msg.includes('forbidden')) {
+        alert('작성자는 본인 게시글에 참여할 수 없습니다.');
+      } else if (e.response?.status === 401) {
+        alert('로그인 정보가 유효하지 않습니다. 다시 로그인 해주세요.');
+        navigate('/login');
+      } else if (e.response?.status === 404) {
+        alert('존재하지 않는 게시글입니다.');
+      } else {
+        alert('채팅방 참여에 실패했습니다.');
       }
     }
   };
+
+  // 1:1 문의하기 버튼 클릭 시
   const handleInquiry = () => {
     alert('아직 구현 못했습니다! :(');
   };
@@ -72,7 +126,9 @@ const ProductInfoAndButtons = ({ detail }) => {
         <InfoSubTitle>{detail.place}</InfoSubTitle>
       </ProductContainer>
       <ButtonRow>
-        <ParticipateButton onClick={handleParticipate}>공동구매 참여하기</ParticipateButton>
+        <ParticipateButton onClick={handleParticipate} $closed={isClosed} disabled={isClosed}>
+          {isClosed ? '모집 마감' : '공동구매 참여하기'}
+        </ParticipateButton>
         <InquiryButton onClick={handleInquiry}>1 : 1 문의하기</InquiryButton>
       </ButtonRow>
     </ProductInfo>
@@ -81,15 +137,18 @@ const ProductInfoAndButtons = ({ detail }) => {
 
 ProductInfoAndButtons.propTypes = {
   detail: PropTypes.shape({
+    id: PropTypes.number,
+    productId: PropTypes.number,
     price: PropTypes.number,
     maxParticipants: PropTypes.number,
+    currentParticipants: PropTypes.number,
     createdAt: PropTypes.string,
     updatedAt: PropTypes.string,
     deadline: PropTypes.string,
     title: PropTypes.string,
     category: PropTypes.string,
     place: PropTypes.string,
-  }),
+  }).isRequired,
 };
 
 export default ProductInfoAndButtons;
@@ -156,7 +215,12 @@ const ParticipateButton = styled(ButtonStyle)`
   height: 56px;
   padding: 0px 10px;
   font-size: 15px;
+
+  background: ${({ $closed }) => ($closed ? '#eee' : undefined)};
+  color: ${({ $closed }) => ($closed ? '#aaa' : undefined)};
+  cursor: ${({ $closed }) => ($closed ? 'not-allowed' : 'pointer')};
 `;
+
 const InquiryButton = styled(ButtonStyle)`
   width: 155px;
   height: 56px;

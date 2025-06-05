@@ -348,7 +348,7 @@ const ProductImageContainer = styled(Container)`
 
 const ImageCountText = styled.span`
   ${({ theme }) => theme.fontStyles.Body7};
-  padding-left: 8px;
+  padding-left: 30px;
   color: #666;
 `;
 

@@ -1,6 +1,6 @@
 import api from '@api/api';
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import LogoIcon from '@assets/chat/logo-icon.svg?react';
 import ChatRoomList from '@components/Chat/ChatRoomList';
@@ -11,6 +11,7 @@ const Chat = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [activeRoomId, setActiveRoomId] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 채팅방 목록 불러오기
   const fetchChatRooms = useCallback(async () => {
@@ -26,18 +27,19 @@ const Chat = () => {
         navigate('/login');
       }
     }
-  }, [activeRoomId]);
+  }, [navigate]);
 
   useEffect(() => {
     fetchChatRooms();
   }, [fetchChatRooms]);
 
   useEffect(() => {
-    const roomId = location.state?.roomId ? String(location.state?.roomId) : null;
-    if (roomId && chatRooms.some((r) => r.roomId === roomId)) {
+    const roomId = location.state?.roomId ? String(location.state.roomId) : null;
+    // r.roomId는 number, roomId는 string이므로 문자열로 비교
+    if (roomId && chatRooms.some((r) => String(r.roomId) === roomId)) {
       setActiveRoomId(roomId);
     } else if (chatRooms.length > 0 && !activeRoomId) {
-      setActiveRoomId(chatRooms[0].roomId);
+      setActiveRoomId(String(chatRooms[0].roomId));
     }
   }, [location.state, chatRooms]);
 

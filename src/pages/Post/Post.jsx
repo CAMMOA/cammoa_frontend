@@ -5,10 +5,13 @@ import useLimitedInput from '@hooks/useMaxlength';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
 import useFormattedDate from '@hooks/useFormattedDate';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import ImageUpload from '@components/Post/ImageUpload';
 import { createPost, uploadPostImages, updatePostMainImage, deletePost } from '@api/post/post';
 
 const Post = () => {
+  const navigate = useNavigate();
+
   const categories = [
     { label: '식품' },
     { label: '생수·음료' },
@@ -74,6 +77,7 @@ const Post = () => {
       }
 
       alert('게시글이 성공적으로 등록되었습니다!');
+      navigate('/mypage');
     } catch (error) {
       console.error('등록 중 에러:', error);
 

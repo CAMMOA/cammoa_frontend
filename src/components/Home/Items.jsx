@@ -2,9 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import JoinIcon from '@assets/icons/join-icon.svg?react';
 import PropTypes from 'prop-types';
-
-const FALLBACK_IMAGE =
-  'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
+import FallbackImage from '@components/shared/FallbackImage';
 
 // D-day 계산 함수
 export function getDday(deadline) {
@@ -32,13 +30,14 @@ const Items = ({ id, imageUrl, title, price, deadline, maxParticipants }) => {
   return (
     <ItemsContainer>
       <ImageWrapper>
-        <ItemImage
+        <FallbackImage
           src={imageUrl}
           alt={title}
-          onError={(e) => {
-            if (e.target.src !== FALLBACK_IMAGE) {
-              e.target.src = FALLBACK_IMAGE;
-            }
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            borderRadius: '4px',
           }}
         />
         {dday && <DdayOverlay>{dday}</DdayOverlay>}
@@ -87,12 +86,6 @@ const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 245px;
-`;
-const ItemImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
 `;
 const DdayOverlay = styled.div`
   position: absolute;

@@ -10,6 +10,7 @@ import UserImage from '@assets/icons/user-image.svg';
 import { Container } from '@components/shared/UIStyles';
 import { Avatar } from '@components/Chat/shared/Avatar';
 import { ButtonStyle } from '@components/shared/ButtonStyle';
+import FallbackImage from '@components/shared/FallbackImage';
 
 // 날짜 구분선
 function DateSeparator({ date }) {
@@ -244,7 +245,18 @@ export function MessageList({ room, onQuit }) {
         </MainRow>
         <MainRow>
           <ProductInfo>
-            <ProductAvatar src={productImage} alt="" />
+            <FallbackImage
+              src={productImage}
+              alt={productTitle}
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '4px',
+                objectFit: 'cover',
+                marginRight: '12px',
+              }}
+              a
+            />
             <ProductDetails>
               <ProductName>{productTitle}</ProductName>
               <ProductPrice>{unitPrice.toLocaleString()}원 ~</ProductPrice>
@@ -334,13 +346,6 @@ const ProductInfo = styled(Container)`
   flex-direction: row;
   background: #f9fbff;
   border-radius: 4px;
-`;
-
-const ProductAvatar = styled.img`
-  width: 48px;
-  height: 48px;
-  border-radius: 4px;
-  margin-right: 12px;
 `;
 
 const ProductDetails = styled(Container)`

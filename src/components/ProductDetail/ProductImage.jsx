@@ -3,43 +3,26 @@ import styled from 'styled-components';
 import LeftIcon from '@assets/icons/image_left.svg?react';
 import RightIcon from '@assets/icons/image_right.svg?react';
 import PropTypes from 'prop-types';
-
-const FALLBACK_IMAGE =
-  'https://shop-phinf.pstatic.net/20220428_195/1651135623901Ht4we_JPEG/52271451701293203_931912436.jpg?type=m510';
+import FallbackImage from '@components/shared/FallbackImage';
 
 const ProductImageCarousel = ({ images = [], title }) => {
-  const initialImages = images && images.length > 0 ? images : [FALLBACK_IMAGE];
+  const initialImages = images && images.length > 0 ? images : [];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [imgSrc, setImgSrc] = useState(initialImages[0]);
-  const [error, setError] = useState(false);
+  const currentSrc = initialImages[currentIndex] || '';
 
   useEffect(() => {
-    const validImages = images && images.length > 0 ? images : [FALLBACK_IMAGE];
     setCurrentIndex(0);
-    setImgSrc(validImages[0]);
-    setError(false);
   }, [images]);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setImgSrc(initialImages[currentIndex - 1]);
-      setError(false);
+      setCurrentIndex((idx) => idx - 1);
     }
   };
 
   const handleNext = () => {
     if (currentIndex < initialImages.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setImgSrc(initialImages[currentIndex + 1]);
-      setError(false);
-    }
-  };
-
-  const handleImgError = (e) => {
-    if (!error && e.currentTarget.src !== FALLBACK_IMAGE) {
-      setImgSrc(FALLBACK_IMAGE);
-      setError(true);
+      setCurrentIndex((idx) => idx + 1);
     }
   };
 
@@ -53,7 +36,16 @@ const ProductImageCarousel = ({ images = [], title }) => {
       >
         <LeftIcon width={26} height={28} />
       </NavButton>
-      <ProductImage src={imgSrc} alt={title} onError={handleImgError} />
+      <FallbackImage
+        src={currentSrc}
+        alt={title}
+        style={{
+          width: '448px',
+          height: '448px',
+          borderRadius: '4px',
+          objectFit: 'cover',
+        }}
+      />
       <NavButton
         $right
         disabled={currentIndex === initialImages.length - 1}
@@ -80,11 +72,6 @@ const ImageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-const ProductImage = styled.img`
-  width: 448px;
-  height: 448px;
-  border-radius: 4px;
 `;
 const NavButton = styled.button`
   width: 48px;

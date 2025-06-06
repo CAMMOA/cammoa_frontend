@@ -183,8 +183,9 @@ const MyPage = () => {
     navigate(`/edit/${postId}`);
   };
 
-  const handleChat = (id) => {
-    console.log('chat', id);
+  const handleChat = (productId) => {
+    console.log('chat', productId);
+    navigate('/chat', { state: { roomId: productId } });
   };
 
   return (

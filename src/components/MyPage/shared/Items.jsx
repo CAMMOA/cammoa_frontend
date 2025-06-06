@@ -1,6 +1,7 @@
 import { Container } from '@components/shared/UIStyles';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import FallbackImage from '@components/shared/FallbackImage';
 
 export default function Items({ imageUrl, title, deadline, detailText, children, onClick }) {
   const isClosed = deadline === '마감됨';
@@ -8,7 +9,15 @@ export default function Items({ imageUrl, title, deadline, detailText, children,
   return (
     <ProductItemContainer>
       <ProductImageContainer onClick={onClick}>
-        <img src={imageUrl} alt={title} />
+        <FallbackImage
+          src={imageUrl}
+          alt={title}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
 
         {isClosed && (
           <>
@@ -52,12 +61,6 @@ const ProductImageContainer = styled(Container)`
   width: 100%;
   height: 222px;
   cursor: pointer;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
 `;
 
 const DeadLine = styled.div`

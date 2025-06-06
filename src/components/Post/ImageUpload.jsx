@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Camera from '@assets/icons/image-icon.svg?react';
 import { Container } from '@components/shared/UIStyles';
 import PropTypes from 'prop-types';
+import FallbackImage from '@components/shared/FallbackImage';
 
 export default function ImageUpload({ images, onAddImage, onRemoveImage }) {
   const inputRef = useRef();
@@ -30,11 +31,31 @@ export default function ImageUpload({ images, onAddImage, onRemoveImage }) {
         </Image>
         <PreviewContainer>
           {images.map((file, idx) => {
-            const src = typeof file === 'string' ? file : URL.createObjectURL(file);
+            let src;
+            if (typeof file === 'string') {
+              src = file;
+            } else if (file instanceof File) {
+              if (file.type && file.type.startsWith('image/')) {
+                src = URL.createObjectURL(file);
+              } else {
+                src = '';
+              }
+            } else {
+              src = '';
+            }
 
             return (
               <Preview key={idx}>
-                <img src={src} alt={`preview-${idx}`} />
+                <FallbackImage
+                  src={src}
+                  alt={`preview-${idx}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectposition: 'center',
+                  }}
+                />
                 <DeleteButton onClick={() => onRemoveImage(idx)}>×</DeleteButton>
                 {idx === 0 && <RepresentativeImageText>대표 이미지</RepresentativeImageText>}
               </Preview>
@@ -96,13 +117,6 @@ const Preview = styled(Container)`
   border: 1px solid #b2b2b2;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
 `;
 
 const DeleteButton = styled.button`
